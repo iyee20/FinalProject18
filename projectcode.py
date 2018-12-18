@@ -32,11 +32,13 @@ class Foe:
     def __init__(self, name, weapon, color, hp, a, d, res, spd):
         self.name = name
         self.weapon = weapon
+        self.color = color
         self.hp = hp
         self.a = a
         self.d = d
         self.res = res
         self.spd = spd
+roll_imp = Foe("Roll Imp", "lance", "blue", 13, 5, 4, 2, 5) #balance later
 
 #opening
 print("Welcome to Fire Emblem: Let's Get This Bread.")
@@ -70,11 +72,11 @@ while True:
         hair_color = input("Please pick one of the options. Is your hair brown, green, blue, red, black, or white? ")
     else:
         break
-weapon = input("Do you use a sword, lance, axe, bow, or dagger? ")
-weapon_list = ["sword", "lance", "axe", "bow", "dagger"]
+weapon = input("Do you use a sword, lance, axe, tome, dragon stone, bow, or dagger? ")
+weapon_list = ["sword", "lance", "axe", "bow", "dagger", "dragon stone", "tome"]
 while True:
     if weapon not in weapon_list:
-        weapon = input("Please pick one of the options. Do you use a sword, lance, axe, bow, or dagger? ")
+        weapon = input("Please pick one of the options. Do you use a sword, lance, axe, tome, dragon stone, bow, or dagger? ")
     else:
         break
 if weapon == "sword":
@@ -86,12 +88,20 @@ elif weapon == "lance":
 elif weapon == "axe":
     print("An axe is a GREEN weapon.")
     color = "green"
-elif weapon == "bow" or weapon == "dagger":
+elif weapon == "bow" or weapon == "dagger" or weapon == "dragon stone":
     color = input(f"A {weapon} can be colorless, red, blue, or green. What color is your {weapon}? ")
     color_list = ["red", "blue", "green", "colorless"]
     while True:
         if color not in color_list:
-            color = input(f"Please pick one of the options. Is your {weapon} colorless, red, blue, or green?")
+            color = input(f"Please pick one of the options. Is your {weapon} colorless, red, blue, or green? ")
+        else:
+            break
+elif weapon == "tome":
+    color = input("A tome can be red, blue, or green. What color is your tome? ")
+    color_list = ["red", "blue", "green"]
+    while True:
+        if color not in color_list:
+            color = input("Please pick one of the options. Is your tome red, blue, or green? ")
         else:
             break
 mc = Player(name, appearance, eye_color, hair_color, weapon, color)
@@ -100,5 +110,7 @@ mc = Player(name, appearance, eye_color, hair_color, weapon, color)
 input(f"ANNA: Good morning, {mc.name}!")
 input("ANNA: Are you ready to start fighting the forces of Brioche? ")
 input("ANNA: That's the spirit. Let's get started.")
+print("")
+input("ANNA: That's a Roll Imp.") #insert arrow pointing at Roll Imp
 
 #print("ANNA: Alright! Let's get this bread!")
