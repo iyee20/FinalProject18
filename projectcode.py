@@ -39,6 +39,9 @@ class Foe:
         self.res = res
         self.spd = spd
 roll_imp = Foe("Roll Imp", "lance", "blue", 13, 5, 4, 2, 5) #balance later
+bun_dragon = Foe("Bun Dragon", "dragon stone", "green", 15, 9, 3, 6, 8)
+baguette_devil = Foe("Baguette Devil", "sword", "red" #
+loaf_archer = Foe("Loaf Archer", "bow", "colorless" #
 
 #opening
 print("Welcome to Fire Emblem: Let's Get This Bread.")
@@ -112,5 +115,7 @@ input("ANNA: Are you ready to start fighting the forces of Brioche? ")
 input("ANNA: That's the spirit. Let's get started.")
 print("")
 input("ANNA: That's a Roll Imp.") #insert arrow pointing at Roll Imp
+input("ANNA: The Roll Imp has a lance, which is a BLUE weapon. Keep the weapon-triangle advantages in mind when you attack enemies.")
+input("ANNA: BLUE weapons are effective against RED weapons, which are effective against GREEN weapons, which are in turn effective against BLUE weapons.")
 
 #print("ANNA: Alright! Let's get this bread!")
