@@ -1,5 +1,6 @@
 #this is the text-based form of "Fire Emblem: Let's Get This Bread"
 #the game is heavily based on Fire Emblem Heroes, the mobile game of the Fire Emblem series
+
 class Player:
     """The class for the Player."""
     def __init__(self, name, appearance, eye_color, hair_color, weapon, color):
@@ -41,10 +42,21 @@ class Foe:
         self.res = res
         self.spd = spd
         self.range = range
-roll_imp = Foe("Roll Imp", "lance", "blue", 18, 5, 6, 3, 5, 1) #based on Blue Fighter, 1 star
-bun_dragon = Foe("Bun Dragon", "dragonstone", "green", 16, 7, 5, 4, 7, 1) #based on Green Manakete, 2 star
-baguette_devil = Foe("Baguette Devil", "sword", "red", 18, 5, 6, 3, 5, 1) #based on Sword Fighter, 1 star
-loaf_archer = Foe("Loaf Archer", "bow", "colorless", 17, 6, 5, 1, 5, 2) #based on Bow Fighter, 1 star
+roll_imp = Foe("Roll Imp", "lance", "blue", 18, 11, 6, 3, 5, 1) #based on Blue Fighter, 1 star with Iron Lance
+bun_dragon = Foe("Bun Dragon", "dragonstone", "green", 16, 13, 5, 4, 7, 1) #based on Green Manakete, 2 star with Fire Breath
+baguette_devil = Foe("Baguette Devil", "sword", "red", 18, 11, 6, 3, 5, 1) #based on Sword Fighter, 1 star with Iron Sword
+loaf_archer = Foe("Loaf Archer", "bow", "colorless", 17, 10, 5, 1, 5, 2) #based on Bow Fighter, 1 star with Iron Bow
+
+physical_weapons = ["sword", "lance", "axe", "bow", "dagger"]
+magic_weapons = ["tome", "dragonstone"]
+def attack(attacker, defender):
+    """The attacker attacks the defender."""
+    pass
+    if attacker.weapon in physical_weapons:
+        dmg = attacker.a - defender.d
+    if attacker.weapon in magic_weapons:
+        dmg = attacker.a - defender.res
+        ###
 
 #opening
 print("Welcome to Fire Emblem: Let's Get This Bread.")
