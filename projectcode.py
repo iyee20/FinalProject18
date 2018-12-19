@@ -3,7 +3,7 @@
 
 class Player:
     """The class for the Player."""
-    def __init__(self, name, appearance, eye_color, hair_color, weapon, color):
+    def __init__(self, name, appearance, eye_color, hair_color, weapon, color, equipped=None):
         self.name = name
         self.appearance = appearance
         if self.appearance == "male":
@@ -22,17 +22,18 @@ class Player:
         self.hair_color = hair_color
         self.weapon = weapon
         self.color = color
-#base stats based on the first hero in Fire Emblem Heroes, Takumi, at 4 star rarity
+        self.equipped = equipped
+#base stats based on the first hero in Fire Emblem Heroes, Takumi, at 4 star rarity, except for range
         self.hp = 17 #health
         self.a = 8 #attack
         self.d = 5 #defense
         self.res = 4 #resistance
         self.spd = 7 #speed
-        self.range = 1 #range
+        self.rng = 1 #range
 
 class Foe:
     """The class for the enemies."""
-    def __init__(self, name, weapon, color, hp, a, d, res, spd, range):
+    def __init__(self, name, weapon, color, hp, a, d, res, spd, rng):
         self.name = name
         self.weapon = weapon
         self.color = color
@@ -41,22 +42,72 @@ class Foe:
         self.d = d
         self.res = res
         self.spd = spd
-        self.range = range
+        self.rng = rng
 roll_imp = Foe("Roll Imp", "lance", "blue", 18, 11, 6, 3, 5, 1) #based on Blue Fighter, 1 star with Iron Lance
 bun_dragon = Foe("Bun Dragon", "dragonstone", "green", 16, 13, 5, 4, 7, 1) #based on Green Manakete, 2 star with Fire Breath
 baguette_devil = Foe("Baguette Devil", "sword", "red", 18, 11, 6, 3, 5, 1) #based on Sword Fighter, 1 star with Iron Sword
 loaf_archer = Foe("Loaf Archer", "bow", "colorless", 17, 10, 5, 1, 5, 2) #based on Bow Fighter, 1 star with Iron Bow
 
+weapon_triangle = { #the value to each key is the color it has an advantage over
+    "red": "green",
+    "blue": "red",
+    "green": "blue",
+    "colorless": ""
+    }
+def advantage(attacker, defender):
+    """Factor the weapon-triangle advantages into attacks."""
+    if defender.color == weapon_triangle[attacker.color]:
+        return 2
+    elif attacker.color == weapon_triangle[defender.color]:
+        return 0.5
+    else:
+        return 1
+
 physical_weapons = ["sword", "lance", "axe", "bow", "dagger"]
 magic_weapons = ["tome", "dragonstone"]
 def attack(attacker, defender):
     """The attacker attacks the defender."""
-    pass
     if attacker.weapon in physical_weapons:
         dmg = attacker.a - defender.d
     if attacker.weapon in magic_weapons:
         dmg = attacker.a - defender.res
-        ###
+    dmg *= advantage(attacker, defender) #alter damage based on the weapon-triangle advantage multiplier
+    if dmg > defender.hp:
+        dmg = defender.hp
+    if dmg <= 0:
+        dmg = 0
+    defender.hp -= dmg
+    return
+
+class Weapon:
+    """The class for weapons that can be equipped by the Player."""
+    def __init__(self, name, might, rng):
+        self.name = name
+        self.might = might
+        self.rng = rng
+
+    def equip(self):
+        """Equip a weapon."""
+        print(f"Equipped the {self.name}.")
+        mc.a += self.might
+        mc.rng = self.rng
+        mc.equipped = self.name
+
+    def unequip(self):
+        """Unequip a weapon."""
+        print(f"Unequipped the {self.name}.")
+        mc.a -= self.might
+        mc.equipped = None
+        mc.rng = 1
+iron_sword = Weapon("Iron Sword", 6, 1)
+iron_lance = Weapon("Iron Lance", 6, 1)
+iron_axe = Weapon("Iron Axe", 6, 1)
+iron_bow = Weapon("Iron Bow", 4, 2)
+iron_dagger = Weapon("Iron Dagger", 3, 2)
+fire_breath = Weapon("Fire Breath", 6, 1)
+fire_tome = Weapon("Fire", 4, 2)
+light_tome = Weapon("Light", 4, 2)
+wind_tome = Weapon("Wind", 4, 2)
 
 #opening
 print("Welcome to Fire Emblem: Let's Get This Bread.")
@@ -123,31 +174,35 @@ elif weapon == "tome":
         else:
             break
 mc = Player(name, appearance, eye_color, hair_color, weapon, color)
-#stat changes based on weapon
+#equip weapons
 if weapon == "sword" or weapon == "lance" or weapon == "axe":
     input(f"You received an Iron {mc.weapon.title()}.")
-    mc.a += 6
+    if weapon == "sword":
+        iron_sword.equip()
+    elif weapon == "lance":
+        iron_lance.equip()
+    elif weapon == "axe":
+        iron_axe.equip()
 elif weapon == "bow":
     input("You received an Iron Bow.")
-    mc.a += 4
-    mc.range += 1
+    iron_bow.equip()
 elif weapon == "dagger":
     input("You received an Iron Dagger.")
-    mc.a += 3
-    mc.range += 1
+    iron_dagger.equip()
 elif weapon == "dragonstone":
     input(f"You received a {mc.color} dragonstone. It allows you to use Fire Breath.")
-    mc.a += 6
+    fire_breath.equip()
 elif weapon == "tome":
     print(f"You received a {mc.color} tome.")
-    mc.a += 4
-    mc.range += 1
     if color == "red":
         input("It can cast a Fire spell.")
+        fire_tome.equip()
     elif color == "blue":
         input("It can cast a Light spell.")
+        light_tome.equip()
     elif color == "green":
         input("It can cast a Wind spell.")
+        wind_tome.equip()
 
 #tutorial scene
 input(f"ANNA: Good morning, {mc.name}!")
