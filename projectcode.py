@@ -33,7 +33,7 @@ class Player:
 
 class Foe:
     """The class for the enemies."""
-    def __init__(self, name, weapon, color, hp, a, d, res, spd, rng):
+    def __init__(self, name, weapon, color, hp, a, d, res, spd, rng, drop):
         self.name = name
         self.weapon = weapon
         self.color = color
@@ -43,10 +43,39 @@ class Foe:
         self.res = res
         self.spd = spd
         self.rng = rng
-roll_imp = Foe("Roll Imp", "lance", "blue", 18, 11, 6, 3, 5, 1) #based on Blue Fighter, 1 star with Iron Lance
-bun_dragon = Foe("Bun Dragon", "dragonstone", "green", 16, 13, 5, 4, 7, 1) #based on Green Manakete, 2 star with Fire Breath
-baguette_devil = Foe("Baguette Devil", "sword", "red", 18, 11, 6, 3, 5, 1) #based on Sword Fighter, 1 star with Iron Sword
-loaf_archer = Foe("Loaf Archer", "bow", "colorless", 17, 10, 5, 1, 5, 2) #based on Bow Fighter, 1 star with Iron Bow
+        self.drop = drop #how many breadcrumbs are dropped by the enemy
+roll_imp = Foe("Roll Imp", "lance", "blue", 18, 11, 6, 3, 5, 1, 10) #based on Blue Fighter, 1 star with Iron Lance
+bun_dragon = Foe("Bun Dragon", "dragonstone", "green", 16, 13, 5, 4, 7, 1, 25) #based on Green Manakete, 2 star with Fire Breath
+baguette_devil = Foe("Baguette Devil", "sword", "red", 18, 11, 6, 3, 5, 1, 10) #based on Sword Fighter, 1 star with Iron Sword
+loaf_archer = Foe("Loaf Archer", "bow", "colorless", 17, 10, 5, 1, 5, 2, 10) #based on Bow Fighter, 1 star with Iron Bow
+
+def breadify():
+    """Convert breadcrumbs to bread."""
+    pass
+    #conversion rate here
+
+class Bread:
+    """The class for the Fire Emblem characters with cutscenes."""
+    def __init__(self, name, appearance, bread):
+        self.name = name
+        if self.appearance == "male":
+            self.he = "he"
+            self.his = "his"
+            self.him = "him"
+        if self.appearance == "female":
+            self.he = "she"
+            self.his = "her"
+            self.him = "her"
+        if self.appearance == "nonbinary":
+            self.he = "they"
+            self.his = "their"
+            self.him = "them"
+        self.bread = bread #how much bread is required to unlock their cutscene
+marth = Bread("Marth", "male", 10)
+groom_marth = Bread("Groom Marth", "male", 25)
+hero_king_marth = Bread("Hero King Marth", "male", 50)
+masked_marth = Bread("Masked Marth", "nonbinary", 75)
+lucina = Bread("Masked Marth", "female", 50)
 
 weapon_triangle = { #the value to each key is the color it has an advantage over
     "red": "green",
