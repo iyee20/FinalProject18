@@ -1,4 +1,5 @@
 #this is the text-based form of "Fire Emblem: Let's Get This Bread"
+#the game is heavily based on Fire Emblem Heroes, the mobile game of the Fire Emblem series
 class Player:
     """The class for the Player."""
     def __init__(self, name, appearance, eye_color, hair_color, weapon, color):
@@ -20,16 +21,17 @@ class Player:
         self.hair_color = hair_color
         self.weapon = weapon
         self.color = color
-#change base stats later
-        self.hp = 10 #health
+#base stats based on the first hero in Fire Emblem Heroes, Takumi, at 4 star rarity
+        self.hp = 17 #health
         self.a = 8 #attack
-        self.d = 3 #defense
-        self.res = 2 #resistance
-        self.spd = 5 #speed
+        self.d = 5 #defense
+        self.res = 4 #resistance
+        self.spd = 7 #speed
+        self.range = 1 #range
 
 class Foe:
     """The class for the enemies."""
-    def __init__(self, name, weapon, color, hp, a, d, res, spd):
+    def __init__(self, name, weapon, color, hp, a, d, res, spd, range):
         self.name = name
         self.weapon = weapon
         self.color = color
@@ -38,10 +40,11 @@ class Foe:
         self.d = d
         self.res = res
         self.spd = spd
-roll_imp = Foe("Roll Imp", "lance", "blue", 13, 5, 4, 2, 5) #balance later
-bun_dragon = Foe("Bun Dragon", "dragon stone", "green", 15, 9, 3, 6, 8)
-baguette_devil = Foe("Baguette Devil", "sword", "red" #
-loaf_archer = Foe("Loaf Archer", "bow", "colorless" #
+        self.range = range
+roll_imp = Foe("Roll Imp", "lance", "blue", 18, 5, 6, 3, 5, 1) #based on Blue Fighter, 1 star
+bun_dragon = Foe("Bun Dragon", "dragonstone", "green", 16, 7, 5, 4, 7, 1) #based on Green Manakete, 2 star
+baguette_devil = Foe("Baguette Devil", "sword", "red", 18, 5, 6, 3, 5, 1) #based on Sword Fighter, 1 star
+loaf_archer = Foe("Loaf Archer", "bow", "colorless", 17, 6, 5, 1, 5, 2) #based on Bow Fighter, 1 star
 
 #opening
 print("Welcome to Fire Emblem: Let's Get This Bread.")
@@ -75,11 +78,11 @@ while True:
         hair_color = input("Please pick one of the options. Is your hair brown, green, blue, red, black, or white? ")
     else:
         break
-weapon = input("Do you use a sword, lance, axe, tome, dragon stone, bow, or dagger? ")
-weapon_list = ["sword", "lance", "axe", "bow", "dagger", "dragon stone", "tome"]
+weapon = input("Do you use a sword, lance, axe, tome, dragonstone, bow, or dagger? ")
+weapon_list = ["sword", "lance", "axe", "bow", "dagger", "dragonstone", "tome"]
 while True:
     if weapon not in weapon_list:
-        weapon = input("Please pick one of the options. Do you use a sword, lance, axe, tome, dragon stone, bow, or dagger? ")
+        weapon = input("Please pick one of the options. Do you use a sword, lance, axe, tome, dragonstone, bow, or dagger? ")
     else:
         break
 if weapon == "sword":
@@ -91,7 +94,7 @@ elif weapon == "lance":
 elif weapon == "axe":
     print("An axe is a GREEN weapon.")
     color = "green"
-elif weapon == "bow" or weapon == "dagger" or weapon == "dragon stone":
+elif weapon == "bow" or weapon == "dagger" or weapon == "dragonstone":
     color = input(f"A {weapon} can be colorless, red, blue, or green. What color is your {weapon}? ")
     color_list = ["red", "blue", "green", "colorless"]
     while True:
@@ -108,6 +111,31 @@ elif weapon == "tome":
         else:
             break
 mc = Player(name, appearance, eye_color, hair_color, weapon, color)
+#stat changes based on weapon
+if weapon == "sword" or weapon == "lance" or weapon == "axe":
+    input(f"You received an Iron {mc.weapon.title()}.")
+    mc.a += 6
+elif weapon == "bow":
+    input("You received an Iron Bow.")
+    mc.a += 4
+    mc.range += 1
+elif weapon == "dagger":
+    input("You received an Iron Dagger.")
+    mc.a += 3
+    mc.range += 1
+elif weapon == "dragonstone":
+    input(f"You received a {mc.color} dragonstone. It allows you to use Fire Breath.")
+    mc.a += 6
+elif weapon == "tome":
+    print(f"You received a {mc.color} tome.")
+    mc.a += 4
+    mc.range += 1
+    if color == "red":
+        input("It can cast a Fire spell.")
+    elif color == "blue":
+        input("It can cast a Light spell.")
+    elif color == "green":
+        input("It can cast a Wind spell.")
 
 #tutorial scene
 input(f"ANNA: Good morning, {mc.name}!")
