@@ -30,6 +30,8 @@ class Player:
         self.res = 4 #resistance
         self.spd = 7 #speed
         self.rng = 1 #range
+        self.breadcrumbs = 0 #obtained breadcrumbs
+        self.bread = 0 #obtained bread
 
 class Foe:
     """The class for the enemies."""
@@ -49,10 +51,26 @@ bun_dragon = Foe("Bun Dragon", "dragonstone", "green", 16, 13, 5, 4, 7, 1, 25) #
 baguette_devil = Foe("Baguette Devil", "sword", "red", 18, 11, 6, 3, 5, 1, 10) #based on Sword Fighter, 1 star with Iron Sword
 loaf_archer = Foe("Loaf Archer", "bow", "colorless", 17, 10, 5, 1, 5, 2, 10) #based on Bow Fighter, 1 star with Iron Bow
 
+def get_bread(defeated):
+    """Obtain breadcrumbs from defeating an enemy."""
+    input(f"You received {defeated.drop} breadcrumbs.")
+    mc.breadcrumbs += defeated.drop
+    return
+
 def breadify():
     """Convert breadcrumbs to bread."""
-    pass
-    #conversion rate here
+    converted = mc.breadcrumbs % 15 #how many whole breads can be made
+    mc.breadcrumbs -= 15 * converted
+    input(f"You received {converted} bread.")
+    input(f"You now have {mc.breadcrumbs} breadcrumbs.")
+    mc.bread += converted
+    return
+
+def check_bread():
+    """Check how many breadcrumbs and how much bread the player has."""
+    input(f"Breadcrumbs: {mc.breadcrumbs}")
+    input(f"Bread: {mc.bread}")
+    return
 
 class Bread:
     """The class for the Fire Emblem characters with cutscenes."""
