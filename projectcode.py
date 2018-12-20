@@ -76,6 +76,7 @@ class Bread:
     """The class for the Fire Emblem characters with cutscenes."""
     def __init__(self, name, appearance, bread):
         self.name = name
+        self.appearance = appearance
         if self.appearance == "male":
             self.he = "he"
             self.his = "his"
@@ -117,9 +118,9 @@ weapon_triangle = { #the value to each key is the color it has an advantage over
 def advantage(attacker, defender):
     """Factor the weapon-triangle advantages into attacks."""
     if defender.color == weapon_triangle[attacker.color]:
-        return 2
+        return 1.2 #20% increase for advantage
     elif attacker.color == weapon_triangle[defender.color]:
-        return 0.5
+        return 0.8 #20% decrease for disadvantage
     else:
         return 1
 
@@ -137,6 +138,7 @@ def attack(attacker, defender):
     if dmg <= 0:
         dmg = 0
     defender.hp -= dmg
+    input(f"{defender.name} took {dmg} damage.")
     return
 
 def check_defeat(defeated):
