@@ -95,6 +95,19 @@ hero_king_marth = Bread("Hero King Marth", "male", 50)
 masked_marth = Bread("Masked Marth", "nonbinary", 75)
 lucina = Bread("Masked Marth", "female", 50)
 
+def unlock(character):
+    """Unlock a character's cutscene."""
+    if character.bread == 0:
+        None #if character has already been unlocked, nothing happens
+    elif mc.bread < character.bread:
+        input(f"You don't have enough bread to unlock {character.name} yet.")
+    elif mc.bread >= character.bread:
+        input(f"{character.name} unlocked!")
+        mc.bread -= character.bread
+        input(f"You now have {mc.bread} bread.")
+        character.bread = 0 #character's bread cost is now 0
+    return
+
 weapon_triangle = { #the value to each key is the color it has an advantage over
     "red": "green",
     "blue": "red",
@@ -125,6 +138,13 @@ def attack(attacker, defender):
         dmg = 0
     defender.hp -= dmg
     return
+
+def check_defeat(defeated):
+    """Check if a character has been defeated."""
+    if defeated.hp == 0:
+        return True
+    else:
+        return False
 
 class Weapon:
     """The class for weapons that can be equipped by the Player."""
@@ -159,6 +179,7 @@ wind_tome = Weapon("Wind", 4, 2)
 #opening
 print("Welcome to Fire Emblem: Let's Get This Bread.")
 input("Press ENTER to begin.")
+print("")
 
 #character customization
 name = input("What is your name? ")
@@ -250,6 +271,7 @@ elif weapon == "tome":
     elif color == "green":
         input("It can cast a Wind spell.")
         wind_tome.equip()
+print("")
 
 #tutorial scene
 input(f"ANNA: Good morning, {mc.name}!")
