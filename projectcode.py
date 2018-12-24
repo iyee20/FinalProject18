@@ -1,14 +1,19 @@
 #the game is heavily based on Fire Emblem Heroes, the mobile game of the Fire Emblem series
 
 import sys, pygame #import pygame to use
-pygame.init()
 
-size = width, height = 100, 100 #define size as a 100x100 px area
+size = width, height = 200, 200 #define size as a certain px area
 screen = pygame.display.set_mode(size) #create a Surface called "screen" with pygame (the screen the computer displays)
 
-#pygame.image.load(image) #load image as surface
+black = (0, 0, 0)
 
-#this is the text-based form of "Fire Emblem: Let's Get This Bread"
+marth_img = pygame.image.load("FEH_Marth.png").convert() #load image as surface
+
+while True:
+    screen.fill(black)
+    screen.blit(marth_img, (0,0))
+
+#this is the text-based form of "Fire Emblem: Let's Get This Bread" so far
 
 class Player:
     """The class for the Player."""
