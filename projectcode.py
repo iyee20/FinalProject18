@@ -1,4 +1,3 @@
-#this is the text-based form of "Fire Emblem: Let's Get This Bread"
 #the game is heavily based on Fire Emblem Heroes, the mobile game of the Fire Emblem series
 
 import sys, pygame #import pygame to use
@@ -7,10 +6,14 @@ pygame.init()
 size = width, height = 100, 100 #define size as a 100x100 px area
 screen = pygame.display.set_mode(size) #create a Surface called "screen" with pygame (the screen the computer displays)
 
+#pygame.image.load(image) #load image as surface
+
+#this is the text-based form of "Fire Emblem: Let's Get This Bread"
+
 class Player:
     """The class for the Player."""
     def __init__(self, name, appearance, eye_color, hair_color, weapon, color, equipped=None):
-        self.name = name
+        self.name = name.title()
         self.appearance = appearance
         if self.appearance == "male":
             self.he = "he"
