@@ -3,21 +3,42 @@
 import sys, pygame #import pygame to use
 pygame.font.init() #initialize font module so font functions work
 
-size = width, height = 200, 200 #define size as a certain px area
+size = width, height = 500, 500 #define size as a certain px area
 screen = pygame.display.set_mode(size) #create a Surface called "screen" with pygame (the screen the computer displays)
 
+#define colors by name for convenience
 black = (0, 0, 0) #rgb value of black
 white = (250, 250, 250) #rgb value of white
 
 def opening_screen():
-    screen.fill(black) #start with a black screen
+    """Draw the opening screen on the Surface."""
+    bg = screen.convert()
+    
+    bg.fill(black) #start with a black screen
+    bg.fill(white) #the opening bg is white
+    
+    #title words
+    title_font = pygame.font.Font(None, 10) #title font is the default font at 10px size
+    title_text = title_font.render("Fire Emblem: Let's Get This Bread", 1, black) #title text is antialiasing and black
+    title_text_position = title_text.get_rect() #position of title text
+    title_text_position.centerx = screen.get_rect().centerx #center of title text is center of the screen (changes x coordinate)
+    bg.blit(title_text, title_text_position) #draw title text at title_text_position
 
-    screen.fill(white) #the opening bg is white
-    font = pygame.font.Font(None, 10) #font is the default font at 10px size
-    text = font.render("Fire Emblem: Let's Get This Bread", 1, black) #opening text is antialiasing and black
-    text_position = text.get_rect() #the final size and origin of the text
-    text_position.centerx = screen.get_rect().centerx #center of text is center of the screen
-    screen.blit(text, text_position) #draw text at text_position
+    #opening instructions
+    font = pygame.font.Font(None, 8) #instructions are default font at 8px size
+    text = font.render("Press any key to start.", 1, black)
+    text_position = text.get_rect() #position of instructions
+    text_position.centerx = screen.get_rect().centerx
+    bg.blit(text, text_position) #draw instructions at text_position
+
+    screen.blit(bg, (0, 0)) #draw bg with text on screen
+
+    while True: #event loop
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: #if the Player tries to close the window...
+                sys.exit()
+            elif event.type == pygame.KEYDOWN: #if the Player presses a key...
+                return
 
 opening_screen()
 
