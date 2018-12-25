@@ -1,17 +1,31 @@
 #the game is heavily based on Fire Emblem Heroes, the mobile game of the Fire Emblem series
 
 import sys, pygame #import pygame to use
+pygame.font.init() #initialize font module so font functions work
 
 size = width, height = 200, 200 #define size as a certain px area
 screen = pygame.display.set_mode(size) #create a Surface called "screen" with pygame (the screen the computer displays)
 
-black = (0, 0, 0)
+black = (0, 0, 0) #rgb value of black
+white = (250, 250, 250) #rgb value of white
 
-marth_img = pygame.image.load("FEH_Marth.png").convert() #load image as surface
+def opening_screen():
+    screen.fill(black) #start with a black screen
 
-while True:
-    screen.fill(black)
-    screen.blit(marth_img, (0,0))
+    screen.fill(white) #the opening bg is white
+    font = pygame.font.Font(None, 10) #font is the default font at 10px size
+    text = font.render("Fire Emblem: Let's Get This Bread", 1, black) #opening text is antialiasing and black
+    text_position = text.get_rect() #the final size and origin of the text
+    text_position.centerx = screen.get_rect().centerx #center of text is center of the screen
+    screen.blit(text, text_position) #draw text at text_position
+
+opening_screen()
+
+#test image stuff that can be worked out later
+#marth_img = pygame.image.load("FEH_Marth.png").convert() #load image as surface
+#while True:
+    #screen.fill(black)
+    #screen.blit(marth_img, (0,0))
 
 #this is the text-based form of "Fire Emblem: Let's Get This Bread" so far
 
