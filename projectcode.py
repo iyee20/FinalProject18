@@ -18,17 +18,19 @@ def opening_screen():
     bg.fill(white) #the opening bg is white
     
     #title words
-    title_font = pygame.font.Font(None, 10) #title font is the default font at 10px size
+    title_font = pygame.font.Font(None, 25) #title font is the default font at 25px size
     title_text = title_font.render("Fire Emblem: Let's Get This Bread", 1, black) #title text is antialiasing and black
     title_text_position = title_text.get_rect() #position of title text
-    title_text_position.centerx = screen.get_rect().centerx #center of title text is center of the screen (changes x coordinate)
+    title_text_position.centerx = screen.get_rect().centerx #center of title text is center of the screen
+    title_text_position.height = screen.get_rect().height / 2 #text is in the middle of the screen
     bg.blit(title_text, title_text_position) #draw title text at title_text_position
 
     #opening instructions
-    font = pygame.font.Font(None, 8) #instructions are default font at 8px size
+    font = pygame.font.Font(None, 15) #instructions are default font at 15px size
     text = font.render("Press any key to start.", 1, black)
     text_position = text.get_rect() #position of instructions
     text_position.centerx = screen.get_rect().centerx
+    text_position.height = screen.get_rect().height / 3 #text is at 1/3 of the screen height
     bg.blit(text, text_position) #draw instructions at text_position
 
     screen.blit(bg, (0, 0)) #draw bg with text on screen
