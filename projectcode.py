@@ -9,13 +9,13 @@ screen = pygame.display.set_mode(size) #create a Surface called "screen" with py
 #define colors by name for convenience
 black = (0, 0, 0) #rgb value of black
 white = (250, 250, 250) #rgb value of white
+fe_blue = (72, 117, 139) #color of Fire Emblem textboxes, midway between the gradient endpoints...ish
 
 def opening_screen():
     """Draw the opening screen on the Surface."""
     bg = screen.convert()
     
-    bg.fill(black) #start with a black screen
-    bg.fill(white) #the opening bg is white
+    bg.fill(white) #the opening bg is white, for now
     
     #title words
     title_font = pygame.font.Font(None, 25) #title font is the default font at 25px size
@@ -35,12 +35,32 @@ def opening_screen():
 
     screen.blit(bg, (0, 0)) #draw bg with text on screen
 
-    while True: #event loop
+    while True: #event loop - start
+        pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT: #if the Player tries to close the window...
                 sys.exit()
             elif event.type == pygame.KEYDOWN: #if the Player presses a key...
                 return
+
+def mc_customize():
+    """Customize the Player character using keyboard input."""
+
+    bg = screen.convert()
+    bg.fill(white)
+
+    q_box = pygame.display.set_mode(500, 250) #question box is a separate surface
+    box_bg = q_box.convert()
+    box_bg.fill(fe_blue)
+
+    question = "What is your name?" #change later; example
+    #question text
+    q_font = pygame.font.Font(None, 25)
+    q_text = q_font.render(question, 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.centerx = screen.get_rect().centerx
+    q_text_position.height = screen.get_rect().height / 2
+    box_bg.blit(q_text, q_text_position)
 
 opening_screen()
 
