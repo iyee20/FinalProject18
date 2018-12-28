@@ -66,28 +66,29 @@ def mc_customize():
     q_text_position.height = screen.get_rect().height / 2
     q_box_bg.blit(q_text, q_text_position)
 
-    answer = user_name()
+    name = user_name()
     #answer text: take user input and display it
     a_font = pygame.font.Font(None, 20)
-    a_text = a_font.render(answer, 1, black)
+    a_text = a_font.render(name, 1, black)
     a_text_position = a_text.get_rect()
     a_text_position.centerx = screen.get_rect().centerx
     a_text_position.height = screen.get_rect().height / 3
     a_box_bg.blit(a_text, a_text_position)
 
+name = ""
 def user_name():
     """Take user input to write the Player's name."""
-    answer = ""
+    global name
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                answer += " "
+                name += " "
             elif event.key == pygame.K_BACKSPACE:
-                answer -= answer[-1]
+                name -= name[-1]
             elif pygame.key.name(event.key).isalpha() == True:
-                answer += pygame.key.name(event.key)
+                name += pygame.key.name(event.key)
             elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
-                return answer
+                return name
 
 opening_screen()
 
