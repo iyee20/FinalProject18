@@ -50,8 +50,12 @@ def mc_customize():
     bg.fill(white)
 
     q_box = pygame.display.set_mode(500, 250) #question box is a separate surface
-    box_bg = q_box.convert()
-    box_bg.fill(fe_blue)
+    q_box_bg = q_box.convert()
+    q_box_bg.fill(fe_blue)
+
+    a_box = pygame.display.set_mode(500, 50) #answer box is a separate surface
+    a_box_bg = a_box.convert()
+    a_box_bg.fill(fe_blue)
 
     question = "What is your name?" #change later; example
     #question text
@@ -60,7 +64,30 @@ def mc_customize():
     q_text_position = q_text.get_rect()
     q_text_position.centerx = screen.get_rect().centerx
     q_text_position.height = screen.get_rect().height / 2
-    box_bg.blit(q_text, q_text_position)
+    q_box_bg.blit(q_text, q_text_position)
+
+    answer = user_name()
+    #answer text: take user input and display it
+    a_font = pygame.font.Font(None, 20)
+    a_text = a_font.render(answer, 1, black)
+    a_text_position = a_text.get_rect()
+    a_text_position.centerx = screen.get_rect().centerx
+    a_text_position.height = screen.get_rect().height / 3
+    a_box_bg.blit(a_text, a_text_position)
+
+def user_name():
+    """Take user input to write the Player's name."""
+    answer = ""
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                answer += " "
+            elif event.key == pygame.K_BACKSPACE:
+                answer -= answer[-1]
+            elif pygame.key.name(event.key).isalpha() == True:
+                answer += pygame.key.name(event.key)
+            elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
+                return answer
 
 opening_screen()
 
