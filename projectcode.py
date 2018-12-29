@@ -44,7 +44,7 @@ def opening_screen():
                 return
 
 def mc_customize():
-    """Customize the Player character using keyboard input."""
+    """Customize the Player character using keyboard and mouse input."""
 
     bg = screen.convert()
     bg.fill(white)
@@ -57,23 +57,40 @@ def mc_customize():
     a_box_bg = a_box.convert()
     a_box_bg.fill(fe_blue)
 
-    question = "What is your name?" #change later; example
     #question text
-    q_font = pygame.font.Font(None, 25)
-    q_text = q_font.render(question, 1, black)
-    q_text_position = q_text.get_rect()
-    q_text_position.centerx = screen.get_rect().centerx
-    q_text_position.height = screen.get_rect().height / 2
-    q_box_bg.blit(q_text, q_text_position)
+    to_blit = display_question("What is your name?")
+    q_box_bg.blit(to_blit)
+    pygame.display.flip()
 
-    name = user_name()
     #answer text: take user input and display it
+    name = user_name()
     a_font = pygame.font.Font(None, 20)
     a_text = a_font.render(name, 1, black)
     a_text_position = a_text.get_rect()
     a_text_position.centerx = screen.get_rect().centerx
     a_text_position.height = screen.get_rect().height / 3
-    a_box_bg.blit(a_text, a_text_position)
+    
+    #check if the Player has entered a name
+    while True:
+        if name == "":
+            q_box_bg.fill(fe_blue)
+            to_blit = display_question("You must enter a name. What is your name?")
+            q_box_bg.blit(to_blit)
+            name = user_name()
+        else:
+            a_box_bg.blit(a_text, a_text_position)
+            break
+
+    pygame.display.flip()
+
+def display_question(question):
+    """Display a question in the question box."""
+    q_font = pygame.font.Font(None, 25)
+    q_text = q_font.render(question, 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.centerx = screen.get_rect().centerx
+    q_text_position.height = screen.get_rect().height / 2
+    return (q_text, q_text_position)
 
 name = ""
 def user_name():
@@ -89,6 +106,19 @@ def user_name():
                 name += pygame.key.name(event.key)
             elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                 return name
+
+def is_clicked(button):
+    """Check if a button has been clicked."""
+    pass
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    #if mouse[0] is w/i button x and mouse[1] is w/i button y:
+        #if click[0] == 1:
+            #return True
+        #else:
+            #return False
+    #else:
+        #return False
 
 opening_screen()
 
@@ -277,110 +307,5 @@ fire_tome = Weapon("Fire", 4, 2)
 light_tome = Weapon("Light", 4, 2)
 wind_tome = Weapon("Wind", 4, 2)
 
-#opening
-print("Welcome to Fire Emblem: Let's Get This Bread.")
-input("Press ENTER to begin.")
-print("")
-
-#character customization
-name = input("What is your name? ")
-while True:
-    if name == "":
-        name = input("Please enter a name. What is your name? ")
-    else:
-        break
-appearance = input("Do you identify as male, female, or nonbinary? ")
-appearance_list = ["male", "female", "nonbinary"]
-while True:
-    if appearance not in appearance_list:
-        appearance = input("Please pick one of the options. Do you identify as male, female, or nonbinary? ")
-    else:
-        break
-eye_color = input("Are your eyes brown, green, blue, or red? ")
-eye_color_list = ["brown", "green", "blue", "red"]
-while True:
-    if eye_color not in eye_color_list:
-        eye_color = input("Please pick one of the options. Are your eyes brown, green, blue, or red? ")
-    else:
-        break
-hair_color = input("Is your hair brown, green, blue, red, black, or white? ")
-hair_color_list = ["brown", "green", "blue", "red", "black", "white"]
-while True:
-    if hair_color not in hair_color_list:
-        hair_color = input("Please pick one of the options. Is your hair brown, green, blue, red, black, or white? ")
-    else:
-        break
-weapon = input("Do you use a sword, lance, axe, tome, dragonstone, bow, or dagger? ")
-weapon_list = ["sword", "lance", "axe", "bow", "dagger", "dragonstone", "tome"]
-while True:
-    if weapon not in weapon_list:
-        weapon = input("Please pick one of the options. Do you use a sword, lance, axe, tome, dragonstone, bow, or dagger? ")
-    else:
-        break
-if weapon == "sword":
-    print("A sword is a RED weapon.")
-    color = "red"
-elif weapon == "lance":
-    print("A lance is a BLUE weapon.")
-    color = "blue"
-elif weapon == "axe":
-    print("An axe is a GREEN weapon.")
-    color = "green"
-elif weapon == "bow" or weapon == "dagger" or weapon == "dragonstone":
-    color = input(f"A {weapon} can be colorless, red, blue, or green. What color is your {weapon}? ")
-    color_list = ["red", "blue", "green", "colorless"]
-    while True:
-        if color not in color_list:
-            color = input(f"Please pick one of the options. Is your {weapon} colorless, red, blue, or green? ")
-        else:
-            break
-elif weapon == "tome":
-    color = input("A tome can be red, blue, or green. What color is your tome? ")
-    color_list = ["red", "blue", "green"]
-    while True:
-        if color not in color_list:
-            color = input("Please pick one of the options. Is your tome red, blue, or green? ")
-        else:
-            break
-mc = Player(name, appearance, eye_color, hair_color, weapon, color)
-#equip weapons
-if weapon == "sword" or weapon == "lance" or weapon == "axe":
-    input(f"You received an Iron {mc.weapon.title()}.")
-    if weapon == "sword":
-        iron_sword.equip()
-    elif weapon == "lance":
-        iron_lance.equip()
-    elif weapon == "axe":
-        iron_axe.equip()
-elif weapon == "bow":
-    input("You received an Iron Bow.")
-    iron_bow.equip()
-elif weapon == "dagger":
-    input("You received an Iron Dagger.")
-    iron_dagger.equip()
-elif weapon == "dragonstone":
-    input(f"You received a {mc.color} dragonstone. It allows you to use Fire Breath.")
-    fire_breath.equip()
-elif weapon == "tome":
-    print(f"You received a {mc.color} tome.")
-    if color == "red":
-        input("It can cast a Fire spell.")
-        fire_tome.equip()
-    elif color == "blue":
-        input("It can cast a Light spell.")
-        light_tome.equip()
-    elif color == "green":
-        input("It can cast a Wind spell.")
-        wind_tome.equip()
-print("")
-
-#tutorial scene
-input(f"ANNA: Good morning, {mc.name}!")
-input("ANNA: Are you ready to start fighting the forces of Brioche? ")
-input("ANNA: That's the spirit. Let's get started.")
-print("")
-input("ANNA: That's a Roll Imp.") #insert arrow pointing at Roll Imp
-input("ANNA: The Roll Imp has a lance, which is a BLUE weapon. Keep the weapon-triangle advantages in mind when you attack enemies.")
-input("ANNA: BLUE weapons are effective against RED weapons, which are effective against GREEN weapons, which are in turn effective against BLUE weapons.")
-
-#print("ANNA: Alright! Let's get this bread!")
+mc = Player(name, appearance, eye_color, hair_color, weapon, color, equipped=None)
+#see textmc.py for the terminal-based customization code
