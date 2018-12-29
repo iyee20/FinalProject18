@@ -10,6 +10,7 @@ screen = pygame.display.set_mode(size) #create a Surface called "screen" with py
 black = (0, 0, 0) #rgb value of black
 white = (250, 250, 250) #rgb value of white
 fe_blue = (72, 117, 139) #color of Fire Emblem textboxes, midway between the gradient endpoints...ish
+light_blue = (112, 172, 201) #a blue to stand out against Fire Emblem blue
 
 def opening_screen():
     """Draw the opening screen on the Surface."""
@@ -53,7 +54,7 @@ def mc_customize():
     q_box_bg = q_box.convert()
     q_box_bg.fill(fe_blue)
 
-    a_box = pygame.display.set_mode(500, 50) #answer box is a separate surface
+    a_box = pygame.display.set_mode(500, 450) #answer box is a separate surface
     a_box_bg = a_box.convert()
     a_box_bg.fill(fe_blue)
 
@@ -68,7 +69,7 @@ def mc_customize():
     a_text = a_font.render(name, 1, black)
     a_text_position = a_text.get_rect()
     a_text_position.centerx = screen.get_rect().centerx
-    a_text_position.height = screen.get_rect().height / 3
+    a_text_position.height = screen.get_rect().height * 2 / 3
     
     #check if the Player has entered a name
     while True:
@@ -76,12 +77,21 @@ def mc_customize():
             q_box_bg.fill(fe_blue)
             to_blit = display_question("You must enter a name. What is your name?")
             q_box_bg.blit(to_blit)
+            pygame.display.flip()
             name = user_name()
         else:
             a_box_bg.blit(a_text, a_text_position)
             break
 
     pygame.display.flip()
+
+    q_box_bg.fill(fe_blue)
+    to_blit = display_question("Do you identify as male, female, or nonbinary?")
+    q_box_bg.blit(to_blit)
+    pygame.display.flip()
+
+    pygame.a_box_bg.fill(light_blue, pygame.a_box_bg.get_rect()/3) #fill answer box 1/3 with light_blue (change later)
+    #insert button checks here
 
 def display_question(question):
     """Display a question in the question box."""
