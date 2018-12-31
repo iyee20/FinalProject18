@@ -48,78 +48,6 @@ def opening_screen():
             elif event.type == pygame.KEYDOWN: #if the Player presses a key...
                 return
 
-def mc_customize():
-    """Customize the Player character using keyboard and mouse input."""
-    global appearance
-
-    bg = screen.convert()
-    bg.fill(white)
-
-    q_box = pygame.display.set_mode(500, 250) #question box is a separate surface
-    q_box_bg = q_box.convert()
-    q_box_bg.fill(fe_blue)
-
-    a_box = pygame.display.set_mode(500, 450) #answer box is a separate surface
-    a_box_bg = a_box.convert()
-    a_box_bg.fill(fe_blue)
-
-    #question text
-    to_blit = display_question("What is your name?")
-    q_box_bg.blit(to_blit)
-    pygame.display.flip()
-
-    #answer text: take user input and display it
-    name = user_name()
-    a_font = pygame.font.Font(None, 20)
-    a_text = a_font.render(name, 1, black)
-    a_text_position = a_text.get_rect()
-    a_text_position.centerx = screen.get_rect().centerx
-    a_text_position.height = screen.get_rect().height * 2 / 3
-    
-    #check if the Player has entered a name
-    while True:
-        if name == "":
-            q_box_bg.fill(fe_blue)
-            to_blit = display_question("You must enter a name. What is your name?")
-            q_box_bg.blit(to_blit)
-            pygame.display.flip()
-            name = user_name()
-        else:
-            a_box_bg.blit(a_text, a_text_position)
-            break
-
-    pygame.display.flip()
-
-    q_box_bg.fill(fe_blue)
-    to_blit = display_question("Do you identify as male, female, or nonbinary?")
-    q_box_bg.blit(to_blit)
-    pygame.display.flip()
-
-    l_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #left button
-    l_button.bottomleft = a_box_bg.bottomleft
-    to_blit = button_text(l_button, "Male")
-    l_button.blit(to_blit)
-
-    c_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #center button
-    c_button.midbottom = a_box_bg.midbottom
-    to_blit = button_text(c_button, "Female")
-    c_button.blit(to_blit)
-
-    r_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #right button
-    r_button.bottomright = a_box_bg.bottomright
-    to_blit = button_text(r_button, "Nonbinary")
-    r_button.blit(to_blit)
-
-    pygame.display.flip()
-
-    #find a way to loop this
-    if is_clicked(l_button) == True:
-        appearance = "male"
-    elif is_clicked(c_button) == True:
-        appearance = "female"
-    elif is_clicked(r_button) == True:
-        appearance = "nonbinary"
-
 def display_question(question):
     """Display a question in the question box."""
     q_font = pygame.font.Font(None, 25)
@@ -139,7 +67,6 @@ def button_text(button, text):
 
 def user_name():
     """Take user input to write the Player's name."""
-    global name
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
@@ -164,15 +91,105 @@ def is_clicked(button):
     else:
         return False
 
+def blit_screen(screen, bg, q_box_bg, a_box_bg):
+    """Blit the q_box and a_box onto screen."""
+    screen.blit(bg, (0,0))
+    screen.blit(q_box_bg, (0,0))
+    screen.blit(a_box_bg, (0,450))
+    return
+
 opening_screen()
+
+#start Player customization
+bg = screen.convert()
+bg.fill(white)
+
+q_box = pygame.display.set_mode(500, 250) #question box is a separate surface
+q_box_bg = q_box.convert()
+q_box_bg.fill(fe_blue)
+
+a_box = pygame.display.set_mode(500, 50) #answer box is a separate surface
+a_box_bg = a_box.convert()
+a_box_bg.fill(fe_blue)
+
+#question text
+#Player name
+to_blit = display_question("What is your name?")
+q_box_bg.blit(to_blit)
+blit_screen(screen, bg, q_box_bg, a_box_bg)
+pygame.display.flip()
+
+#answer text: take user input and display it
+name = user_name()
+a_font = pygame.font.Font(None, 20)
+a_text = a_font.render(name, 1, black)
+a_text_position = a_text.get_rect()
+a_text_position.centerx = screen.get_rect().centerx
+a_text_position.height = screen.get_rect().height * 2 / 3
+
+#check if the Player has entered a name
+while True:
+    if name == "":
+        q_box_bg.fill(fe_blue)
+        to_blit = display_question("You must enter a name. What is your name?")
+        q_box_bg.blit(to_blit)
+        pygame.display.flip()
+        name = user_name()
+    else:
+        a_box_bg.blit(a_text, a_text_position)
+        break
+
+blit_screen(screen, bg, q_box_bg, a_box_bg)
+pygame.display.flip()
+
+#Player appearance (gender)
+q_box_bg.fill(fe_blue)
+to_blit = display_question("Do you identify as male, female, or nonbinary?")
+q_box_bg.blit(to_blit)
+pygame.display.flip()
+
+l_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #left button
+l_button.bottomleft = a_box_bg.bottomleft
+to_blit = button_text(l_button, "Male")
+l_button.blit(to_blit)
+
+c_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #center button
+c_button.midbottom = a_box_bg.midbottom
+to_blit = button_text(c_button, "Female")
+c_button.blit(to_blit)
+
+r_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #right button
+r_button.bottomright = a_box_bg.bottomright
+to_blit = button_text(r_button, "Nonbinary")
+r_button.blit(to_blit)
+
+blit_screen(screen, bg, q_box_bg, a_box_bg)
+pygame.display.flip()
+
+#find a way to loop this
+if is_clicked(l_button) == True:
+    appearance = "male"
+elif is_clicked(c_button) == True:
+    appearance = "female"
+elif is_clicked(r_button) == True:
+    appearance = "nonbinary"
+
+#Player eye color
+q_box_bg.fill(fe_blue)
+to_blit = display_question("What color are your eyes?")
+q_box_bg.blit(to_blit)
+a_box_bg.fill(fe_blue)
+blit_screen(screen, bg, q_box_bg, a_box_bg)
+pygame.display.flip()
+
+b1 = a_box_bg.fill(light_blue, a_box_bg.get_rect()/4 - 5) #leftmost button
+b1.bottomleft = a_box_bg.bottomleft
 
 #test image stuff that can be worked out later
 #marth_img = pygame.image.load("FEH_Marth.png").convert() #load image as surface
 #while True:
     #screen.fill(black)
     #screen.blit(marth_img, (0,0))
-
-#this is the text-based form of "Fire Emblem: Let's Get This Bread" so far
 
 class Player:
     """The class for the Player."""
