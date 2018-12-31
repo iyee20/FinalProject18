@@ -12,6 +12,10 @@ white = (250, 250, 250) #rgb value of white
 fe_blue = (72, 117, 139) #color of Fire Emblem textboxes, midway between the gradient endpoints...ish
 light_blue = (112, 172, 201) #a blue to stand out against Fire Emblem blue
 
+#default stats - changed by Player later
+name = ""
+appearance = ""
+
 def opening_screen():
     """Draw the opening screen on the Surface."""
     bg = screen.convert()
@@ -46,6 +50,7 @@ def opening_screen():
 
 def mc_customize():
     """Customize the Player character using keyboard and mouse input."""
+    global appearance
 
     bg = screen.convert()
     bg.fill(white)
@@ -90,8 +95,30 @@ def mc_customize():
     q_box_bg.blit(to_blit)
     pygame.display.flip()
 
-    pygame.a_box_bg.fill(light_blue, pygame.a_box_bg.get_rect()/3) #fill answer box 1/3 with light_blue (change later)
-    #insert button checks here
+    l_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #left button
+    l_button.bottomleft = a_box_bg.bottomleft
+    to_blit = button_text(l_button, "Male")
+    l_button.blit(to_blit)
+
+    c_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #center button
+    c_button.midbottom = a_box_bg.midbottom
+    to_blit = button_text(c_button, "Female")
+    c_button.blit(to_blit)
+
+    r_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #right button
+    r_button.bottomright = a_box_bg.bottomright
+    to_blit = button_text(r_button, "Nonbinary")
+    r_button.blit(to_blit)
+
+    pygame.display.flip()
+
+    #find a way to loop this
+    if is_clicked(l_button) == True:
+        appearance = "male"
+    elif is_clicked(c_button) == True:
+        appearance = "female"
+    elif is_clicked(r_button) == True:
+        appearance = "nonbinary"
 
 def display_question(question):
     """Display a question in the question box."""
@@ -102,7 +129,14 @@ def display_question(question):
     q_text_position.height = screen.get_rect().height / 2
     return (q_text, q_text_position)
 
-name = ""
+def button_text(button, text):
+    """Display a label on a button."""
+    font = pygame.font.Font(None, 20)
+    text = font.render(text, 1, black)
+    text_position = text.get_rect()
+    text_position.center = button.center
+    return (text, text_position)
+
 def user_name():
     """Take user input to write the Player's name."""
     global name
@@ -122,13 +156,13 @@ def is_clicked(button):
     pass
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
-    #if mouse[0] is w/i button x and mouse[1] is w/i button y:
-        #if click[0] == 1:
-            #return True
-        #else:
-            #return False
-    #else:
-        #return False
+    if button.left <= mouse[0] <= button.right and button.bottom <= mouse[1] <= button.top:
+        if click[0] == 1:
+            return True
+        else:
+            return False
+    else:
+        return False
 
 opening_screen()
 
