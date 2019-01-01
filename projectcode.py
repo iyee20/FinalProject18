@@ -12,33 +12,30 @@ white = (250, 250, 250) #rgb value of white
 fe_blue = (72, 117, 139) #color of Fire Emblem textboxes, midway between the gradient endpoints...ish
 light_blue = (112, 172, 201) #a blue to stand out against Fire Emblem blue
 
-#default stats - changed by Player later
-name = ""
-appearance = ""
-
 def opening_screen():
     """Draw the opening screen on the Surface."""
     bg = screen.convert()
     
     bg.fill(white) #the opening bg is white, for now
+    pygame.display.flip()
     
     #title words
-    title_font = pygame.font.Font(None, 25) #title font is the default font at 25px size
+    title_font = pygame.font.Font(None, 35) #title font is the default font at 35px size
     title_text = title_font.render("Fire Emblem: Let's Get This Bread", 1, black) #title text is antialiasing and black
     title_text_position = title_text.get_rect() #position of title text
-    title_text_position.centerx = screen.get_rect().centerx #center of title text is center of the screen
-    title_text_position.height = screen.get_rect().height / 2 #text is in the middle of the screen
+    title_text_position.centerx = screen.get_rect().centerx #center of title text is at center of the screen's width
+    title_text_position.bottom = screen.get_rect().bottom * 3 / 8 #title text is at 3/8 of screen's height
     bg.blit(title_text, title_text_position) #draw title text at title_text_position
 
     #opening instructions
-    font = pygame.font.Font(None, 15) #instructions are default font at 15px size
+    font = pygame.font.Font(None, 25) #instructions are default font at 25px size
     text = font.render("Press any key to start.", 1, black)
     text_position = text.get_rect() #position of instructions
-    text_position.centerx = screen.get_rect().centerx
-    text_position.height = screen.get_rect().height / 3 #text is at 1/3 of the screen height
+    text_position.center = screen.get_rect().center #text is at center of screen
     bg.blit(text, text_position) #draw instructions at text_position
 
     screen.blit(bg, (0, 0)) #draw bg with text on screen
+    pygame.display.flip()
 
     while True: #event loop - start
         pygame.event.pump()
@@ -49,13 +46,17 @@ def opening_screen():
                 return
 
 def display_question(question):
-    """Display a question in the question box."""
+    """Format a question as text."""
     q_font = pygame.font.Font(None, 25)
     q_text = q_font.render(question, 1, black)
+    return q_text
+
+def question_pos(q_text):
+    """Determine the position of text."""
     q_text_position = q_text.get_rect()
     q_text_position.centerx = screen.get_rect().centerx
-    q_text_position.height = screen.get_rect().height / 2
-    return (q_text, q_text_position)
+    q_text_position.bottom = screen.get_rect().bottom / 2
+    return q_text_position
 
 def button_text(button, text):
     """Display a label on a button."""
@@ -104,18 +105,21 @@ opening_screen()
 bg = screen.convert()
 bg.fill(white)
 
-q_box = pygame.display.set_mode(500, 250) #question box is a separate surface
+q_box_size = 500, 250
+q_box = pygame.display.set_mode(q_box_size) #question box is a separate surface
 q_box_bg = q_box.convert()
 q_box_bg.fill(fe_blue)
 
-a_box = pygame.display.set_mode(500, 50) #answer box is a separate surface
+a_box_size = 500, 50
+a_box = pygame.display.set_mode(a_box_size) #answer box is a separate surface
 a_box_bg = a_box.convert()
 a_box_bg.fill(fe_blue)
 
 #question text
 #Player name
-to_blit = display_question("What is your name?")
-q_box_bg.blit(to_blit)
+q_text = display_question("What is your name?")
+q_text_position = question_pos(q_text)
+q_box_bg.blit(q_text, q_text_position)
 blit_screen(screen, bg, q_box_bg, a_box_bg)
 pygame.display.flip()
 
@@ -125,14 +129,15 @@ a_font = pygame.font.Font(None, 20)
 a_text = a_font.render(name, 1, black)
 a_text_position = a_text.get_rect()
 a_text_position.centerx = screen.get_rect().centerx
-a_text_position.height = screen.get_rect().height * 2 / 3
+a_text_position.bottom = screen.get_rect().bottom * 2 / 3
 
 #check if the Player has entered a name
 while True:
     if name == "":
         q_box_bg.fill(fe_blue)
-        to_blit = display_question("You must enter a name. What is your name?")
-        q_box_bg.blit(to_blit)
+        q_text = display_question("You must enter a name. What is your name?")
+        q_text_position = question_pos(q_text)
+        q_box_bg.blit(q_text, q_text_position)
         pygame.display.flip()
         name = user_name()
     else:
@@ -144,21 +149,29 @@ pygame.display.flip()
 
 #Player appearance (gender)
 q_box_bg.fill(fe_blue)
-to_blit = display_question("Do you identify as male, female, or nonbinary?")
-q_box_bg.blit(to_blit)
+q_text = display_question("Do you identify as male, female, or nonbinary?")
+q_text_position = question_pos(q_text)
+q_box_bg.blit(q_text, q_text_position)
 pygame.display.flip()
 
-l_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #left button
+
+####THIS DOESN'T WORK (YET)
+a_box_width = a_box_bg.get_width()
+a_box_height = a_box_bg.get_height()
+button_width = (a_box_width / 3) - 10
+button_size = button_width, a_box_height
+
+l_button = a_box_bg.fill(light_blue, button_size) #left button
 l_button.bottomleft = a_box_bg.bottomleft
 to_blit = button_text(l_button, "Male")
 l_button.blit(to_blit)
 
-c_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #center button
+c_button = a_box_bg.fill(light_blue, button_size) #center button
 c_button.midbottom = a_box_bg.midbottom
 to_blit = button_text(c_button, "Female")
 c_button.blit(to_blit)
 
-r_button = a_box_bg.fill(light_blue, a_box_bg.get_rect()/3 - 10) #right button
+r_button = a_box_bg.fill(light_blue, button_size) #right button
 r_button.bottomright = a_box_bg.bottomright
 to_blit = button_text(r_button, "Nonbinary")
 r_button.blit(to_blit)
@@ -175,15 +188,31 @@ elif is_clicked(r_button) == True:
     appearance = "nonbinary"
 
 #Player eye color
-q_box_bg.fill(fe_blue)
-to_blit = display_question("What color are your eyes?")
-q_box_bg.blit(to_blit)
-a_box_bg.fill(fe_blue)
+q_box_bg.fill(fe_blue) #clear q_box and re-fill
+q_text = display_question("What color are your eyes?") #new q_box text
+q_text_position = question_pos(q_text)
+q_box_bg.blit(q_text, q_text_position)
+
+l_button.fill(fe_blue) #clear buttons and re-fill
+c_button.fill(fe_blue)
+r_button.fill(fe_blue)
+to_blit = button_text(l_button, "Red") #new button text
+l_button.blit(to_blit)
+to_blit = button_text(c_button, "Green")
+c_button.blit(to_blit)
+to_blit = button_text(r_button, "Blue")
+r_button.blit(to_blit)
+
 blit_screen(screen, bg, q_box_bg, a_box_bg)
 pygame.display.flip()
 
-b1 = a_box_bg.fill(light_blue, a_box_bg.get_rect()/4 - 5) #leftmost button
-b1.bottomleft = a_box_bg.bottomleft
+#find a way to loop this
+if is_clicked(l_button) == True:
+    eye_color = "red"
+elif is_clicked(c_button) == True:
+    eye_color = "green"
+elif is_clicked(r_button) == True:
+    eye_color = "blue"
 
 #test image stuff that can be worked out later
 #marth_img = pygame.image.load("FEH_Marth.png").convert() #load image as surface
