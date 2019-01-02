@@ -12,8 +12,16 @@ white = (250, 250, 250) #rgb value of white
 fe_blue = (72, 117, 139) #color of Fire Emblem textboxes, midway between the gradient endpoints...ish
 light_blue = (112, 172, 201) #a blue to stand out against Fire Emblem blue
 
+#empty stats
+name = "Takumi"
+appearance = "male"
+eye_color = "red"
+hair_color = "gray"
+weapon = "bow"
+color = "colorless"
+
 def opening_screen():
-    """Draw the opening screen on the Surface."""
+    #opening screen
     bg = screen.convert()
     
     bg.fill(white) #the opening bg is white, for now
@@ -62,12 +70,22 @@ def button_text(button, text):
     """Display a label on a button."""
     font = pygame.font.Font(None, 20)
     text = font.render(text, 1, black)
-    text_position = text.get_rect()
+    return text
+
+def button_text_position(button, button_text):
+    """Display a label on a button."""
+    text_position = button_text.get_rect()
     text_position.center = button.center
-    return (text, text_position)
+    return text_position
+
+def add_button_text(a_box_bg, button_text, button_text_position):
+    """Print text on a button."""
+    a_box_bg.blit(button_text, button_text_position)
+    return
 
 def user_name():
     """Take user input to write the Player's name."""
+    name = ""
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
@@ -77,7 +95,7 @@ def user_name():
             elif pygame.key.name(event.key).isalpha() == True:
                 name += pygame.key.name(event.key)
             elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
-                return name
+                return name.title()
 
 def is_clicked(button):
     """Check if a button has been clicked."""
@@ -154,27 +172,29 @@ q_text_position = question_pos(q_text)
 q_box_bg.blit(q_text, q_text_position)
 pygame.display.flip()
 
-
-####THIS DOESN'T WORK (YET)
+#define the size of buttons
 a_box_width = a_box_bg.get_width()
-a_box_height = a_box_bg.get_height()
+a_box_height = a_box_bg.get_height() #the height of a_box is used as the button height
 button_width = (a_box_width / 3) - 10
-button_size = button_width, a_box_height
+button_size = pygame.Rect(0, 0, button_width, a_box_height)
 
 l_button = a_box_bg.fill(light_blue, button_size) #left button
-l_button.bottomleft = a_box_bg.bottomleft
-to_blit = button_text(l_button, "Male")
-l_button.blit(to_blit)
+l_button.bottomleft = 0, a_box_bg.get_height()
+l_button_text = button_text(l_button, "Male")
+l_button_text_position = button_text_position(l_button, l_button_text)
+add_button_text(a_box_bg, l_button_text, l_button_text_position)
 
 c_button = a_box_bg.fill(light_blue, button_size) #center button
-c_button.midbottom = a_box_bg.midbottom
-to_blit = button_text(c_button, "Female")
-c_button.blit(to_blit)
+c_button.midbottom = a_box_bg.get_width() / 2, a_box_bg.get_height()
+c_button_text = button_text(c_button, "Female")
+c_button_text_position = button_text_position(c_button, c_button_text)
+add_button_text(a_box_bg, c_button_text, c_button_text_position)
 
 r_button = a_box_bg.fill(light_blue, button_size) #right button
-r_button.bottomright = a_box_bg.bottomright
-to_blit = button_text(r_button, "Nonbinary")
-r_button.blit(to_blit)
+r_button.bottomright = a_box_bg.get_width(), a_box_bg.get_height()
+r_button_text = button_text(r_button, "Nonbinary")
+r_button_text_position = button_text_position(r_button, r_button_text)
+add_button_text(a_box_bg, r_button_text, r_button_text_position)
 
 blit_screen(screen, bg, q_box_bg, a_box_bg)
 pygame.display.flip()
@@ -193,15 +213,19 @@ q_text = display_question("What color are your eyes?") #new q_box text
 q_text_position = question_pos(q_text)
 q_box_bg.blit(q_text, q_text_position)
 
-l_button.fill(fe_blue) #clear buttons and re-fill
-c_button.fill(fe_blue)
-r_button.fill(fe_blue)
-to_blit = button_text(l_button, "Red") #new button text
-l_button.blit(to_blit)
-to_blit = button_text(c_button, "Green")
-c_button.blit(to_blit)
-to_blit = button_text(r_button, "Blue")
-r_button.blit(to_blit)
+l_button = a_box_bg.fill(light_blue, button_size) #clear buttons and re-fill
+c_button = a_box_bg.fill(light_blue, button_size)
+r_button = a_box_bg.fill(light_blue, button_size)
+
+l_button_text = button_text(l_button, "Red") #new button text
+l_button_text_position = button_text_position(l_button, l_button_text)
+add_button_text(a_box_bg, l_button_text, l_button_text_position)
+c_button_text = button_text(c_button, "Blue")
+c_button_text_position = button_text_position(c_button, c_button_text)
+add_button_text(a_box_bg, c_button_text, c_button_text_position)
+r_button_text = button_text(r_button, "Green")
+r_button_text_position = button_text_position(r_button, r_button_text)
+add_button_text(a_box_bg, r_button_text, r_button_text_position)
 
 blit_screen(screen, bg, q_box_bg, a_box_bg)
 pygame.display.flip()
@@ -223,7 +247,7 @@ elif is_clicked(r_button) == True:
 class Player:
     """The class for the Player."""
     def __init__(self, name, appearance, eye_color, hair_color, weapon, color, equipped=None):
-        self.name = name.title()
+        self.name = name
         self.appearance = appearance
         if self.appearance == "male":
             self.he = "he"
