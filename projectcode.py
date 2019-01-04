@@ -1,5 +1,6 @@
 #the game is heavily based on Fire Emblem Heroes, the mobile game of the Fire Emblem series
 
+import random #import random to use
 import sys, pygame #import pygame to use
 pygame.font.init() #initialize font module so font functions work
 
@@ -110,6 +111,53 @@ def is_clicked(button):
     else:
         return False
 
+def spawn(character):
+    """Spawn a character on the screen."""
+    global screen
+    pass #remove
+    #location is based on a 6 x 6 tile map
+    squarex = random.randint(1, 6)
+    squarey = random.randint(1, 6)
+    location = screen.get_width() * squarex / 6, screen.get_height() *squarey / 6
+    screen.blit(character, location)
+    pygame.display.flip()
+    return
+
+def tilex(character):
+    """Check which tile in the x direction a character is on."""
+    global screen
+    pass #remove
+    character = character.get_rect()
+    for x in range(1, 6):
+        if character.right == screen.get_width() * x / 6:
+            return x
+        else:
+            None
+
+def tiley(character):
+    """Check which title in the y direction a character is on."""
+    global screen
+    pass #remove
+    character = character.get_rect()
+    for y in range(1, 6):
+        if character.bottom == screen.get_height() * y / 6:
+            return y
+        else:
+            None
+
+def move(character, tilexmove, tileymove):
+    """Move a character on the screen."""
+    global screen
+    pass #remove
+    position = character.get_rect()
+    if tilex(character) + 2 > 6:
+        tilexmove = 6 - tilex(character)
+    if tiley(character) + 2 > 6:
+        tileymove = 6 - tiley(character)
+    position = position.move(tilexmove, tileymove)
+    screen.blit(character, position)
+    pygame.display.flip()
+    return
 
 #opening_screen()
 
@@ -234,6 +282,45 @@ def main():
     elif is_clicked(r_button) == True:
         eye_color = "blue"
     
+    #Player hair color
+    q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
+    q_text = display_question("What color is your hair?") #new q_box text
+    q_text_position = question_pos(q_text)
+    screen.blit(q_text, q_text_position)
+
+    l_button = screen.fill(light_blue, button_size) #clear buttons and re-fill
+    c_button = screen.fill(light_blue, button_size)
+    r_button = screen.fill(light_blue, button_size)
+
+    l_button_text = button_text(l_button, "Red") #new button text
+    l_button_text_position = button_text_position(l_button, l_button_text)
+    add_button_text(screen, l_button_text, l_button_text_position)
+    c_button_text = button_text(c_button, "Blue")
+    c_button_text_position = button_text_position(c_button, c_button_text)
+    add_button_text(screen, c_button_text, c_button_text_position)
+    r_button_text = button_text(r_button, "Green")
+    r_button_text_position = button_text_position(r_button, r_button_text)
+    add_button_text(screen, r_button_text, r_button_text_position)
+
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
+
+    #find a way to loop this
+    if is_clicked(l_button) == True:
+        hair_color = "red"
+    elif is_clicked(c_button) == True:
+        hair_color = "green"
+    elif is_clicked(r_button) == True:
+        hair_color = "blue"
+    
+    #Player weapon
+    bg.fill(white) #refill background to start a new question
+    pygame.display.flip()
+
+    q_box_size = pygame.Rect(0, 0, 500, 100)
+    q_box = bg.fill(fe_blue, q_box_size) #question box is a filled rectangle
+    q_box.topleft = 0, 0
+
     return
 
 main()
@@ -247,6 +334,7 @@ main()
 class Player:
     """The class for the Player."""
     def __init__(self, name, appearance, eye_color, hair_color, weapon, color, equipped=None):
+        self.chartype = "player"
         self.name = name
         self.appearance = appearance
         if self.appearance == "male":
@@ -279,6 +367,7 @@ class Player:
 class Foe:
     """The class for the enemies."""
     def __init__(self, name, weapon, color, hp, a, d, res, spd, rng, drop):
+        self.chartype = "foe"
         self.name = name
         self.weapon = weapon
         self.color = color
