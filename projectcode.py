@@ -219,7 +219,6 @@ def add_button_text(screen, button_text, button_text_position):
 
 def is_clicked(button):
     """Check if a button has been clicked."""
-    pass
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if button.left <= mouse[0] <= button.right and button.bottom <= mouse[1] <= button.top:
@@ -233,7 +232,6 @@ def is_clicked(button):
 def spawn(character):
     """Spawn a character on the screen."""
     global screen
-    pass #remove
     #location is based on a 6 x 6 tile map
     squarex = random.randint(1, 6)
     squarey = random.randint(1, 6)
@@ -245,7 +243,6 @@ def spawn(character):
 def tilex(character):
     """Check which tile in the x direction a character is on."""
     global screen
-    pass #remove
     character = character.get_rect()
     for x in range(1, 6):
         if character.right == screen.get_width() * x / 6:
@@ -256,7 +253,6 @@ def tilex(character):
 def tiley(character):
     """Check which title in the y direction a character is on."""
     global screen
-    pass #remove
     character = character.get_rect()
     for y in range(1, 6):
         if character.bottom == screen.get_height() * y / 6:
@@ -267,7 +263,6 @@ def tiley(character):
 def move(character, tilexmove, tileymove):
     """Move a character on the screen."""
     global screen
-    pass #remove
     position = character.get_rect()
     if tilex(character) + 2 > 6:
         tilexmove = 6 - tilex(character)
@@ -361,8 +356,9 @@ def main():
     a_text_position.centerx = screen.get_rect().centerx
     a_text_position.bottom = a_box.bottom
 
+    namecheck = True
     #check if the Player has entered a name
-    while True:
+    while namecheck == True:
         if name == "":
             q_box = bg.fill(fe_blue, q_box_size)
             q_font = pygame.font.Font(None, 25)
@@ -391,8 +387,8 @@ def main():
                         else:
                             None
         else:
-            screen.blit(a_text, a_text_position)
-            break
+            bg.blit(a_text, a_text_position)
+            namecheck = False
 
     screen.blit(bg, (0,0))
     pygame.display.flip()
@@ -434,13 +430,20 @@ def main():
     screen.blit(bg, (0,0))
     pygame.display.flip()
 
-    #find a way to loop this
-    if is_clicked(l_button) == True:
-        appearance = "male"
-    elif is_clicked(c_button) == True:
-        appearance = "female"
-    elif is_clicked(r_button) == True:
-        appearance = "nonbinary"
+    choosing = True
+    while choosing == True:
+        pygame.event.pump()
+        if is_clicked(l_button) == True:
+            appearance = "male"
+            choosing = False
+        elif is_clicked(c_button) == True:
+            appearance = "female"
+            choosing = False
+        elif is_clicked(r_button) == True:
+            appearance = "nonbinary"
+            choosing = False
+        else:
+            None
 
     #Player eye color
     q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
@@ -467,13 +470,20 @@ def main():
     screen.blit(bg, (0,0))
     pygame.display.flip()
 
-    #find a way to loop this
-    if is_clicked(l_button) == True:
-        eye_color = "red"
-    elif is_clicked(c_button) == True:
-        eye_color = "green"
-    elif is_clicked(r_button) == True:
-        eye_color = "blue"
+    choosing = True
+    while choosing == True:
+        pygame.event.pump()
+        if is_clicked(l_button) == True:
+            eye_color = "red"
+            choosing = False
+        elif is_clicked(c_button) == True:
+            eye_color = "green"
+            choosing = False
+        elif is_clicked(r_button) == True:
+            eye_color = "blue"
+            choosing = False
+        else:
+            None
     
     #Player hair color
     q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
@@ -500,13 +510,20 @@ def main():
     screen.blit(bg, (0,0))
     pygame.display.flip()
 
-    #find a way to loop this
-    if is_clicked(l_button) == True:
-        hair_color = "red"
-    elif is_clicked(c_button) == True:
-        hair_color = "green"
-    elif is_clicked(r_button) == True:
-        hair_color = "blue"
+    choosing = True
+    while choosing == True:
+        pygame.event.pump()
+        if is_clicked(l_button) == True:
+            hair_color = "red"
+            choosing = False
+        elif is_clicked(c_button) == True:
+            hair_color = "green"
+            choosing = False
+        elif is_clicked(r_button) == True:
+            hair_color = "blue"
+            choosing = False
+        else:
+            None
     
     #Player weapon
     bg.fill(white) #refill background to start a new question
