@@ -233,18 +233,15 @@ def opening_screen():
             elif event.type == pygame.KEYDOWN: #if the Player presses a key...
                 return
 
-def display_question(question):
+def display_question(question, screen):
     """Format a question as text."""
     q_font = pygame.font.Font(None, 25)
     q_text = q_font.render(question, 1, black)
-    return q_text
-
-def question_pos(q_text, screen):
-    """Determine the position of text."""
     q_text_position = q_text.get_rect()
     q_text_position.centerx = screen.get_rect().centerx
     q_text_position.height = screen.get_height() / 2
-    return q_text_position
+    screen.blit(q_text, q_text_position)
+    return
 
 def button_text(button, text):
     """Display a label on a button."""
@@ -360,9 +357,7 @@ def main():
 
     #question text
     #Player name
-    q_text = display_question("What is your name?")
-    q_text_position = question_pos(q_text, screen)
-    screen.blit(q_text, q_text_position)
+    display_question("What is your name?", screen)
     screen.blit(bg, (0,0))
     pygame.display.flip()
 
@@ -378,9 +373,8 @@ def main():
     while True:
         if name == "":
             q_box = bg.fill(fe_blue, q_box_size)
-            q_text = display_question("You must enter a name. What is your name?")
-            q_text_position = question_pos(q_text, screen)
-            screen.blit(q_text, q_text_position)
+            display_question("You must enter a name. What is your name?", bg)
+            screen.blit(bg, (0,0))
             pygame.display.flip()
             name = user_name()
         else:
@@ -392,9 +386,8 @@ def main():
 
     #Player appearance (gender)
     q_box = bg.fill(fe_blue, q_box_size)
-    q_text = display_question("Do you identify as male, female, or nonbinary?")
-    q_text_position = question_pos(q_text, screen)
-    screen.blit(q_text, q_text_position)
+    display_question("Do you identify as male, female, or nonbinary?", bg)
+    screen.blit(bg, (0,0))
     pygame.display.flip()
 
     #define the size of buttons
@@ -434,9 +427,7 @@ def main():
 
     #Player eye color
     q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
-    q_text = display_question("What color are your eyes?") #new q_box text
-    q_text_position = question_pos(q_text, screen)
-    screen.blit(q_text, q_text_position)
+    display_question("What color are your eyes?", bg) #new q_box text
 
     l_button = screen.fill(light_blue, button_size) #clear buttons and re-fill
     c_button = screen.fill(light_blue, button_size)
@@ -465,9 +456,7 @@ def main():
     
     #Player hair color
     q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
-    q_text = display_question("What color is your hair?") #new q_box text
-    q_text_position = question_pos(q_text, screen)
-    screen.blit(q_text, q_text_position)
+    display_question("What color is your hair?", bg) #new q_box text
 
     l_button = screen.fill(light_blue, button_size) #clear buttons and re-fill
     c_button = screen.fill(light_blue, button_size)
@@ -500,9 +489,7 @@ def main():
 
     q_box_size = pygame.Rect(0, 0, 500, 100)
     q_box = bg.fill(fe_blue, q_box_size) #question box is a filled rectangle
-    q_text = display_question("Pick a weapon.")
-    q_text_position = question_pos(q_text, screen)
-    screen.blit(q_text, q_text_position)
+    display_question("Pick a weapon.", bg)
 
     return
 
