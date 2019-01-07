@@ -233,16 +233,6 @@ def opening_screen():
             elif event.type == pygame.KEYDOWN: #if the Player presses a key...
                 return
 
-def display_question(question, screen):
-    """Format a question as text."""
-    q_font = pygame.font.Font(None, 25)
-    q_text = q_font.render(question, 1, black)
-    q_text_position = q_text.get_rect()
-    q_text_position.centerx = screen.get_rect().centerx
-    q_text_position.height = screen.get_height() / 2
-    screen.blit(q_text, q_text_position)
-    return
-
 def button_text(button, text):
     """Display a label on a button."""
     font = pygame.font.Font(None, 20)
@@ -275,6 +265,8 @@ def user_name():
                     name += pygame.key.name(event.key)
                 elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                     return name.title()
+                else:
+                    None
 
 def is_clicked(button):
     """Check if a button has been clicked."""
@@ -351,13 +343,16 @@ def main():
     q_box = bg.fill(fe_blue, q_box_size) #question box is a filled rectangle
     q_box.topleft = 0, 0
 
-    a_box_size = pygame.Rect(0, 0, 500, 50)
+    a_box_size = pygame.Rect(0, 450, 500, 50)
     a_box = bg.fill(fe_blue, a_box_size) #answer box is a filled rectangle
-    a_box.bottomleft = 0, bg.get_height()
 
     #question text
     #Player name
-    display_question("What is your name?", screen)
+    q_font = pygame.font.Font(None, 25)
+    q_text = q_font.render("What is your name?", 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.center = q_box.center
+    bg.blit(q_text, q_text_position)
     screen.blit(bg, (0,0))
     pygame.display.flip()
 
@@ -367,13 +362,17 @@ def main():
     a_text = a_font.render(name, 1, black)
     a_text_position = a_text.get_rect()
     a_text_position.centerx = screen.get_rect().centerx
-    a_text_position.bottom = screen.get_rect().bottom * 2 / 3
+    a_text_position.bottom = screen.get_rect().bottom
 
     #check if the Player has entered a name
     while True:
         if name == "":
             q_box = bg.fill(fe_blue, q_box_size)
-            display_question("You must enter a name. What is your name?", bg)
+            q_font = pygame.font.Font(None, 25)
+            q_text = q_font.render("You must enter a name. What is your name?", 1, black)
+            q_text_position = q_text.get_rect()
+            q_text_position.center = q_box.center
+            bg.blit(q_text, q_text_position)
             screen.blit(bg, (0,0))
             pygame.display.flip()
             name = user_name()
@@ -386,7 +385,11 @@ def main():
 
     #Player appearance (gender)
     q_box = bg.fill(fe_blue, q_box_size)
-    display_question("Do you identify as male, female, or nonbinary?", bg)
+    q_font = pygame.font.Font(None, 25)
+    q_text = q_font.render("Do you identify as male, female, or nonbinary?", 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.center = q_box.center
+    bg.blit(q_text, q_text_position)
     screen.blit(bg, (0,0))
     pygame.display.flip()
 
@@ -427,7 +430,11 @@ def main():
 
     #Player eye color
     q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
-    display_question("What color are your eyes?", bg) #new q_box text
+    q_font = pygame.font.Font(None, 25) #new q_box text
+    q_text = q_font.render("What color are your eyes?", 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.center = q_box.center
+    bg.blit(q_text, q_text_position)
 
     l_button = screen.fill(light_blue, button_size) #clear buttons and re-fill
     c_button = screen.fill(light_blue, button_size)
@@ -456,7 +463,11 @@ def main():
     
     #Player hair color
     q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
-    display_question("What color is your hair?", bg) #new q_box text
+    q_font = pygame.font.Font(None, 25)
+    q_text = q_font.render("What color is your hair?", 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.center = q_box.center
+    bg.blit(q_text, q_text_position)
 
     l_button = screen.fill(light_blue, button_size) #clear buttons and re-fill
     c_button = screen.fill(light_blue, button_size)
@@ -489,7 +500,11 @@ def main():
 
     q_box_size = pygame.Rect(0, 0, 500, 100)
     q_box = bg.fill(fe_blue, q_box_size) #question box is a filled rectangle
-    display_question("Pick a weapon.", bg)
+    q_font = pygame.font.Font(None, 25)
+    q_text = q_font.render("Pick a weapon.", 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.center = q_box.center
+    bg.blit(q_text, q_text_position)
 
     return
 
