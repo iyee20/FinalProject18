@@ -200,39 +200,6 @@ fire_tome = Weapon("Fire", 4, 2)
 light_tome = Weapon("Light", 4, 2)
 wind_tome = Weapon("Wind", 4, 2)
 
-def opening_screen():
-    """Opening screen"""
-    bg = screen.convert()
-    
-    bg.fill(white) #the opening bg is white, for now
-    pygame.display.flip()
-    
-    #title words
-    title_font = pygame.font.Font(None, 35) #title font is the default font at 35px size
-    title_text = title_font.render("Fire Emblem: Let's Get This Bread", 1, black) #title text is antialiasing and black
-    title_text_position = title_text.get_rect() #position of title text
-    title_text_position.centerx = screen.get_rect().centerx #center of title text is at center of the screen's width
-    title_text_position.bottom = screen.get_rect().bottom * 3 / 8 #title text is at 3/8 of screen's height
-    bg.blit(title_text, title_text_position) #draw title text at title_text_position
-
-    #opening instructions
-    font = pygame.font.Font(None, 25) #instructions are default font at 25px size
-    text = font.render("Press any key to start.", 1, black)
-    text_position = text.get_rect() #position of instructions
-    text_position.center = screen.get_rect().center #text is at center of screen
-    bg.blit(text, text_position) #draw instructions at text_position
-
-    screen.blit(bg, (0, 0)) #draw bg with text on screen
-    pygame.display.flip()
-
-    while True: #event loop - start
-        pygame.event.pump()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: #if the Player tries to close the window...
-                sys.exit()
-            elif event.type == pygame.KEYDOWN: #if the Player presses a key...
-                return
-
 def button_text(button, text):
     """Display a label on a button."""
     font = pygame.font.Font(None, 20)
@@ -274,7 +241,7 @@ def is_clicked(button):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if button.left <= mouse[0] <= button.right and button.bottom <= mouse[1] <= button.top:
-        if click[0] == 1:
+        if click[0] == True:
             return True
         else:
             return False
@@ -329,13 +296,41 @@ def move(character, tilexmove, tileymove):
     pygame.display.flip()
     return
 
-#opening_screen()
-
-###combine opening_screen() and main() later
 def main():
-    """The body of the game."""
-    #start Player customization
+    """The code of the game."""
+    #opening screen
     bg = screen.convert()
+    
+    bg.fill(white) #the opening bg is white, for now
+    pygame.display.flip()
+    
+    #title words
+    title_font = pygame.font.Font(None, 35) #title font is the default font at 35px size
+    title_text = title_font.render("Fire Emblem: Let's Get This Bread", 1, black) #title text is antialiasing and black
+    title_text_position = title_text.get_rect() #position of title text
+    title_text_position.centerx = screen.get_rect().centerx #center of title text is at center of the screen's width
+    title_text_position.bottom = screen.get_rect().bottom * 3 / 8 #title text is at 3/8 of screen's height
+    bg.blit(title_text, title_text_position) #draw title text at title_text_position
+
+    #opening instructions
+    font = pygame.font.Font(None, 25) #instructions are default font at 25px size
+    text = font.render("Press any key to start.", 1, black)
+    text_position = text.get_rect() #position of instructions
+    text_position.center = screen.get_rect().center #text is at center of screen
+    bg.blit(text, text_position) #draw instructions at text_position
+
+    screen.blit(bg, (0, 0)) #draw bg with text on screen
+    pygame.display.flip()
+
+    while True: #event loop - start
+        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: #if the Player tries to close the window...
+                return
+            elif event.type == pygame.KEYDOWN: #if the Player presses a key...
+                break
+
+    #start Player customization
     bg.fill(white)
     pygame.display.flip()
 
