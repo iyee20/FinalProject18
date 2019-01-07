@@ -299,6 +299,7 @@ def move(character, tilexmove, tileymove):
 def main():
     """The code of the game."""
     #opening screen
+    intro = True
     bg = screen.convert()
     
     bg.fill(white) #the opening bg is white, for now
@@ -322,13 +323,13 @@ def main():
     screen.blit(bg, (0, 0)) #draw bg with text on screen
     pygame.display.flip()
 
-    while True: #event loop - start
+    while intro == True: #event loop - start
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT: #if the Player tries to close the window...
                 return
             elif event.type == pygame.KEYDOWN: #if the Player presses a key...
-                break
+                intro = False
 
     #start Player customization
     bg.fill(white)
