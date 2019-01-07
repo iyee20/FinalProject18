@@ -217,24 +217,6 @@ def add_button_text(screen, button_text, button_text_position):
     screen.blit(button_text, button_text_position)
     return
 
-def user_name():
-    """Take user input to write the Player's name."""
-    name = ""
-    while True:
-        pygame.event.pump()
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    name += " "
-                elif event.key == pygame.K_BACKSPACE:
-                    name -= name[-1]
-                elif pygame.key.name(event.key).isalpha() == True:
-                    name += pygame.key.name(event.key)
-                elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
-                    return name.title()
-                else:
-                    None
-
 def is_clicked(button):
     """Check if a button has been clicked."""
     pass
@@ -299,7 +281,6 @@ def move(character, tilexmove, tileymove):
 def main():
     """The code of the game."""
     #opening screen
-    intro = True
     bg = screen.convert()
     
     bg.fill(white) #the opening bg is white, for now
@@ -323,6 +304,7 @@ def main():
     screen.blit(bg, (0, 0)) #draw bg with text on screen
     pygame.display.flip()
 
+    intro = True
     while intro == True: #event loop - start
         pygame.event.pump()
         for event in pygame.event.get():
@@ -339,7 +321,7 @@ def main():
     q_box = bg.fill(fe_blue, q_box_size) #question box is a filled rectangle
     q_box.topleft = 0, 0
 
-    a_box_size = pygame.Rect(0, 450, 500, 50)
+    a_box_size = pygame.Rect(0, 250, 500, 50)
     a_box = bg.fill(fe_blue, a_box_size) #answer box is a filled rectangle
 
     #question text
@@ -351,14 +333,33 @@ def main():
     bg.blit(q_text, q_text_position)
     screen.blit(bg, (0,0))
     pygame.display.flip()
-
+    
+    namescreen = True
+    name = ""
     #answer text: take user input and display it
-    name = user_name()
+    while namescreen == True:
+        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    name += " "
+                elif event.key == pygame.K_BACKSPACE:
+                    name -= name[-1]
+                elif pygame.key.name(event.key).isalpha() == True:
+                    name += pygame.key.name(event.key)
+                elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
+                    name = name.title()
+                    namescreen = False
+                else:
+                    None
+    
     a_font = pygame.font.Font(None, 20)
     a_text = a_font.render(name, 1, black)
     a_text_position = a_text.get_rect()
     a_text_position.centerx = screen.get_rect().centerx
-    a_text_position.bottom = screen.get_rect().bottom
+    a_text_position.bottom = a_box.bottom
 
     #check if the Player has entered a name
     while True:
@@ -371,7 +372,24 @@ def main():
             bg.blit(q_text, q_text_position)
             screen.blit(bg, (0,0))
             pygame.display.flip()
-            name = user_name()
+            namescreen = True
+            while namescreen == True:
+                pygame.event.pump()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        return
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE:
+                            name += " "
+                        elif event.key == pygame.K_BACKSPACE:
+                            name -= name[-1]
+                        elif pygame.key.name(event.key).isalpha() == True:
+                            name += pygame.key.name(event.key)
+                        elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
+                            name = name.title()
+                            namescreen = False
+                        else:
+                            None
         else:
             screen.blit(a_text, a_text_position)
             break
