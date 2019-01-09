@@ -20,6 +20,7 @@ eye_color = "red"
 hair_color = "gray"
 weapon = "bow"
 color = "colorless"
+equipped = None
 
 class Player:
     """The class for the Player."""
@@ -113,8 +114,6 @@ class Bread:
             self.him = "them"
         self.bread = bread #how much bread is required to unlock their cutscene
 marth = Bread("Marth", "male", 10)
-groom_marth = Bread("Groom Marth", "male", 25)
-hero_king_marth = Bread("Hero King Marth", "male", 50)
 masked_marth = Bread("Masked Marth", "nonbinary", 75)
 lucina = Bread("Masked Marth", "female", 50)
 
@@ -217,18 +216,6 @@ def add_button_text(bg, button_text, button_text_position):
     bg.blit(button_text, button_text_position)
     return
 
-def is_clicked(button):
-    """Check if a button has been clicked."""
-    mouse = pygame.mouse.get_pos()
-    click = pygame.mouse.get_pressed()
-    if button.left <= mouse[0] <= button.right and button.bottom <= mouse[1] <= button.top:
-        if click[0] == True:
-            return True
-        else:
-            return False
-    else:
-        return False
-
 def spawn(character):
     """Spawn a character on the screen."""
     global screen
@@ -322,7 +309,12 @@ def main():
     q_text = q_font.render("Do you identify as male, female, or nonbinary?", 1, black)
     q_text_position = q_text.get_rect()
     q_text_position.center = q_box.center
-    bg.blit(q_text, q_text_position)
+    bg.blit(q_text, q_text_position) #blit question text
+    q_font_sub = pygame.font.Font(None, 20)
+    q_text = q_font_sub.render("Type the number on the button.", 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.center = q_box.centerx, q_box.bottom - 20
+    bg.blit(q_text, q_text_position) #blit subtext
     screen.blit(bg, (0,0))
     pygame.display.flip()
 
@@ -339,17 +331,17 @@ def main():
     r_button_size = pygame.Rect(r_button_left, button_top, button_width, a_box_height)
 
     l_button = bg.fill(light_blue, l_button_size) #left button
-    l_button_text = button_text(l_button, "Male")
+    l_button_text = button_text(l_button, "1. Male")
     l_button_text_position = button_text_position(l_button, l_button_text)
     add_button_text(bg, l_button_text, l_button_text_position)
 
     c_button = bg.fill(light_blue, c_button_size) #center button
-    c_button_text = button_text(c_button, "Female")
+    c_button_text = button_text(c_button, "2. Female")
     c_button_text_position = button_text_position(c_button, c_button_text)
     add_button_text(bg, c_button_text, c_button_text_position)
 
     r_button = bg.fill(light_blue, r_button_size) #right button
-    r_button_text = button_text(r_button, "Nonbinary")
+    r_button_text = button_text(r_button, "3. Nonbinary")
     r_button_text_position = button_text_position(r_button, r_button_text)
     add_button_text(bg, r_button_text, r_button_text_position)
 
@@ -359,17 +351,20 @@ def main():
     choosing = True
     while choosing == True:
         pygame.event.pump()
-        if is_clicked(l_button) == True:
-            appearance = "male"
-            choosing = False
-        elif is_clicked(c_button) == True:
-            appearance = "female"
-            choosing = False
-        elif is_clicked(r_button) == True:
-            appearance = "nonbinary"
-            choosing = False
-        else:
-            None
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.KEYDOWN:
+                pressed = pygame.key.get_pressed()
+                if pressed[pygame.K_1] == True:
+                    appearance = "male"
+                    choosing = False
+                elif pressed[pygame.K_2] == True:
+                    appearance = "female"
+                    choosing = False
+                elif pressed[pygame.K_3] == True:
+                    appearance = "nonbinary"
+                    choosing = False
 
     #Player eye color
     q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
@@ -377,19 +372,24 @@ def main():
     q_text = q_font.render("What color are your eyes?", 1, black)
     q_text_position = q_text.get_rect()
     q_text_position.center = q_box.center
-    bg.blit(q_text, q_text_position)
+    bg.blit(q_text, q_text_position) #blit question text
+    q_font_sub = pygame.font.Font(None, 20)
+    q_text = q_font_sub.render("Type the number on the button.", 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.center = q_box.centerx, q_box.bottom - 20
+    bg.blit(q_text, q_text_position) #blit subtext    
 
     l_button = bg.fill(light_blue, l_button_size) #clear buttons and re-fill
     c_button = bg.fill(light_blue, r_button_size)
     r_button = bg.fill(light_blue, c_button_size)
 
-    l_button_text = button_text(l_button, "Red") #new button text
+    l_button_text = button_text(l_button, "1. Red") #new button text
     l_button_text_position = button_text_position(l_button, l_button_text)
     add_button_text(bg, l_button_text, l_button_text_position)
-    c_button_text = button_text(c_button, "Blue")
+    c_button_text = button_text(c_button, "2. Green")
     c_button_text_position = button_text_position(c_button, c_button_text)
     add_button_text(bg, c_button_text, c_button_text_position)
-    r_button_text = button_text(r_button, "Green")
+    r_button_text = button_text(r_button, "3. Blue")
     r_button_text_position = button_text_position(r_button, r_button_text)
     add_button_text(bg, r_button_text, r_button_text_position)
 
@@ -399,17 +399,20 @@ def main():
     choosing = True
     while choosing == True:
         pygame.event.pump()
-        if is_clicked(l_button) == True:
-            eye_color = "red"
-            choosing = False
-        elif is_clicked(c_button) == True:
-            eye_color = "green"
-            choosing = False
-        elif is_clicked(r_button) == True:
-            eye_color = "blue"
-            choosing = False
-        else:
-            None
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return            
+            elif event.type == pygame.KEYDOWN:
+                pressed = pygame.key.get_pressed()
+                if pressed[pygame.K_1] == True:
+                    eye_color = "red"
+                    choosing = False
+                elif pressed[pygame.K_2] == True:
+                    eye_color = "green"
+                    choosing = False
+                elif pressed[pygame.K_3] == True:
+                    eye_color = "blue"
+                    choosing = False
     
     #Player hair color
     q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
@@ -417,19 +420,25 @@ def main():
     q_text = q_font.render("What color is your hair?", 1, black)
     q_text_position = q_text.get_rect()
     q_text_position.center = q_box.center
-    bg.blit(q_text, q_text_position)
+    bg.blit(q_text, q_text_position) #blit question text
+    q_font_sub = pygame.font.Font(None, 20)
+    q_text = q_font_sub.render("Type the number on the button.", 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.centerx = q_box.centerx
+    q_text_position.center = q_box.centerx, q_box.bottom - 20
+    bg.blit(q_text, q_text_position) #blit subtext
 
     l_button = bg.fill(light_blue, l_button_size) #clear buttons and re-fill
     c_button = bg.fill(light_blue, c_button_size)
     r_button = bg.fill(light_blue, r_button_size)
 
-    l_button_text = button_text(l_button, "Red") #new button text
+    l_button_text = button_text(l_button, "1. Red") #new button text
     l_button_text_position = button_text_position(l_button, l_button_text)
     add_button_text(bg, l_button_text, l_button_text_position)
-    c_button_text = button_text(c_button, "Blue")
+    c_button_text = button_text(c_button, "2. Green")
     c_button_text_position = button_text_position(c_button, c_button_text)
     add_button_text(bg, c_button_text, c_button_text_position)
-    r_button_text = button_text(r_button, "Green")
+    r_button_text = button_text(r_button, "3. Blue")
     r_button_text_position = button_text_position(r_button, r_button_text)
     add_button_text(bg, r_button_text, r_button_text_position)
 
@@ -439,17 +448,20 @@ def main():
     choosing = True
     while choosing == True:
         pygame.event.pump()
-        if is_clicked(l_button) == True:
-            hair_color = "red"
-            choosing = False
-        elif is_clicked(c_button) == True:
-            hair_color = "green"
-            choosing = False
-        elif is_clicked(r_button) == True:
-            hair_color = "blue"
-            choosing = False
-        else:
-            None
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.KEYDOWN:
+                pressed = pygame.key.get_pressed()
+                if pressed[pygame.K_1] == True:
+                    hair_color = "red"
+                    choosing = False
+                elif pressed[pygame.K_2] == True:
+                    hair_color = "green"
+                    choosing = False
+                elif pressed[pygame.K_3] == True:
+                    hair_color = "blue"
+                    choosing = False
     
     #Player weapon
     bg.fill(white) #refill background to start a new question
@@ -461,7 +473,13 @@ def main():
     q_text = q_font.render("Pick a weapon.", 1, black)
     q_text_position = q_text.get_rect()
     q_text_position.center = q_box.center
-    bg.blit(q_text, q_text_position)
+    bg.blit(q_text, q_text_position) #blit question text
+    q_font_sub = pygame.font.Font(None, 20)
+    q_text = q_font_sub.render("Type the number on the button.", 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.centerx = q_box.centerx
+    q_text_position.center = q_box.centerx, q_box.bottom - 20
+    bg.blit(q_text, q_text_position) #blit subtext
 
     return
 
