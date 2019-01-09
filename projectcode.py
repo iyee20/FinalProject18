@@ -481,6 +481,24 @@ def main():
     q_text_position.center = q_box.centerx, q_box.bottom - 20
     bg.blit(q_text, q_text_position) #blit subtext
 
+    button_top_1 = bg.get_height() - q_box.height - 5
+    button_top_2 = bg.get_height() - button_top_1 - 5
+    b1_size = pygame.Rect(0, button_top_1, button_width, a_box_height)
+    b2_size = pygame.Rect(r_button_left, button_top_1, button_width, a_box_height)
+    b3_size = pygame.Rect(0, button_top_2, button_width, a_box_height)
+    b4_size = pygame.Rect(r_button_left, button_top_2, button_width, a_box_height)
+    b5_size = pygame.Rect(0, button_top, button_width, a_box_height)
+    b6_size = pygame.Rect(c_button_left, button_top, button_width, a_box_height)
+    b7_size = pygame.Rect(r_button_left, button_top, button_width, a_box_height)
+    
+    b1 = bg.fill(light_blue, b1_size)
+    b2 = bg.fill(light_blue, b2_size)
+    b3 = bg.fill(light_blue, b3_size)
+    b4 = bg.fill(light_blue, b4_size)
+    b5 = bg.fill(light_blue, b5_size)
+    b6 = bg.fill(light_blue, b6_size)
+    b7 = bg.fill(light_blue, b7_size)
+
     return
 
 main()
