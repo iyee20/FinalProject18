@@ -490,7 +490,7 @@ def main():
                     weapon = "tome"
                     choosing = False
 
-    colors = ["red", "blue", "green"]
+    colors = ["red", "blue", "green"] #I've elected to remove the colorless option
     if weapon == "sword":
         color = "red"
     elif weapon == "lance":
@@ -500,9 +500,10 @@ def main():
     elif weapon == "dagger" or weapon == "bow" or weapon == "dragonstone" or weapon == "tome":
         color = random.choice(colors)
 
+    mc = Player(name, appearance, eye_color, hair_color, weapon, color, None)
+
     return
 
 main()
 
-mc = Player(name, appearance, eye_color, hair_color, weapon, color, equipped)
 #see textmc.py for the terminal-based customization code
