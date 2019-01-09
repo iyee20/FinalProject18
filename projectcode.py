@@ -431,8 +431,8 @@ def main():
     q_box = bg.fill(fe_blue, q_box_size)
     print_question("Pick a weapon.", q_box, bg)
 
-    button_top_1 = bg.get_height() - q_box.height - 5
-    button_top_2 = bg.get_height() - button_top_1 - 5
+    button_top_1 = q_box.height + 10
+    button_top_2 = bg.get_rect().centery + (a_box_height / 2)
     b1_size = pygame.Rect(0, button_top_1, button_width, a_box_height)
     b2_size = pygame.Rect(r_button_left, button_top_1, button_width, a_box_height)
     b3_size = pygame.Rect(0, button_top_2, button_width, a_box_height)
@@ -448,6 +448,57 @@ def main():
     b5 = bg.fill(light_blue, b5_size)
     b6 = bg.fill(light_blue, b6_size)
     b7 = bg.fill(light_blue, b7_size)
+
+    print_button_text("1. Sword", b1, bg)
+    print_button_text("2. Lance", b2, bg)
+    print_button_text("3. Axe", b3, bg)
+    print_button_text("4. Bow", b4, bg)
+    print_button_text("5. Dagger", b5, bg)
+    print_button_text("6. Dragonstone", b6, bg)
+    print_button_text("7. Tome", b7, bg)
+
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
+
+    choosing = True
+    while choosing == True:
+        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.KEYDOWN:
+                pressed = pygame.key.get_pressed()
+                if pressed[pygame.K_1] == True:
+                    weapon = "sword"
+                    choosing = False
+                elif pressed[pygame.K_2] == True:
+                    weapon = "lance"
+                    choosing = False
+                elif pressed[pygame.K_3] == True:
+                    weapon = "axe"
+                    choosing = False
+                elif pressed[pygame.K_4] == True:
+                    weapon = "bow"
+                    choosing = False
+                elif pressed[pygame.K_5] == True:
+                    weapon = "dagger"
+                    choosing = False
+                elif pressed[pygame.K_6] == True:
+                    weapon = "dragonstone"
+                    choosing = False
+                elif pressed[pygame.K_7] == True:
+                    weapon = "tome"
+                    choosing = False
+
+    colors = ["red", "blue", "green"]
+    if weapon == "sword":
+        color = "red"
+    elif weapon == "lance":
+        color = "blue"
+    elif weapon == "axe":
+        color = "green"
+    elif weapon == "dagger" or weapon == "bow" or weapon == "dragonstone" or weapon == "tome":
+        color = random.choice(colors)
 
     return
 
