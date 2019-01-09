@@ -199,21 +199,27 @@ fire_tome = Weapon("Fire", 4, 2)
 light_tome = Weapon("Light", 4, 2)
 wind_tome = Weapon("Wind", 4, 2)
 
-def button_text(button, text):
-    """Display a label on a button."""
+def print_question(question, q_box, bg):
+    """Print a question on q_box."""
+    q_font = pygame.font.Font(None, 25)
+    q_text = q_font.render(question, 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.center = q_box.center
+    bg.blit(q_text, q_text_position) #blit question text
+    q_font_sub = pygame.font.Font(None, 20)
+    q_text = q_font_sub.render("Type the number on the button.", 1, black)
+    q_text_position = q_text.get_rect()
+    q_text_position.center = q_box.centerx, q_box.bottom - 20
+    bg.blit(q_text, q_text_position) #blit subtext
+    return
+
+def print_button_text(text, button, bg):
+    """Print text on a button."""
     font = pygame.font.Font(None, 20)
     text = font.render(text, 1, black)
-    return text
-
-def button_text_position(button, button_text):
-    """Display a label on a button."""
-    text_position = button_text.get_rect()
+    text_position = text.get_rect()
     text_position.center = button.center
-    return text_position
-
-def add_button_text(bg, button_text, button_text_position):
-    """Print text on a button."""
-    bg.blit(button_text, button_text_position)
+    bg.blit(text, text_position)
     return
 
 def spawn(character):
@@ -298,23 +304,14 @@ def main():
     #start Player customization
     bg.fill(white)
     pygame.display.flip()
-
+    
     q_box_size = pygame.Rect(0, 0, 500, 100)
     q_box = bg.fill(fe_blue, q_box_size) #question box is a filled rectangle
     q_box.topleft = 0, 0
 
     #question text
     #Player appearance (gender)
-    q_font = pygame.font.Font(None, 25)
-    q_text = q_font.render("Do you identify as male, female, or nonbinary?", 1, black)
-    q_text_position = q_text.get_rect()
-    q_text_position.center = q_box.center
-    bg.blit(q_text, q_text_position) #blit question text
-    q_font_sub = pygame.font.Font(None, 20)
-    q_text = q_font_sub.render("Type the number on the button.", 1, black)
-    q_text_position = q_text.get_rect()
-    q_text_position.center = q_box.centerx, q_box.bottom - 20
-    bg.blit(q_text, q_text_position) #blit subtext
+    print_question("Do you identify as male, female, or nonbinary?", q_box, bg)
     screen.blit(bg, (0,0))
     pygame.display.flip()
 
@@ -331,19 +328,13 @@ def main():
     r_button_size = pygame.Rect(r_button_left, button_top, button_width, a_box_height)
 
     l_button = bg.fill(light_blue, l_button_size) #left button
-    l_button_text = button_text(l_button, "1. Male")
-    l_button_text_position = button_text_position(l_button, l_button_text)
-    add_button_text(bg, l_button_text, l_button_text_position)
+    print_button_text("1. Male", l_button, bg)
 
     c_button = bg.fill(light_blue, c_button_size) #center button
-    c_button_text = button_text(c_button, "2. Female")
-    c_button_text_position = button_text_position(c_button, c_button_text)
-    add_button_text(bg, c_button_text, c_button_text_position)
+    print_button_text("2. Female", c_button, bg)
 
     r_button = bg.fill(light_blue, r_button_size) #right button
-    r_button_text = button_text(r_button, "3. Nonbinary")
-    r_button_text_position = button_text_position(r_button, r_button_text)
-    add_button_text(bg, r_button_text, r_button_text_position)
+    print_button_text("3. Nonbinary", r_button, bg)
 
     screen.blit(bg, (0,0))
     pygame.display.flip()
@@ -368,30 +359,15 @@ def main():
 
     #Player eye color
     q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
-    q_font = pygame.font.Font(None, 25) #new q_box text
-    q_text = q_font.render("What color are your eyes?", 1, black)
-    q_text_position = q_text.get_rect()
-    q_text_position.center = q_box.center
-    bg.blit(q_text, q_text_position) #blit question text
-    q_font_sub = pygame.font.Font(None, 20)
-    q_text = q_font_sub.render("Type the number on the button.", 1, black)
-    q_text_position = q_text.get_rect()
-    q_text_position.center = q_box.centerx, q_box.bottom - 20
-    bg.blit(q_text, q_text_position) #blit subtext    
+    print_question("What color are your eyes?", q_box, bg)
 
     l_button = bg.fill(light_blue, l_button_size) #clear buttons and re-fill
     c_button = bg.fill(light_blue, r_button_size)
     r_button = bg.fill(light_blue, c_button_size)
 
-    l_button_text = button_text(l_button, "1. Red") #new button text
-    l_button_text_position = button_text_position(l_button, l_button_text)
-    add_button_text(bg, l_button_text, l_button_text_position)
-    c_button_text = button_text(c_button, "2. Green")
-    c_button_text_position = button_text_position(c_button, c_button_text)
-    add_button_text(bg, c_button_text, c_button_text_position)
-    r_button_text = button_text(r_button, "3. Blue")
-    r_button_text_position = button_text_position(r_button, r_button_text)
-    add_button_text(bg, r_button_text, r_button_text_position)
+    print_button_text("1. Red", l_button, bg) #new button text
+    print_button_text("2. Green", c_button, bg)
+    print_button_text("3. Blue", r_button, bg)
 
     screen.blit(bg, (0,0))
     pygame.display.flip()
@@ -416,31 +392,15 @@ def main():
     
     #Player hair color
     q_box = bg.fill(fe_blue, q_box_size) #clear q_box and re-fill
-    q_font = pygame.font.Font(None, 25)
-    q_text = q_font.render("What color is your hair?", 1, black)
-    q_text_position = q_text.get_rect()
-    q_text_position.center = q_box.center
-    bg.blit(q_text, q_text_position) #blit question text
-    q_font_sub = pygame.font.Font(None, 20)
-    q_text = q_font_sub.render("Type the number on the button.", 1, black)
-    q_text_position = q_text.get_rect()
-    q_text_position.centerx = q_box.centerx
-    q_text_position.center = q_box.centerx, q_box.bottom - 20
-    bg.blit(q_text, q_text_position) #blit subtext
+    print_question("What color is your hair?", q_box, bg)
 
     l_button = bg.fill(light_blue, l_button_size) #clear buttons and re-fill
     c_button = bg.fill(light_blue, c_button_size)
     r_button = bg.fill(light_blue, r_button_size)
 
-    l_button_text = button_text(l_button, "1. Red") #new button text
-    l_button_text_position = button_text_position(l_button, l_button_text)
-    add_button_text(bg, l_button_text, l_button_text_position)
-    c_button_text = button_text(c_button, "2. Green")
-    c_button_text_position = button_text_position(c_button, c_button_text)
-    add_button_text(bg, c_button_text, c_button_text_position)
-    r_button_text = button_text(r_button, "3. Blue")
-    r_button_text_position = button_text_position(r_button, r_button_text)
-    add_button_text(bg, r_button_text, r_button_text_position)
+    print_button_text("1. Red", l_button, bg)
+    print_button_text("2. Green", c_button, bg)
+    print_button_text("3. Blue", r_button, bg)
 
     screen.blit(bg, (0,0))
     pygame.display.flip()
@@ -468,18 +428,8 @@ def main():
     pygame.display.flip()
 
     q_box_size = pygame.Rect(0, 0, 500, 100)
-    q_box = bg.fill(fe_blue, q_box_size) #question box is a filled rectangle
-    q_font = pygame.font.Font(None, 25)
-    q_text = q_font.render("Pick a weapon.", 1, black)
-    q_text_position = q_text.get_rect()
-    q_text_position.center = q_box.center
-    bg.blit(q_text, q_text_position) #blit question text
-    q_font_sub = pygame.font.Font(None, 20)
-    q_text = q_font_sub.render("Type the number on the button.", 1, black)
-    q_text_position = q_text.get_rect()
-    q_text_position.centerx = q_box.centerx
-    q_text_position.center = q_box.centerx, q_box.bottom - 20
-    bg.blit(q_text, q_text_position) #blit subtext
+    q_box = bg.fill(fe_blue, q_box_size)
+    print_question("Pick a weapon.", q_box, bg)
 
     button_top_1 = bg.get_height() - q_box.height - 5
     button_top_2 = bg.get_height() - button_top_1 - 5
