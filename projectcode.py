@@ -215,12 +215,13 @@ def print_button_text(text, button, bg):
 
 def spawn(character):
     """Spawn a character on the screen."""
-    global screen
+    global screen, bg
     #location is based on a 6 x 6 tile map
     squarex = random.randint(1, 6)
     squarey = random.randint(1, 6)
     location = screen.get_width() * squarex / 6, screen.get_height() * squarey / 6
-    screen.blit(character, location)
+    bg.blit(character, location)
+    screen.blit(bg, (0,0))
     pygame.display.flip()
     return
 
@@ -256,6 +257,14 @@ def move(character, tilexmove, tileymove):
     screen.blit(character, position)
     pygame.display.flip()
     return
+
+def draw_map():
+    """Draw the battle map on the screen."""
+    pass #remove later
+    global screen, bg
+    bg.fill((250, 250, 250))
+    pygame.draw.line(bg, (0,0,0), #insert)
+
 
 def main():
     """The code of the game."""
@@ -494,7 +503,7 @@ def main():
     mc = Player(name, appearance, eye_color, hair_color, weapon, color, None)
 
     bg.fill(white)
-    q_box = bg.fill(fe_blue, q_box_size)
+    q_box = bg.fill(white, q_box_size) #q_box is white for the equipment screen
 
     if weapon == "sword":
         print_button_text("You received an Iron Sword!", q_box, bg) #print text on q_box (q_box is the "button")
@@ -525,8 +534,20 @@ def main():
             print_button_text("You received a Wind tome!", q_box, bg)
             wind_tome.equip(mc)
     
+    bottom_text = font.render("Press any key to continue.", 1, black) #font = size of instructions on opening screen, 25px
+    bg.blit(bottom_text, text_position)
+
     screen.blit(bg, (0,0))
     pygame.display.flip()
+
+    wait_to_start = True
+    while wait_to_start == True: #wait for Player to press a key
+        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.KEYDOWN:
+                wait_to_start = False    
 
     return
 
