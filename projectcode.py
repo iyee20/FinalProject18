@@ -13,15 +13,6 @@ white = (250, 250, 250) #rgb value of white
 fe_blue = (72, 117, 139) #color of Fire Emblem textboxes, midway between the gradient endpoints...ish
 light_blue = (112, 172, 201) #a blue to stand out against Fire Emblem blue
 
-#default stats
-name = "Player" #only stat that will not change
-appearance = "male"
-eye_color = "red"
-hair_color = "gray"
-weapon = "bow"
-color = "colorless"
-equipped = None
-
 class Player:
     """The class for the Player."""
     def __init__(self, name, appearance, eye_color, hair_color, weapon, color, equipped=None):
@@ -74,13 +65,13 @@ bun_dragon = Foe("Bun Dragon", "dragonstone", "green", 16, 13, 5, 4, 7, 1, 25) #
 baguette_devil = Foe("Baguette Devil", "sword", "red", 18, 11, 6, 3, 5, 1, 10) #based on Sword Fighter, 1 star with Iron Sword
 loaf_archer = Foe("Loaf Archer", "bow", "colorless", 17, 10, 5, 1, 5, 2, 10) #based on Bow Fighter, 1 star with Iron Bow
 
-def get_bread(defeated):
+def get_bread(defeated, mc):
     """Obtain breadcrumbs from defeating an enemy."""
     input(f"You received {defeated.drop} breadcrumbs.")
     mc.breadcrumbs += defeated.drop
     return
 
-def breadify():
+def breadify(mc):
     """Convert breadcrumbs to bread."""
     converted = mc.breadcrumbs % 15 #how many whole breads can be made
     mc.breadcrumbs -= 15 * converted
@@ -89,7 +80,7 @@ def breadify():
     mc.bread += converted
     return
 
-def check_bread():
+def check_bread(mc):
     """Check how many breadcrumbs and how much bread the player has."""
     input(f"Breadcrumbs: {mc.breadcrumbs}")
     input(f"Bread: {mc.bread}")
@@ -117,7 +108,7 @@ marth = Bread("Marth", "male", 10)
 masked_marth = Bread("Masked Marth", "nonbinary", 75)
 lucina = Bread("Masked Marth", "female", 50)
 
-def unlock(character):
+def unlock(character, mc):
     """Unlock a character's cutscene."""
     if character.bread == 0:
         None #if character has already been unlocked, nothing happens
@@ -176,14 +167,14 @@ class Weapon:
         self.might = might
         self.rng = rng
 
-    def equip(self):
+    def equip(self, mc):
         """Equip a weapon."""
         print(f"Equipped the {self.name}.")
         mc.a += self.might
         mc.rng = self.rng
         mc.equipped = self.name
 
-    def unequip(self):
+    def unequip(self, mc):
         """Unequip a weapon."""
         print(f"Unequipped the {self.name}.")
         mc.a -= self.might
@@ -310,6 +301,7 @@ def main():
     q_box.topleft = 0, 0
 
     #question text
+    name = "You" #Player is always referred to as "You"
     #Player appearance (gender)
     print_question("Do you identify as male, female, or nonbinary?", q_box, bg)
     screen.blit(bg, (0,0))
@@ -362,8 +354,8 @@ def main():
     print_question("What color are your eyes?", q_box, bg)
 
     l_button = bg.fill(light_blue, l_button_size) #clear buttons and re-fill
-    c_button = bg.fill(light_blue, r_button_size)
-    r_button = bg.fill(light_blue, c_button_size)
+    c_button = bg.fill(light_blue, c_button_size)
+    r_button = bg.fill(light_blue, r_button_size)
 
     print_button_text("1. Red", l_button, bg) #new button text
     print_button_text("2. Green", c_button, bg)
@@ -427,7 +419,6 @@ def main():
     bg.fill(white) #refill background to start a new question
     pygame.display.flip()
 
-    q_box_size = pygame.Rect(0, 0, 500, 100)
     q_box = bg.fill(fe_blue, q_box_size)
     print_question("Pick a weapon.", q_box, bg)
 
@@ -490,7 +481,7 @@ def main():
                     weapon = "tome"
                     choosing = False
 
-    colors = ["red", "blue", "green"] #I've elected to remove the colorless option
+    colors = ["red", "blue", "green"] #I've elected to remove the colorless option for daggers, bows, and dragonstones
     if weapon == "sword":
         color = "red"
     elif weapon == "lance":
@@ -498,9 +489,44 @@ def main():
     elif weapon == "axe":
         color = "green"
     elif weapon == "dagger" or weapon == "bow" or weapon == "dragonstone" or weapon == "tome":
-        color = random.choice(colors)
+        color = random.choice(colors) #random color assignment, to be fair
 
     mc = Player(name, appearance, eye_color, hair_color, weapon, color, None)
+
+    bg.fill(white)
+    q_box = bg.fill(fe_blue, q_box_size)
+
+    if weapon == "sword":
+        print_button_text("You received an Iron Sword!", q_box, bg) #print text on q_box (q_box is the "button")
+        iron_sword.equip(mc)
+    elif weapon == "lance":
+        print_button_text("You received an Iron Lance!", q_box, bg)
+        iron_lance.equip(mc)
+    elif weapon == "axe":
+        print_button_text("You received an Iron Axe!", q_box, bg)
+        iron_axe.equip(mc)
+    elif weapon == "dagger":
+        print_button_text(f"You received a {color} Iron Dagger!", q_box, bg)
+        iron_dagger.equip(mc)
+    elif weapon == "bow":
+        print_button_text(f"You received a {color} Iron Bow!", q_box, bg)
+        iron_bow.equip(mc)
+    elif weapon == "dragonstone":
+        print_button_text(f"You received a {color} Fire Breath dragonstone!", q_box, bg)
+        fire_breath.equip(mc)
+    elif weapon == "tome":
+        if color == "red":
+            print_button_text("You received a Fire tome!", q_box, bg)
+            fire_tome.equip(mc)
+        elif color == "blue":
+            print_button_text("You received a Light tome!", q_box, bg)
+            light_tome.equip(mc)
+        elif color == "green":
+            print_button_text("You received a Wind tome!", q_box, bg)
+            wind_tome.equip(mc)
+    
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
 
     return
 
