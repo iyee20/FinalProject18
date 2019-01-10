@@ -67,10 +67,10 @@ class Foe:
         self.x = 0
         self.y = 0
 bg = screen.convert()
-roll_imp_img = pygame.draw.rect(bg, fe_blue, (0,0,50,50)) #replace later
-bun_dragon_img = pygame.draw.rect(bg, fe_blue, (0,0,50,50))
-baguette_devil_img = pygame.draw.rect(bg, fe_blue, (0,0,50,50))
-loaf_archer_img = pygame.draw.rect(bg, fe_blue, (0,0,50,50))
+roll_imp_img = pygame.Rect((0,0,50,50)) #replace later
+bun_dragon_img = pygame.Rect((0,0,50,50))
+baguette_devil_img = pygame.Rect((0,0,50,50))
+loaf_archer_img = pygame.Rect((0,0,50,50))
 roll_imp = Foe("Roll Imp", "lance", "blue", roll_imp_img, 18, 11, 6, 3, 5, 1, 10) #based on Blue Fighter, 1 star with Iron Lance
 bun_dragon = Foe("Bun Dragon", "dragonstone", "green", bun_dragon_img, 16, 13, 5, 4, 7, 1, 25) #based on Green Manakete, 2 star with Fire Breath
 baguette_devil = Foe("Baguette Devil", "sword", "red", baguette_devil_img, 18, 11, 6, 3, 5, 1, 10) #based on Sword Fighter, 1 star with Iron Sword
@@ -450,33 +450,33 @@ def main():
                     choosing = False
     
     #mc_appearance_eye color_hair color
-    mc_m_r_r = pygame.draw.rect(bg, light_blue, (0,0,50,50)) #replace later
-    mc_m_r_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_m_r_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_m_b_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_m_b_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_m_b_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_m_g_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_m_g_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_m_g_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_f_r_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_f_r_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_f_r_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_f_b_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_f_b_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_f_b_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_f_g_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_f_g_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_f_g_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_n_r_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_n_r_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_n_r_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_n_b_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_n_b_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_n_b_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_n_g_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_n_g_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
-    mc_n_g_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_m_r_r = pygame.Rect((0,0,50,50)) #replace later
+    mc_m_r_g = pygame.Rect((0,0,50,50))
+    mc_m_r_b = pygame.Rect((0,0,50,50))
+    mc_m_b_r = pygame.Rect((0,0,50,50))
+    mc_m_b_b = pygame.Rect((0,0,50,50))
+    mc_m_b_g = pygame.Rect((0,0,50,50))
+    mc_m_g_r = pygame.Rect((0,0,50,50))
+    mc_m_g_b = pygame.Rect((0,0,50,50))
+    mc_m_g_g = pygame.Rect((0,0,50,50))
+    mc_f_r_r = pygame.Rect((0,0,50,50))
+    mc_f_r_g = pygame.Rect((0,0,50,50))
+    mc_f_r_b = pygame.Rect((0,0,50,50))
+    mc_f_b_r = pygame.Rect((0,0,50,50))
+    mc_f_b_b = pygame.Rect((0,0,50,50))
+    mc_f_b_g = pygame.Rect((0,0,50,50))
+    mc_f_g_r = pygame.Rect((0,0,50,50))
+    mc_f_g_b = pygame.Rect((0,0,50,50))
+    mc_f_g_g = pygame.Rect((0,0,50,50))
+    mc_n_r_r = pygame.Rect((0,0,50,50))
+    mc_n_r_g = pygame.Rect((0,0,50,50))
+    mc_n_r_b = pygame.Rect((0,0,50,50))
+    mc_n_b_r = pygame.Rect((0,0,50,50))
+    mc_n_b_b = pygame.Rect((0,0,50,50))
+    mc_n_b_g = pygame.Rect((0,0,50,50))
+    mc_n_g_r = pygame.Rect((0,0,50,50))
+    mc_n_g_b = pygame.Rect((0,0,50,50))
+    mc_n_g_g = pygame.Rect((0,0,50,50))
     #image logic - which icon is used
     if appearance == "male":
         if eye_color == "red":
