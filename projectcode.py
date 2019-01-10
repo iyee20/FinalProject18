@@ -15,7 +15,7 @@ light_blue = (112, 172, 201) #a blue to stand out against Fire Emblem blue
 
 class Player:
     """The class for the Player."""
-    def __init__(self, name, appearance, eye_color, hair_color, weapon, color, equipped=None):
+    def __init__(self, name, appearance, eye_color, hair_color, weapon, color, image, equipped=None):
         self.chartype = "player"
         self.name = name
         self.appearance = appearance
@@ -35,6 +35,7 @@ class Player:
         self.hair_color = hair_color
         self.weapon = weapon
         self.color = color
+        self.image = image
         self.equipped = equipped
 #base stats based on the first hero in Fire Emblem Heroes, Takumi, at 4 star rarity, except for range
         self.hp = 17 #health
@@ -45,14 +46,17 @@ class Player:
         self.rng = 1 #range
         self.breadcrumbs = 0 #obtained breadcrumbs
         self.bread = 0 #obtained bread
+        self.x = 0 #x square on screen
+        self.y = 0 #y square on screen
 
 class Foe:
     """The class for the enemies."""
-    def __init__(self, name, weapon, color, hp, a, d, res, spd, rng, drop):
+    def __init__(self, name, weapon, color, image, hp, a, d, res, spd, rng, drop):
         self.chartype = "foe"
         self.name = name
         self.weapon = weapon
         self.color = color
+        self.image = image
         self.hp = hp
         self.a = a
         self.d = d
@@ -60,10 +64,17 @@ class Foe:
         self.spd = spd
         self.rng = rng
         self.drop = drop #how many breadcrumbs are dropped by the enemy
-roll_imp = Foe("Roll Imp", "lance", "blue", 18, 11, 6, 3, 5, 1, 10) #based on Blue Fighter, 1 star with Iron Lance
-bun_dragon = Foe("Bun Dragon", "dragonstone", "green", 16, 13, 5, 4, 7, 1, 25) #based on Green Manakete, 2 star with Fire Breath
-baguette_devil = Foe("Baguette Devil", "sword", "red", 18, 11, 6, 3, 5, 1, 10) #based on Sword Fighter, 1 star with Iron Sword
-loaf_archer = Foe("Loaf Archer", "bow", "colorless", 17, 10, 5, 1, 5, 2, 10) #based on Bow Fighter, 1 star with Iron Bow
+        self.x = 0
+        self.y = 0
+bg = screen.convert()
+roll_imp_img = pygame.draw.rect(bg, fe_blue, (0,0,50,50)) #replace later
+bun_dragon_img = pygame.draw.rect(bg, fe_blue, (0,0,50,50))
+baguette_devil_img = pygame.draw.rect(bg, fe_blue, (0,0,50,50))
+loaf_archer_img = pygame.draw.rect(bg, fe_blue, (0,0,50,50))
+roll_imp = Foe("Roll Imp", "lance", "blue", roll_imp_img, 18, 11, 6, 3, 5, 1, 10) #based on Blue Fighter, 1 star with Iron Lance
+bun_dragon = Foe("Bun Dragon", "dragonstone", "green", bun_dragon_img, 16, 13, 5, 4, 7, 1, 25) #based on Green Manakete, 2 star with Fire Breath
+baguette_devil = Foe("Baguette Devil", "sword", "red", baguette_devil_img, 18, 11, 6, 3, 5, 1, 10) #based on Sword Fighter, 1 star with Iron Sword
+loaf_archer = Foe("Loaf Archer", "bow", "colorless", loaf_archer_img, 17, 10, 5, 1, 5, 2, 10) #based on Bow Fighter, 1 star with Iron Bow
 
 def get_bread(defeated, mc):
     """Obtain breadcrumbs from defeating an enemy."""
@@ -219,8 +230,16 @@ def spawn(character):
     #location is based on a 6 x 6 tile map
     squarex = random.randint(1, 6)
     squarey = random.randint(1, 6)
-    location = screen.get_width() * squarex / 6, screen.get_height() * squarey / 6
-    bg.blit(character, location)
+    #location = screen.get_width() * squarex / 6, screen.get_height() * squarey / 6
+    character.image.left = (screen.get_width() * squarex / 6) + 100/6 #temp, while images are Rects
+    character.image.top = (screen.get_height() * squarey / 6) + 100/6
+    character.x = squarex
+    character.y = squarey
+    if character.name == "You":
+        bg.fill(light_blue, character.image) #temp, while images are Rects
+    else:
+        bg.fill(fe_blue, character.image)
+    #bg.blit(character.image, location)
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
@@ -228,9 +247,8 @@ def spawn(character):
 def tilex(character):
     """Check which tile in the x direction a character is on."""
     global screen
-    character = character.get_rect()
     for x in range(1, 6):
-        if character.right == screen.get_width() * x / 6:
+        if x == character.x:
             return x
         else:
             None
@@ -238,23 +256,23 @@ def tilex(character):
 def tiley(character):
     """Check which title in the y direction a character is on."""
     global screen
-    character = character.get_rect()
     for y in range(1, 6):
-        if character.bottom == screen.get_height() * y / 6:
+        if y == character.y:
             return y
         else:
             None
 
 def move(character, tilexmove, tileymove):
     """Move a character on the screen."""
-    global screen
+    global screen, bg
     position = character.get_rect()
     if tilex(character) + 2 > 6:
         tilexmove = 6 - tilex(character)
     if tiley(character) + 2 > 6:
         tileymove = 6 - tiley(character)
     position = position.move(tilexmove, tileymove)
-    screen.blit(character, position)
+    bg.blit(character, position)
+    screen.blit(bg, (0,0))
     pygame.display.flip()
     return
 
@@ -263,8 +281,15 @@ def draw_map():
     pass #remove later
     global screen, bg
     bg.fill((250, 250, 250))
-    pygame.draw.line(bg, (0,0,0), #insert)
-
+    for x in range(1,6):
+        linespace = screen.get_width() * x / 6
+        pygame.draw.line(bg, (0,0,0), (linespace, 0), (linespace, screen.get_height()))
+    for y in range(1,6):
+        linespace = screen.get_height() * y / 6
+        pygame.draw.line(bg, (0,0,0), (0, linespace), (screen.get_width(), linespace))
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
+    return
 
 def main():
     """The code of the game."""
@@ -424,6 +449,102 @@ def main():
                     hair_color = "blue"
                     choosing = False
     
+    #mc_appearance_eye color_hair color
+    mc_m_r_r = pygame.draw.rect(bg, light_blue, (0,0,50,50)) #replace later
+    mc_m_r_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_m_r_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_m_b_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_m_b_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_m_b_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_m_g_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_m_g_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_m_g_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_f_r_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_f_r_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_f_r_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_f_b_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_f_b_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_f_b_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_f_g_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_f_g_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_f_g_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_n_r_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_n_r_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_n_r_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_n_b_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_n_b_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_n_b_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_n_g_r = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_n_g_b = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    mc_n_g_g = pygame.draw.rect(bg, light_blue, (0,0,50,50))
+    #image logic - which icon is used
+    if appearance == "male":
+        if eye_color == "red":
+            if hair_color == "red":
+                image = mc_m_r_r
+            elif hair_color == "blue":
+                image = mc_m_r_b
+            elif hair_color == "green":
+                image = mc_m_r_g
+        elif eye_color == "blue":
+            if hair_color == "red":
+                image = mc_m_b_r
+            elif hair_color == "blue":
+                image = mc_m_b_b
+            elif hair_color == "green":
+                image = mc_m_b_g
+        elif eye_color == "green":
+            if hair_color == "red":
+                image = mc_m_g_r
+            elif hair_color == "blue":
+                image = mc_m_g_b
+            elif hair_color == "green":
+                image = mc_m_g_g
+    elif appearance == "female":
+        if eye_color == "red":
+            if hair_color == "red":
+                image = mc_f_r_r
+            elif hair_color == "blue":
+                image = mc_f_r_b
+            elif hair_color == "green":
+                image = mc_f_r_g
+        elif eye_color == "blue":
+            if hair_color == "red":
+                image = mc_f_b_r
+            elif hair_color == "blue":
+                image = mc_f_b_b
+            elif hair_color == "green":
+                image = mc_f_b_g
+        elif eye_color == "green":
+            if hair_color == "red":
+                image = mc_f_g_r
+            elif hair_color == "blue":
+                image = mc_f_g_b
+            elif hair_color == "green":
+                image = mc_f_g_g
+    elif appearance == "nonbinary":
+        if eye_color == "red":
+            if hair_color == "red":
+                image = mc_n_r_r
+            elif hair_color == "blue":
+                image = mc_n_r_b
+            elif hair_color == "green":
+                image = mc_n_r_g
+        elif eye_color == "blue":
+            if hair_color == "red":
+                image = mc_n_b_r
+            elif hair_color == "blue":
+                image = mc_n_b_b
+            elif hair_color == "green":
+                image = mc_n_b_g
+        elif eye_color == "green":
+            if hair_color == "red":
+                image = mc_n_g_r
+            elif hair_color == "blue":
+                image = mc_n_g_b
+            elif hair_color == "green":
+                image = mc_n_g_g
+
     #Player weapon
     bg.fill(white) #refill background to start a new question
     pygame.display.flip()
@@ -500,7 +621,7 @@ def main():
     elif weapon == "dagger" or weapon == "bow" or weapon == "dragonstone" or weapon == "tome":
         color = random.choice(colors) #random color assignment, to be fair
 
-    mc = Player(name, appearance, eye_color, hair_color, weapon, color, None)
+    mc = Player(name, appearance, eye_color, hair_color, weapon, color, image, None)
 
     bg.fill(white)
     q_box = bg.fill(white, q_box_size) #q_box is white for the equipment screen
@@ -549,6 +670,24 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 wait_to_start = False    
 
+    draw_map()
+    spawn(mc)
+    spawn(roll_imp)
+    while True:
+        if tilex(roll_imp) == tilex(mc) and tiley(roll_imp) == tiley(mc):
+            move(roll_imp, 1, 1)
+        else:
+            break
+
+    #temp, while testing
+    wait_to_start = True
+    while wait_to_start == True: #wait for Player to press a key
+        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.KEYDOWN:
+                wait_to_start = False    
     return
 
 main()
