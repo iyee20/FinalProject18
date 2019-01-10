@@ -132,6 +132,14 @@ def unlock(character, mc):
         character.bread = 0 #character's bread cost is now 0
     return
 
+def in_range(attacker, defender):
+    x_dif = abs(attacker.x - defender.x)
+    y_dif = abs(attacker.y - defender.y)
+    if x_dif + y_dif <= attacker.range:
+        return True
+    else:
+        return False
+
 weapon_triangle = { #the value to each key is the color it has an advantage over
     "red": "green",
     "blue": "red",
@@ -672,7 +680,7 @@ def main():
 
     draw_map()
     spawn(mc)
-    spawn(roll_imp)
+    spawn(roll_imp) #fix so it uncovers mc
     while True:
         if tilex(roll_imp) == tilex(mc) and tiley(roll_imp) == tiley(mc):
             move(roll_imp, 1, 1)
