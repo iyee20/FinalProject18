@@ -307,7 +307,7 @@ def draw_map():
     pygame.display.flip()
     return
 
-def anna_box(menu_box_size, dialogue):
+def anna_box(menu_box_size, dialogue, line2):
     """Draw Anna's dialogue box on the screen."""
     global screen, bg
     #insert Anna image here
@@ -326,6 +326,13 @@ def anna_box(menu_box_size, dialogue):
     dialogue_text_pos.left = 60
     dialogue_text_pos.top = text_position.height + 5
     bg.blit(dialogue_text, dialogue_text_pos)
+
+    if line2 != None:
+        line2_text = font.render(line2, 1, black)
+        line2_text_pos = line2_text.get_rect()
+        line2_text_pos.left = 60
+        line2_text_pos.top = dialogue_text_pos.top + 25
+        bg.blit(line2_text, line2_text_pos)
 
     screen.blit(bg, (0,0))
     pygame.display.flip()
@@ -755,18 +762,18 @@ def main():
     menu_box_size = pygame.Rect(0, 0, screen.get_width(), screen.get_height()/6)
     #menu_box = bg.fill(fe_blue, menu_box_size)
     #draw_menu(menu_box_size)
-    anna_box(menu_box_size, "Good morning!")
+    anna_box(menu_box_size, "Good morning!", None)
     pygame.time.delay(2000) #Player gets 2 seconds to read
-    anna_box(menu_box_size, "The forces of Brioche have invaded Mantou. We need your help!")
+    anna_box(menu_box_size, "The forces of Brioche have invaded Mantou. We need your help!", None)
     pygame.time.delay(4000)
 
     square = pygame.Rect(roll_imp.image.left - 100/6, roll_imp.image.top - 100/6, screen.get_width()/6, screen.get_height()/6)
     highlight(square)
-    anna_box(menu_box_size, "That's a Roll Imp.")
+    anna_box(menu_box_size, "That's a Roll Imp.", None)
     pygame.time.delay(2000)
-    anna_box(menu_box_size, "The Roll Imp has a lance, which is a BLUE weapon.")
+    anna_box(menu_box_size, "The Roll Imp has a lance, which is a BLUE weapon.", None)
     pygame.time.delay(4000)
-    anna_box(menu_box_size, "Keep the weapon-triangle advantages in mind when you attack enemies.")
+    anna_box(menu_box_size, "Keep the weapon-triangle advantages in mind when you", "attack enemies.")
     pygame.time.delay(5000)
 
     #temp, while testing
