@@ -12,6 +12,10 @@ black = (0, 0, 0) #rgb value of black
 white = (250, 250, 250) #rgb value of white
 fe_blue = (72, 117, 139) #color of Fire Emblem textboxes, midway between the gradient endpoints...ish
 light_blue = (112, 172, 201) #a blue to stand out against Fire Emblem blue
+red = (223, 29, 64) #a red to represent red-colored characters
+blue = (36, 101, 224) #a blue to represent blue-colored characters
+green = (6, 165, 41) #a green to represent green-colored characters
+gray = (100, 117, 126) #a gray to represent colorless characters
 
 class Player:
     """The class for the Player."""
@@ -232,12 +236,17 @@ def print_button_text(text, button, bg):
     bg.blit(text, text_position)
     return
 
-def spawn(character):
+def spawn(character, spawned):
     """Spawn a character on the screen."""
     global screen, bg
     #location is based on a 6 x 6 tile map
-    squarex = random.randint(1, 6)
-    squarey = random.randint(1, 6)
+    squarex = random.randint(1, 5)
+    squarey = random.randint(1, 5)
+    if spawned != None:
+        for other in spawned:
+            if squarex == other.x and squarey == other.y:
+                squarex = random.randint(1, 5)
+                squarey = random.randint(1, 5)
     #location = screen.get_width() * squarex / 6, screen.get_height() * squarey / 6
     character.image.left = (screen.get_width() * squarex / 6) + 100/6 #temp, while images are Rects
     character.image.top = (screen.get_height() * squarey / 6) + 100/6
@@ -255,7 +264,7 @@ def spawn(character):
 def tilex(character):
     """Check which tile in the x direction a character is on."""
     global screen
-    for x in range(1, 6):
+    for x in range(1, 5):
         if x == character.x:
             return x
         else:
@@ -264,7 +273,7 @@ def tilex(character):
 def tiley(character):
     """Check which title in the y direction a character is on."""
     global screen
-    for y in range(1, 6):
+    for y in range(1, 5):
         if y == character.y:
             return y
         else:
@@ -274,10 +283,10 @@ def move(character, tilexmove, tileymove):
     """Move a character on the screen."""
     global screen, bg
     position = character.get_rect()
-    if tilex(character) + 2 > 6:
-        tilexmove = 6 - tilex(character)
-    if tiley(character) + 2 > 6:
-        tileymove = 6 - tiley(character)
+    if tilex(character) + 2 > 5:
+        tilexmove = 5 - tilex(character)
+    if tiley(character) + 2 > 5:
+        tileymove = 5 - tiley(character)
     position = position.move(tilexmove, tileymove)
     bg.blit(character, position)
     screen.blit(bg, (0,0))
@@ -286,7 +295,6 @@ def move(character, tilexmove, tileymove):
 
 def draw_map():
     """Draw the battle map on the screen."""
-    pass #remove later
     global screen, bg
     bg.fill((250, 250, 250))
     for x in range(1,6):
@@ -295,6 +303,14 @@ def draw_map():
     for y in range(1,6):
         linespace = screen.get_height() * y / 6
         pygame.draw.line(bg, (0,0,0), (0, linespace), (screen.get_width(), linespace))
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
+    return
+
+def highlight(square):
+    """Highlight a square with a red outline."""
+    global bg, screen
+    pygame.draw.rect(bg, red, square, 5)
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
@@ -679,13 +695,13 @@ def main():
                 wait_to_start = False    
 
     draw_map()
-    spawn(mc)
-    spawn(roll_imp) #fix so it uncovers mc
-    while True:
-        if tilex(roll_imp) == tilex(mc) and tiley(roll_imp) == tiley(mc):
-            move(roll_imp, 1, 1)
-        else:
-            break
+    spawn(mc, None)
+    spawn(roll_imp, [mc])
+
+    q_box = bg.fill(fe_blue, q_box_size)
+
+    square = pygame.Rect(roll_imp.image.left - 100/6, roll_imp.image.top - 100/6, screen.get_width() / 6, screen.get_height() / 6)
+    highlight(square)
 
     #temp, while testing
     wait_to_start = True
