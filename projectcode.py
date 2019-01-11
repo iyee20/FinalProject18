@@ -307,16 +307,57 @@ def draw_map():
     pygame.display.flip()
     return
 
-def anna_box(menu_box_size):
+def anna_box(menu_box_size, dialogue):
     """Draw Anna's dialogue box on the screen."""
     global screen, bg
     #insert Anna image here
-    menu_box = bg.fill(fe_blue, menu_box_size)
+    bg.fill(fe_blue, menu_box_size)
+    white_box = pygame.Rect(10, 0, screen.get_width() - 20, menu_box_size.height)
+    bg.fill(white, white_box)
+
     font = pygame.font.Font(None, 20)
     text = font.render("ANNA", 1, black)
     text_position = text.get_rect()
-    text_position.left = 50
+    text_position.left = 60
     bg.blit(text, text_position)
+    
+    dialogue_text = font.render(dialogue, 1, black)
+    dialogue_text_pos = dialogue_text.get_rect()
+    dialogue_text_pos.left = 60
+    dialogue_text_pos.top = text_position.height + 5
+    bg.blit(dialogue_text, dialogue_text_pos)
+
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
+    return
+
+def draw_menu(menu_box_size):
+    """Draw the menu box on the screen."""
+    global screen, bg
+    bg.fill(fe_blue, menu_box_size)
+    check_bread_box = pygame.Rect(10, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
+    unlock_bread_box = pygame.Rect(menu_box_size.width/3 + 6, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
+    new_lvl_box = pygame.Rect(menu_box_size.width*2/3, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
+    bg.fill(light_blue, check_bread_box)
+    bg.fill(light_blue, unlock_bread_box)
+    bg.fill(light_blue, new_lvl_box)
+
+    font = pygame.font.Font(None, 20)
+    t1 = font.render("1. Check Bread", 1, black)
+    t1_pos = t1.get_rect()
+    t1_pos.center = check_bread_box.center
+    bg.blit(t1, t1_pos)
+
+    t2 = font.render("2. Unlock Bread", 1, black)
+    t2_pos = t2.get_rect()
+    t2_pos.center = unlock_bread_box.center
+    bg.blit(t2, t2_pos)
+
+    t3 = font.render("3. New Level", 1, black)
+    t3_pos = t3.get_rect()
+    t3_pos.center = new_lvl_box.center
+    bg.blit(t3, t3_pos)
+
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
@@ -708,15 +749,25 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 wait_to_start = False    
 
-    draw_map()
-    spawn(mc, None)
-    spawn(roll_imp, [mc])
+    draw_map() #draw the bg
+    spawn(mc, None) #spawn mc on map
+    spawn(roll_imp, [mc]) #spawn Roll Imp on map, not on mc
     menu_box_size = pygame.Rect(0, 0, screen.get_width(), screen.get_height()/6)
     #menu_box = bg.fill(fe_blue, menu_box_size)
-    anna_box(menu_box_size)
+    #draw_menu(menu_box_size)
+    anna_box(menu_box_size, "Good morning!")
+    pygame.time.delay(2000) #Player gets 2 seconds to read
+    anna_box(menu_box_size, "The forces of Brioche have invaded Mantou. We need your help!")
+    pygame.time.delay(4000)
 
     square = pygame.Rect(roll_imp.image.left - 100/6, roll_imp.image.top - 100/6, screen.get_width()/6, screen.get_height()/6)
     highlight(square)
+    anna_box(menu_box_size, "That's a Roll Imp.")
+    pygame.time.delay(2000)
+    anna_box(menu_box_size, "The Roll Imp has a lance, which is a BLUE weapon.")
+    pygame.time.delay(4000)
+    anna_box(menu_box_size, "Keep the weapon-triangle advantages in mind when you attack enemies.")
+    pygame.time.delay(5000)
 
     #temp, while testing
     wait_to_start = True
