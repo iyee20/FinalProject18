@@ -369,12 +369,41 @@ def draw_menu(menu_box_size):
     pygame.display.flip()
     return
 
-def highlight(square):
-    """Highlight a square with a red outline."""
+def highlight(square, color):
+    """Highlight a square with a colored outline."""
     global bg, screen
-    pygame.draw.rect(bg, red, square, 5)
+    pygame.draw.rect(bg, color, square, 5)
     screen.blit(bg, (0,0))
     pygame.display.flip()
+    return
+
+def move_options(character, others):
+    """Highlight the player's move options in green"""
+    square_width = screen.get_width()/6
+    square_height = screen.get_height()/6
+    character_left = character.image.left - 100/6
+    character_top = character.image.top - 100/6
+
+    #squares that require moving two squares
+    qsquare = pygame.Rect(character_left - square_width, character_top - square_height, square_width, square_height)
+    wsquare = pygame.Rect(character_left, character_top - 2*square_height, square_width, square_height)
+    esquare = pygame.Rect(character_left + square_width, character_top - square_height, square_width, square_height)
+    asquare = pygame.Rect(character_left - 2*square_width, character_top, square_width, square_height)
+    dsquare = pygame.Rect(character_left + 2*square_width, character_top, square_width, square_height)
+    zsquare = pygame.Rect(character_left - square_width, character_top + square_height, square_width, square_height)
+    xsquare = pygame.Rect(character_left, character_top + 2*square_height, square_width, square_height)
+    csquare = pygame.Rect(character_left + square_width, character_top + square_height, square_width, square_height)
+    
+    #squares that require moving one space
+    upsquare = pygame.Rect(character_left, character_top - square_height, square_width, square_height)
+    leftsquare = pygame.Rect(character_left - square_width, character_top, square_width, square_height)
+    rightsquare = pygame.Rect(character_left + square_width, character_top, square_width, square_height)
+    downsquare = pygame.Rect(character_left, character_top + square_height, square_width, square_height)
+
+    squares = [qsquare, wsquare, esquare, asquare, dsquare, zsquare, xsquare, csquare, upsquare, leftsquare, rightsquare, downsquare]
+    for option in squares:
+        #check if square is occupied
+
     return
 
 def main():
@@ -768,23 +797,18 @@ def main():
     pygame.time.delay(4000)
 
     square = pygame.Rect(roll_imp.image.left - 100/6, roll_imp.image.top - 100/6, screen.get_width()/6, screen.get_height()/6)
-    highlight(square)
+    highlight(square, red)
     anna_box(menu_box_size, "That's a Roll Imp.", None)
     pygame.time.delay(2000)
     anna_box(menu_box_size, "The Roll Imp has a lance, which is a BLUE weapon.", None)
     pygame.time.delay(4000)
     anna_box(menu_box_size, "Keep the weapon-triangle advantages in mind when you", "attack enemies.")
     pygame.time.delay(5000)
+    anna_box(menu_box_size, "BLUE weapons are effective against RED weapons, which are", "effective against GREEN weapons,") 
+    pygame.time.delay(5000)
+    anna_box(menu_box_size, "and GREEN weapons are effective against BLUE weapons.", None)
+    pygame.time.delay(4000)
 
-    #temp, while testing
-    wait_to_start = True
-    while wait_to_start == True: #wait for Player to press a key
-        pygame.event.pump()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return
-            elif event.type == pygame.KEYDOWN:
-                wait_to_start = False    
     return
 
 main()
