@@ -311,8 +311,12 @@ def anna_box(menu_box_size):
     """Draw Anna's dialogue box on the screen."""
     global screen, bg
     #insert Anna image here
-    menu_box = bg.fill(fe_blue, menu_box_size)    
-    print_button_text("ANNA", menu_box, bg)
+    menu_box = bg.fill(fe_blue, menu_box_size)
+    font = pygame.font.Font(None, 20)
+    text = font.render("ANNA", 1, black)
+    text_position = text.get_rect()
+    text_position.left = 50
+    bg.blit(text, text_position)
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
