@@ -307,6 +307,16 @@ def draw_map():
     pygame.display.flip()
     return
 
+def anna_box(menu_box_size):
+    """Draw Anna's dialogue box on the screen."""
+    global screen, bg
+    #insert Anna image here
+    menu_box = bg.fill(fe_blue, menu_box_size)    
+    print_button_text("ANNA", menu_box, bg)
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
+    return
+
 def highlight(square):
     """Highlight a square with a red outline."""
     global bg, screen
@@ -697,10 +707,11 @@ def main():
     draw_map()
     spawn(mc, None)
     spawn(roll_imp, [mc])
+    menu_box_size = pygame.Rect(0, 0, screen.get_width(), screen.get_height()/6)
+    #menu_box = bg.fill(fe_blue, menu_box_size)
+    anna_box(menu_box_size)
 
-    q_box = bg.fill(fe_blue, q_box_size)
-
-    square = pygame.Rect(roll_imp.image.left - 100/6, roll_imp.image.top - 100/6, screen.get_width() / 6, screen.get_height() / 6)
+    square = pygame.Rect(roll_imp.image.left - 100/6, roll_imp.image.top - 100/6, screen.get_width()/6, screen.get_height()/6)
     highlight(square)
 
     #temp, while testing
