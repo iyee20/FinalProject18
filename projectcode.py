@@ -17,6 +17,9 @@ blue = (36, 101, 224) #a blue to represent blue-colored characters
 green = (6, 165, 41) #a green to represent green-colored characters
 gray = (100, 117, 126) #a gray to represent colorless characters
 
+#Anna's image
+anna = pygame.image.load("Images/NPC/Anna.png").convert_alpha() #load file as surface
+
 class Player:
     """The class for the Player."""
     def __init__(self, name, appearance, eye_color, hair_color, weapon, color, image, equipped=None):
@@ -71,10 +74,10 @@ class Foe:
         self.x = 0
         self.y = 0
 bg = screen.convert()
-roll_imp_img = pygame.Rect((0,0,50,50)) #replace later
-bun_dragon_img = pygame.Rect((0,0,50,50))
-baguette_devil_img = pygame.Rect((0,0,50,50))
-loaf_archer_img = pygame.Rect((0,0,50,50))
+roll_imp_img = pygame.image.load("Images/NPC/roll_imp.png").convert_alpha()
+bun_dragon_img = pygame.image.load("Images/NPC/bun_dragon.png").convert_alpha()
+baguette_devil_img = pygame.image.load("Images/NPC/baguette_devil.png").convert_alpha()
+loaf_archer_img = pygame.image.load("Images/NPC/loaf_archer.png").convert_alpha()
 roll_imp = Foe("Roll Imp", "lance", "blue", roll_imp_img, 18, 11, 6, 3, 5, 1, 10) #based on Blue Fighter, 1 star with Iron Lance
 bun_dragon = Foe("Bun Dragon", "dragonstone", "green", bun_dragon_img, 16, 13, 5, 4, 7, 1, 25) #based on Green Manakete, 2 star with Fire Breath
 baguette_devil = Foe("Baguette Devil", "sword", "red", baguette_devil_img, 18, 11, 6, 3, 5, 1, 10) #based on Sword Fighter, 1 star with Iron Sword
@@ -247,16 +250,10 @@ def spawn(character, spawned):
             if squarex == other.x and squarey == other.y:
                 squarex = random.randint(0, 5)
                 squarey = random.randint(1, 5)
-    #location = screen.get_width() * squarex / 6, screen.get_height() * squarey / 6
-    character.image.left = (screen.get_width() * squarex / 6) + 100/6 #temp, while images are Rects
-    character.image.top = (screen.get_height() * squarey / 6) + 100/6
+    location = (screen.get_width() * squarex / 6) + 100/6, (screen.get_height() * squarey / 6) + 100/6
     character.x = squarex
     character.y = squarey
-    if character.name == "You":
-        bg.fill(light_blue, character.image) #temp, while images are Rects
-    else:
-        bg.fill(fe_blue, character.image)
-    #bg.blit(character.image, location)
+    bg.blit(character.image, location)
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
@@ -309,11 +306,11 @@ def draw_map():
 
 def anna_box(menu_box_size, dialogue, line2):
     """Draw Anna's dialogue box on the screen."""
-    global screen, bg
-    #insert Anna image here
+    global screen, bg, anna
     bg.fill(fe_blue, menu_box_size)
     white_box = pygame.Rect(10, 0, screen.get_width() - 20, menu_box_size.height)
     bg.fill(white, white_box)
+    bg.blit(anna, (10,0)) #print Anna's image
 
     font = pygame.font.Font(None, 20)
     text = font.render("ANNA", 1, black) #print Anna's name
@@ -381,8 +378,8 @@ def move_options(character, others):
     """Highlight the player's move options in green."""
     square_width = screen.get_width()/6
     square_height = screen.get_height()/6
-    character_left = character.image.left - 100/6
-    character_top = character.image.top - 100/6
+    character_left = character.image.get_width() - 50 - 100/6
+    character_top = character.image.get_height() - 50 - 100/6
     
     #characters can only move 1 space. otherwise, I would die from writing instructions.
     upsquare = pygame.Rect(character_left, character_top - square_height, square_width, square_height)
@@ -560,34 +557,34 @@ def main():
                     hair_color = "blue"
                     choosing = False
     
-    #mc_appearance_eye color_hair color
-    mc_m_r_r = pygame.Rect((0,0,50,50)) #replace later
-    mc_m_r_g = pygame.Rect((0,0,50,50))
-    mc_m_r_b = pygame.Rect((0,0,50,50))
-    mc_m_b_r = pygame.Rect((0,0,50,50))
-    mc_m_b_b = pygame.Rect((0,0,50,50))
-    mc_m_b_g = pygame.Rect((0,0,50,50))
-    mc_m_g_r = pygame.Rect((0,0,50,50))
-    mc_m_g_b = pygame.Rect((0,0,50,50))
-    mc_m_g_g = pygame.Rect((0,0,50,50))
-    mc_f_r_r = pygame.Rect((0,0,50,50))
-    mc_f_r_g = pygame.Rect((0,0,50,50))
-    mc_f_r_b = pygame.Rect((0,0,50,50))
-    mc_f_b_r = pygame.Rect((0,0,50,50))
-    mc_f_b_b = pygame.Rect((0,0,50,50))
-    mc_f_b_g = pygame.Rect((0,0,50,50))
-    mc_f_g_r = pygame.Rect((0,0,50,50))
-    mc_f_g_b = pygame.Rect((0,0,50,50))
-    mc_f_g_g = pygame.Rect((0,0,50,50))
-    mc_n_r_r = pygame.Rect((0,0,50,50))
-    mc_n_r_g = pygame.Rect((0,0,50,50))
-    mc_n_r_b = pygame.Rect((0,0,50,50))
-    mc_n_b_r = pygame.Rect((0,0,50,50))
-    mc_n_b_b = pygame.Rect((0,0,50,50))
-    mc_n_b_g = pygame.Rect((0,0,50,50))
-    mc_n_g_r = pygame.Rect((0,0,50,50))
-    mc_n_g_b = pygame.Rect((0,0,50,50))
-    mc_n_g_g = pygame.Rect((0,0,50,50))
+    #mc_appearance_eye color_hair color - load file as surface
+    mc_m_r_r = pygame.image.load("Images/Player/mc_m_r_r.png").convert_alpha() #yes, I lost a few brain cells while copying and pasting these lines
+    mc_m_r_g = pygame.image.load("Images/Player/mc_m_r_g.png").convert_alpha() #I lost a few more while coloring and saving all of the images, too
+    mc_m_r_b = pygame.image.load("Images/Player/mc_m_r_b.png").convert_alpha()
+    mc_m_b_r = pygame.image.load("Images/Player/mc_m_b_r.png").convert_alpha()
+    mc_m_b_b = pygame.image.load("Images/Player/mc_m_b_b.png").convert_alpha()
+    mc_m_b_g = pygame.image.load("Images/Player/mc_m_b_g.png").convert_alpha()
+    mc_m_g_r = pygame.image.load("Images/Player/mc_m_g_r.png").convert_alpha()
+    mc_m_g_b = pygame.image.load("Images/Player/mc_m_g_b.png").convert_alpha()
+    mc_m_g_g = pygame.image.load("Images/Player/mc_m_g_g.png").convert_alpha()
+    mc_f_r_r = pygame.image.load("Images/Player/mc_f_r_r.png").convert_alpha()
+    mc_f_r_g = pygame.image.load("Images/Player/mc_f_r_g.png").convert_alpha()
+    mc_f_r_b = pygame.image.load("Images/Player/mc_f_r_b.png").convert_alpha()
+    mc_f_b_r = pygame.image.load("Images/Player/mc_f_b_r.png").convert_alpha()
+    mc_f_b_b = pygame.image.load("Images/Player/mc_f_b_b.png").convert_alpha()
+    mc_f_b_g = pygame.image.load("Images/Player/mc_f_b_g.png").convert_alpha()
+    mc_f_g_r = pygame.image.load("Images/Player/mc_f_g_r.png").convert_alpha()
+    mc_f_g_b = pygame.image.load("Images/Player/mc_f_g_b.png").convert_alpha()
+    mc_f_g_g = pygame.image.load("Images/Player/mc_f_g_g.png").convert_alpha()
+    mc_n_r_r = pygame.image.load("Images/Player/mc_n_r_r.png").convert_alpha()
+    mc_n_r_g = pygame.image.load("Images/Player/mc_n_r_g.png").convert_alpha()
+    mc_n_r_b = pygame.image.load("Images/Player/mc_n_r_b.png").convert_alpha()
+    mc_n_b_r = pygame.image.load("Images/Player/mc_n_b_r.png").convert_alpha()
+    mc_n_b_b = pygame.image.load("Images/Player/mc_n_b_b.png").convert_alpha()
+    mc_n_b_g = pygame.image.load("Images/Player/mc_n_b_g.png").convert_alpha()
+    mc_n_g_r = pygame.image.load("Images/Player/mc_n_g_r.png").convert_alpha()
+    mc_n_g_b = pygame.image.load("Images/Player/mc_n_g_b.png").convert_alpha()
+    mc_n_g_g = pygame.image.load("Images/Player/mc_n_g_g.png").convert_alpha()
     #image logic - which icon is used
     if appearance == "male":
         if eye_color == "red":
@@ -787,14 +784,14 @@ def main():
     menu_box_size = pygame.Rect(0, 0, screen.get_width(), screen.get_height()/6)
     #menu_box = bg.fill(fe_blue, menu_box_size)
     #draw_menu(menu_box_size)
-    move_options(mc, [roll_imp])
+    #move_options(mc, [roll_imp])
     anna_box(menu_box_size, "Good morning!", None)
     pygame.time.delay(2000) #Player gets 2 seconds to read
     anna_box(menu_box_size, "The forces of Brioche have invaded Mantou. We need your help!", None)
     pygame.time.delay(4000)
 
     #tutorial dialogue
-    square = pygame.Rect(roll_imp.image.left - 100/6, roll_imp.image.top - 100/6, screen.get_width()/6, screen.get_height()/6)
+    square = pygame.Rect((screen.get_width() * roll_imp.x / 6), (screen.get_height() * roll_imp.y / 6), screen.get_width()/6, screen.get_height()/6)
     highlight(square, red)
     anna_box(menu_box_size, "That's a Roll Imp.", None)
     pygame.time.delay(2000)
