@@ -239,13 +239,13 @@ def print_button_text(text, button, bg):
 def spawn(character, spawned):
     """Spawn a character on the screen."""
     global screen, bg
-    #location is based on a 6 x 6 tile map
-    squarex = random.randint(1, 5)
-    squarey = random.randint(1, 5)
+    #location is based on a 6 x 5 tile map
+    squarex = random.randint(0, 5)
+    squarey = random.randint(1, 5) #the top row is taken up by the menu box
     if spawned != None:
         for other in spawned:
             if squarex == other.x and squarey == other.y:
-                squarex = random.randint(1, 5)
+                squarex = random.randint(0, 5)
                 squarey = random.randint(1, 5)
     #location = screen.get_width() * squarex / 6, screen.get_height() * squarey / 6
     character.image.left = (screen.get_width() * squarex / 6) + 100/6 #temp, while images are Rects
@@ -264,7 +264,7 @@ def spawn(character, spawned):
 def tilex(character):
     """Check which tile in the x direction a character is on."""
     global screen
-    for x in range(1, 5):
+    for x in range(0, 5):
         if x == character.x:
             return x
         else:
@@ -283,10 +283,10 @@ def move(character, tilexmove, tileymove):
     """Move a character on the screen."""
     global screen, bg
     position = character.get_rect()
-    if tilex(character) + 2 > 5:
-        tilexmove = 5 - tilex(character)
-    if tiley(character) + 2 > 5:
-        tileymove = 5 - tiley(character)
+    if tilex(character) + 1 > 5 or tilex(character) - 1 < 0:
+        tilexmove = 0
+    if tiley(character) + 1 > 5 or tiley(character) - 1 < 1:
+        tileymove = 0
     position = position.move(tilexmove, tileymove)
     bg.blit(character, position)
     screen.blit(bg, (0,0))
@@ -316,18 +316,18 @@ def anna_box(menu_box_size, dialogue, line2):
     bg.fill(white, white_box)
 
     font = pygame.font.Font(None, 20)
-    text = font.render("ANNA", 1, black)
+    text = font.render("ANNA", 1, black) #print Anna's name
     text_position = text.get_rect()
     text_position.left = 60
     bg.blit(text, text_position)
     
-    dialogue_text = font.render(dialogue, 1, black)
+    dialogue_text = font.render(dialogue, 1, black) #print first line of dialogue
     dialogue_text_pos = dialogue_text.get_rect()
     dialogue_text_pos.left = 60
     dialogue_text_pos.top = text_position.height + 5
     bg.blit(dialogue_text, dialogue_text_pos)
 
-    if line2 != None:
+    if line2 != None: #if there is a second line of dialogue, print it
         line2_text = font.render(line2, 1, black)
         line2_text_pos = line2_text.get_rect()
         line2_text_pos.left = 60
@@ -350,17 +350,17 @@ def draw_menu(menu_box_size):
     bg.fill(light_blue, new_lvl_box)
 
     font = pygame.font.Font(None, 20)
-    t1 = font.render("1. Check Bread", 1, black)
+    t1 = font.render("1. Check Bread", 1, black) #check bread button
     t1_pos = t1.get_rect()
     t1_pos.center = check_bread_box.center
     bg.blit(t1, t1_pos)
 
-    t2 = font.render("2. Unlock Bread", 1, black)
+    t2 = font.render("2. Unlock Bread", 1, black) #unlock bread button
     t2_pos = t2.get_rect()
     t2_pos.center = unlock_bread_box.center
     bg.blit(t2, t2_pos)
 
-    t3 = font.render("3. New Level", 1, black)
+    t3 = font.render("3. New Level", 1, black) #new level button
     t3_pos = t3.get_rect()
     t3_pos.center = new_lvl_box.center
     bg.blit(t3, t3_pos)
@@ -372,37 +372,33 @@ def draw_menu(menu_box_size):
 def highlight(square, color):
     """Highlight a square with a colored outline."""
     global bg, screen
-    pygame.draw.rect(bg, color, square, 5)
+    pygame.draw.rect(bg, color, square, 5) #draw a colored rectangle with width 5
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
 
 def move_options(character, others):
-    """Highlight the player's move options in green"""
+    """Highlight the player's move options in green."""
     square_width = screen.get_width()/6
     square_height = screen.get_height()/6
     character_left = character.image.left - 100/6
     character_top = character.image.top - 100/6
-
-    #squares that require moving two squares
-    qsquare = pygame.Rect(character_left - square_width, character_top - square_height, square_width, square_height)
-    wsquare = pygame.Rect(character_left, character_top - 2*square_height, square_width, square_height)
-    esquare = pygame.Rect(character_left + square_width, character_top - square_height, square_width, square_height)
-    asquare = pygame.Rect(character_left - 2*square_width, character_top, square_width, square_height)
-    dsquare = pygame.Rect(character_left + 2*square_width, character_top, square_width, square_height)
-    zsquare = pygame.Rect(character_left - square_width, character_top + square_height, square_width, square_height)
-    xsquare = pygame.Rect(character_left, character_top + 2*square_height, square_width, square_height)
-    csquare = pygame.Rect(character_left + square_width, character_top + square_height, square_width, square_height)
     
-    #squares that require moving one space
+    #characters can only move 1 space. otherwise, I would die from writing instructions.
     upsquare = pygame.Rect(character_left, character_top - square_height, square_width, square_height)
     leftsquare = pygame.Rect(character_left - square_width, character_top, square_width, square_height)
     rightsquare = pygame.Rect(character_left + square_width, character_top, square_width, square_height)
     downsquare = pygame.Rect(character_left, character_top + square_height, square_width, square_height)
 
-    squares = [qsquare, wsquare, esquare, asquare, dsquare, zsquare, xsquare, csquare, upsquare, leftsquare, rightsquare, downsquare]
-    for option in squares:
-        #check if square is occupied
+    squares = [upsquare, leftsquare, rightsquare, downsquare]
+    for option in squares: #for each square...
+        squarex = option.left * square_width
+        squarey = option.top * square_height
+        for char in others: #check against all char in list others
+            if squarex == char.x and squarey == char.y:
+                None #if the square is occupied, don't highlight it
+            else:
+                highlight(option, green) #highlight unoccupied squares green
 
     return
 
@@ -791,11 +787,13 @@ def main():
     menu_box_size = pygame.Rect(0, 0, screen.get_width(), screen.get_height()/6)
     #menu_box = bg.fill(fe_blue, menu_box_size)
     #draw_menu(menu_box_size)
+    move_options(mc, [roll_imp])
     anna_box(menu_box_size, "Good morning!", None)
     pygame.time.delay(2000) #Player gets 2 seconds to read
     anna_box(menu_box_size, "The forces of Brioche have invaded Mantou. We need your help!", None)
     pygame.time.delay(4000)
 
+    #tutorial dialogue
     square = pygame.Rect(roll_imp.image.left - 100/6, roll_imp.image.top - 100/6, screen.get_width()/6, screen.get_height()/6)
     highlight(square, red)
     anna_box(menu_box_size, "That's a Roll Imp.", None)
