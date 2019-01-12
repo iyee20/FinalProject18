@@ -258,34 +258,21 @@ def spawn(character, spawned):
     pygame.display.flip()
     return
 
-def tilex(character):
-    """Check which tile in the x direction a character is on."""
-    global screen
-    for x in range(0, 5):
-        if x == character.x:
-            return x
-        else:
-            None
-
-def tiley(character):
-    """Check which title in the y direction a character is on."""
-    global screen
-    for y in range(1, 5):
-        if y == character.y:
-            return y
-        else:
-            None
-
-def move(character, tilexmove, tileymove):
+def move(character, tilexmove, tileymove, others):
     """Move a character on the screen."""
     global screen, bg
-    position = character.get_rect()
-    if tilex(character) + 1 > 5 or tilex(character) - 1 < 0:
+    position = pygame.Rect((screen.get_width() * character.x / 6) + 100/6, (screen.get_height() * character.y / 6) + 100/6, screen.get_width()/6, screen.get_height()/6)
+    if character.x + 1 > 5 or character.x - 1 < 0:
         tilexmove = 0
-    if tiley(character) + 1 > 5 or tiley(character) - 1 < 1:
+    if character.y + 1 > 5 or character.y - 1 < 1:
         tileymove = 0
-    position = position.move(tilexmove, tileymove)
-    bg.blit(character, position)
+    character.x += tilexmove
+    character.y += tileymove
+    tilexmove *= screen.get_width()/6
+    tileymove *= screen.get_height()/6
+    new_pos = position.move(tilexmove, tileymove)
+    clean_map(others)
+    bg.blit(character.image, new_pos)
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
@@ -293,13 +280,14 @@ def move(character, tilexmove, tileymove):
 def draw_map():
     """Draw the battle map on the screen."""
     global screen, bg
-    bg.fill((250, 250, 250))
+    fill_space = pygame.Rect(0, bg.get_height()/6, bg.get_width(), bg.get_height()*5/6)
+    bg.fill((250, 250, 250), fill_space)
     for x in range(1,6):
         linespace = screen.get_width() * x / 6
-        pygame.draw.line(bg, (0,0,0), (linespace, 0), (linespace, screen.get_height()))
+        pygame.draw.line(bg, (0,0,0), (linespace, bg.get_height()/6), (linespace, bg.get_height()))
     for y in range(1,6):
         linespace = screen.get_height() * y / 6
-        pygame.draw.line(bg, (0,0,0), (0, linespace), (screen.get_width(), linespace))
+        pygame.draw.line(bg, (0,0,0), (0, linespace), (bg.get_width(), linespace))
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
@@ -378,8 +366,8 @@ def move_options(character, others):
     """Highlight the player's move options in green."""
     square_width = screen.get_width()/6
     square_height = screen.get_height()/6
-    character_left = character.image.get_width() - 50 - 100/6
-    character_top = character.image.get_height() - 50 - 100/6
+    character_left = character.x * square_width
+    character_top = character.y * square_height
     
     #characters can only move 1 space. otherwise, I would die from writing instructions.
     upsquare = pygame.Rect(character_left, character_top - square_height, square_width, square_height)
@@ -395,8 +383,62 @@ def move_options(character, others):
             if squarex == char.x and squarey == char.y:
                 None #if the square is occupied, don't highlight it
             else:
-                highlight(option, green) #highlight unoccupied squares green
+                if squarey != 0:
+                    highlight(option, green) #highlight unoccupied squares green
 
+    return
+
+def move_player(mc, others):
+    """Move the Player on the map."""
+    global bg, screen
+    choosing = True
+    while choosing == True:
+        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.KEYDOWN: #if a key is pressed...
+                pressed = pygame.key.get_pressed()
+                if pressed[pygame.K_UP] == True:
+                    move(mc, 0, -1, others)
+                    choosing = False
+                elif pressed[pygame.K_LEFT] == True:
+                    move(mc, -1, 0, others)
+                    choosing = False
+                elif pressed[pygame.K_RIGHT] == True:
+                    move(mc, 1, 0, others)
+                    choosing = False
+                elif pressed[pygame.K_DOWN] == True:
+                    move(mc, 0, 1, others)
+                    choosing = False
+                elif pressed[pygame.KP_K_ENTER] == True or pressed[pygame.K_RETURN] == True:
+                    choosing = False #don't move if the Player presses ENTER
+
+    return
+
+def move_npc(character, others):
+    """Move an enemy on the map."""
+    direction = random.randint(1,4) #randomly pick a direction
+    if direction == 1:
+        move(character, 0, -1, others) #1 = move up
+    elif direction == 2:
+        move(character, 1, 0, others) #2 = move right
+    elif direction == 3:
+        move(character, 0, 1, others) #3 = move down
+    elif direction == 4:
+        move(character, -1, 0, others) #4 = move left
+
+    return
+
+def clean_map(others):
+    """Draw the map as it is before a character moves, without that character."""
+    global bg, screen
+    draw_map()
+    for char in others: #for every char in the list others...
+        location = pygame.Rect((screen.get_width() * char.x / 6) + 100/6, (screen.get_height() * char.y / 6) + 100/6, screen.get_width()/6, screen.get_height()/6)
+        bg.blit(char.image, location)
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
     return
 
 def main():
@@ -754,13 +796,13 @@ def main():
         fire_breath.equip(mc)
     elif weapon == "tome":
         if color == "red":
-            print_button_text("You received a Fire tome!", q_box, bg)
+            print_button_text("You received a red Fire tome!", q_box, bg)
             fire_tome.equip(mc)
         elif color == "blue":
-            print_button_text("You received a Light tome!", q_box, bg)
+            print_button_text("You received a blue Light tome!", q_box, bg)
             light_tome.equip(mc)
         elif color == "green":
-            print_button_text("You received a Wind tome!", q_box, bg)
+            print_button_text("You received a green Wind tome!", q_box, bg)
             wind_tome.equip(mc)
     
     bottom_text = font.render("Press any key to continue.", 1, black) #font = size of instructions on opening screen, 25px
@@ -784,8 +826,7 @@ def main():
     menu_box_size = pygame.Rect(0, 0, screen.get_width(), screen.get_height()/6)
     #menu_box = bg.fill(fe_blue, menu_box_size)
     #draw_menu(menu_box_size)
-    #move_options(mc, [roll_imp])
-    anna_box(menu_box_size, "Good morning!", None)
+    anna_box(menu_box_size, "Good morning! It's good to see that you're finally awake.", None)
     pygame.time.delay(2000) #Player gets 2 seconds to read
     anna_box(menu_box_size, "The forces of Brioche have invaded Mantou. We need your help!", None)
     pygame.time.delay(4000)
@@ -803,6 +844,15 @@ def main():
     pygame.time.delay(5000)
     anna_box(menu_box_size, "and GREEN weapons are effective against BLUE weapons.", None)
     pygame.time.delay(4000)
+    anna_box(menu_box_size, "Let's try attacking the Roll Imp!", None)
+    pygame.time.delay(2000)
+    anna_box(menu_box_size, "Move using the arrow keys until you get in range to attack.", "Press ENTER if you don't need to move.")
+
+    move_options(mc, [roll_imp]) #show Player their move options
+    move_player(mc, [roll_imp]) #the Player moves
+    move_npc(roll_imp, [mc]) #the roll_imp moves
+
+    pygame.time.delay(2000)
 
     return
 
