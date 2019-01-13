@@ -142,7 +142,7 @@ def unlock(character, mc):
 def in_range(attacker, defender):
     x_dif = abs(attacker.x - defender.x)
     y_dif = abs(attacker.y - defender.y)
-    if x_dif + y_dif <= attacker.range:
+    if x_dif + y_dif <= attacker.rng:
         return True
     else:
         return False
@@ -176,7 +176,7 @@ def attack(attacker, defender):
     if dmg <= 0:
         dmg = 0
     defender.hp -= dmg
-    input(f"{defender.name} took {dmg} damage.")
+    display_health([attacker, defender])
     return
 
 def check_defeat(defeated):
@@ -185,6 +185,19 @@ def check_defeat(defeated):
         return True
     else:
         return False
+
+def reset_hp(character):
+    """Reset a character's hp."""
+    if character.chartype != "foe":
+       character.hp = 17
+    else:
+        if character.name == "Roll Imp" or character.name == "Baguette Devil":
+            character.hp = 18
+        elif character.name == "Bun Dragon":
+            character.hp = 16
+        elif character.name == "Loaf Archer":
+            character.hp = 17
+    return 
 
 class Weapon:
     """The class for weapons that can be equipped by the Player."""
@@ -323,6 +336,24 @@ def anna_box(menu_box_size, dialogue, line2):
     pygame.display.flip()
     return
 
+def display_health(menu_box_size, characters):
+    """Display the health of all characters on the screen."""
+    global screen, bg
+    bg.fill(fe_blue, menu_box_size)
+    font = pygame.font.Font(None, 20)
+    above = -20
+    for character in characters:
+        above += 30 #add 30px to the above line
+        text = font.render(f"{character}: {character.hp} HP", 1, black)
+        text_pos = text.get_rect()
+        text_pos.left = 10
+        text_pos.top = above
+        bg.blit(text, text_pos)
+    
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
+    return
+
 def draw_menu(menu_box_size):
     """Draw the menu box on the screen."""
     global screen, bg
@@ -411,7 +442,7 @@ def move_player(mc, others):
                 elif pressed[pygame.K_DOWN] == True:
                     move(mc, 0, 1, others)
                     choosing = False
-                elif pressed[pygame.KP_K_ENTER] == True or pressed[pygame.K_RETURN] == True:
+                elif pressed[pygame.K_KP_ENTER] == True or pressed[pygame.K_RETURN] == True:
                     choosing = False #don't move if the Player presses ENTER
 
     return
@@ -848,9 +879,18 @@ def main():
     pygame.time.delay(2000)
     anna_box(menu_box_size, "Move using the arrow keys until you get in range to attack.", "Press ENTER if you don't need to move.")
 
-    move_options(mc, [roll_imp]) #show Player their move options
-    move_player(mc, [roll_imp]) #the Player moves
-    move_npc(roll_imp, [mc]) #the roll_imp moves
+    fight1 = True
+    while fight1 == True:
+        move_options(mc, [roll_imp]) #show Player their move options
+        move_player(mc, [roll_imp]) #the Player moves
+        if in_range(mc, roll_imp) == True:
+            attack(mc, roll_imp) #the Player automatically attacks if the Roll Imp is in range
+            if check_defeat(roll_imp) == True:
+                fight1 = False
+        else:
+            move_npc(roll_imp, [mc]) #the Roll Imp moves
+            if in_range(roll_imp, mc) == True:
+                attack(roll_imp, mc)
 
     pygame.time.delay(2000)
 
