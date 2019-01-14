@@ -85,16 +85,14 @@ loaf_archer = Foe("Loaf Archer", "bow", "colorless", loaf_archer_img, 17, 10, 5,
 
 def get_bread(defeated, mc):
     """Obtain breadcrumbs from defeating an enemy."""
-    input(f"You received {defeated.drop} breadcrumbs.")
     mc.breadcrumbs += defeated.drop
     return
 
-def breadify(mc):
+def breadify(mc, menu_box_size):
     """Convert breadcrumbs to bread."""
+    global screen, bg
     converted = mc.breadcrumbs % 15 #how many whole breads can be made
     mc.breadcrumbs -= 15 * converted
-    input(f"You received {converted} bread.")
-    input(f"You now have {mc.breadcrumbs} breadcrumbs.")
     mc.bread += converted
     return
 
@@ -261,9 +259,9 @@ def move(character, tilexmove, tileymove, others):
     """Move a character on the screen."""
     global screen, bg
     position = pygame.Rect((screen.get_width() * character.x / 6) + 100/6, (screen.get_height() * character.y / 6) + 100/6, screen.get_width()/6, screen.get_height()/6)
-    if character.x + tilexmove > 5 or character.x - tilexmove < 0:
+    if character.x + tilexmove > 5 or character.x + tilexmove < 0:
         tilexmove = 0
-    if character.y + tileymove > 5 or character.y - tileymove < 1:
+    if character.y + tileymove > 5 or character.y + tileymove < 1:
         tileymove = 0
     character.x += tilexmove
     character.y += tileymove
@@ -372,11 +370,11 @@ def draw_menu(menu_box_size):
     return
 
 def bread_menu(menu_box_size, mc):
-    """Draw the bread menu on the screen."""
+    """Draw the bread menu on the screen and interact with it."""
     global screen, bg
     bg.fill(fe_blue, menu_box_size)
-    breadcrumb_box = pygame.Rect(10, 10, menu_box_size.width/3 - 10, menu_box_size.height/2 - 10)
-    bread_box = pygame.Rect(10, menu_box_size.height/2 - 10, menu_box_size.width/3 - 10, menu_box_size.height/2 - 10)
+    breadcrumb_box = pygame.Rect(10, 10, menu_box_size.width/3 - 10, menu_box_size.height/2 - 11)
+    bread_box = pygame.Rect(10, menu_box_size.height/2 + 2, menu_box_size.width/3 - 10, menu_box_size.height/2 - 11)
     convert_bread_box = pygame.Rect(menu_box_size.width/3 + 6, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
     go_back_box = pygame.Rect(menu_box_size.width*2/3, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
     bg.fill(light_blue, breadcrumb_box)
@@ -387,7 +385,7 @@ def bread_menu(menu_box_size, mc):
     font = pygame.font.Font(None, 20)
     t1 = font.render(f"Breadcrumbs: {mc.breadcrumbs}", 1, black) #display number of breadcrumbs
     t1_pos = t1.get_rect()
-    t1_pos.center = breadcrumbs_box.center
+    t1_pos.center = breadcrumb_box.center
     bg.blit(t1, t1_pos)
 
     t2 = font.render(f"Bread: {mc.bread}", 1, black) #display amount of bread
@@ -404,7 +402,22 @@ def bread_menu(menu_box_size, mc):
     t4_pos = t4.get_rect()
     t4_pos.center = go_back_box.center
     bg.blit(t4, t4_pos)
-    
+
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
+
+    wait_to_start = True
+    while wait_to_start == True:
+        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                pressed = pygame.key.get_pressed()
+                if pressed[pygame.K_1] == True:
+                    breadify(mc, menu_box_size)
+                    wait_to_start = False
+                elif pressed[pygame.K_2] == True:
+                    wait_to_start = False
+
     return
 
 def highlight(square, color):
@@ -483,11 +496,11 @@ def move_npc(character, others):
 
     return
 
-def clean_map(others):
-    """Draw the map as it is before a character moves, without that character."""
+def clean_map(characters):
+    """Draw the map with characters placed on it."""
     global bg, screen
     draw_map()
-    for char in others: #for every char in the list others...
+    for char in characters: #for every char in the list characters...
         location = pygame.Rect((screen.get_width() * char.x / 6) + 100/6, (screen.get_height() * char.y / 6) + 100/6, screen.get_width()/6, screen.get_height()/6)
         bg.blit(char.image, location)
     screen.blit(bg, (0,0))
@@ -902,19 +915,27 @@ def main():
     anna_box(menu_box_size, "Move using the arrow keys until you get in range to attack.", "Press ENTER if you don't need to move.")
 
     fight1 = True
+    turn = "mc"
     while fight1 == True:
-        move_options(mc, [roll_imp]) #show Player their move options
-        move_player(mc, [roll_imp]) #the Player moves
-        if in_range(mc, roll_imp) == True:
-            attack(mc, roll_imp, menu_box_size) #the Player automatically attacks if the Roll Imp is in range
-            if check_defeat(roll_imp) == True:
-                clean_map([mc])
-                fight1 = False
-        move_npc(roll_imp, [mc]) #the Roll Imp moves
-        if in_range(roll_imp, mc) == True:
-            attack(roll_imp, mc, menu_box_size)
-            if check_defeat(mc) == True:
-                fight1 = False
+        if check_defeat(roll_imp) == True:
+            draw_map()
+            get_bread(roll_imp, mc)
+            reset_hp(roll_imp)
+            reset_hp(mc)
+            fight1 = False
+        elif turn == "mc":
+            move_options(mc, [roll_imp]) #show Player their move options
+            move_player(mc, [roll_imp]) #the Player moves
+            if in_range(mc, roll_imp) == True:
+                attack(mc, roll_imp, menu_box_size) #the Player automatically attacks if the Roll Imp is in range
+            turn = "foe"  
+        else:
+            move_npc(roll_imp, [mc]) #the Roll Imp moves
+            if in_range(roll_imp, mc) == True:
+                attack(roll_imp, mc, menu_box_size)
+                if check_defeat(mc) == True: #this most likely won't happen, but the Player can be defeated by the first enemy
+                    fight1 = False
+            turn = "mc"
 
     anna_box(menu_box_size, "Nice work!", None)
     pygame.time.delay(2000)
@@ -930,6 +951,8 @@ def main():
                 return
             elif event.type == pygame.KEYDOWN: #the Player doesn't actually have to press 1 this time, but... they don't have to know that
                 wait_to_start = False    
+
+    bread_menu(menu_box_size, mc)
 
     pygame.time.delay(2000)
 
