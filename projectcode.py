@@ -164,7 +164,7 @@ def advantage(attacker, defender):
 
 physical_weapons = ["sword", "lance", "axe", "bow", "dagger"]
 magic_weapons = ["tome", "dragonstone"]
-def attack(attacker, defender):
+def attack(attacker, defender, menu_box_size):
     """The attacker attacks the defender."""
     if attacker.weapon in physical_weapons:
         dmg = attacker.a - defender.d
@@ -175,8 +175,8 @@ def attack(attacker, defender):
         dmg = defender.hp
     if dmg <= 0:
         dmg = 0
-    defender.hp -= dmg
-    display_health([attacker, defender])
+    defender.hp -= int(dmg)
+    display_health(menu_box_size, [attacker, defender])
     return
 
 def check_defeat(defeated):
@@ -208,17 +208,9 @@ class Weapon:
 
     def equip(self, mc):
         """Equip a weapon."""
-        print(f"Equipped the {self.name}.")
         mc.a += self.might
         mc.rng = self.rng
         mc.equipped = self.name
-
-    def unequip(self, mc):
-        """Unequip a weapon."""
-        print(f"Unequipped the {self.name}.")
-        mc.a -= self.might
-        mc.equipped = None
-        mc.rng = 1
 iron_sword = Weapon("Iron Sword", 6, 1)
 iron_lance = Weapon("Iron Lance", 6, 1)
 iron_axe = Weapon("Iron Axe", 6, 1)
@@ -275,9 +267,9 @@ def move(character, tilexmove, tileymove, others):
     """Move a character on the screen."""
     global screen, bg
     position = pygame.Rect((screen.get_width() * character.x / 6) + 100/6, (screen.get_height() * character.y / 6) + 100/6, screen.get_width()/6, screen.get_height()/6)
-    if character.x + 1 > 5 or character.x - 1 < 0:
+    if character.x + tilexmove > 5 or character.x - tilexmove < 0:
         tilexmove = 0
-    if character.y + 1 > 5 or character.y - 1 < 1:
+    if character.y + tileymove > 5 or character.y - tileymove < 1:
         tileymove = 0
     character.x += tilexmove
     character.y += tileymove
@@ -344,7 +336,7 @@ def display_health(menu_box_size, characters):
     above = -20
     for character in characters:
         above += 30 #add 30px to the above line
-        text = font.render(f"{character}: {character.hp} HP", 1, black)
+        text = font.render(f"{character.name}: {character.hp} HP", 1, black)
         text_pos = text.get_rect()
         text_pos.left = 10
         text_pos.top = above
@@ -884,13 +876,15 @@ def main():
         move_options(mc, [roll_imp]) #show Player their move options
         move_player(mc, [roll_imp]) #the Player moves
         if in_range(mc, roll_imp) == True:
-            attack(mc, roll_imp) #the Player automatically attacks if the Roll Imp is in range
+            attack(mc, roll_imp, menu_box_size) #the Player automatically attacks if the Roll Imp is in range
             if check_defeat(roll_imp) == True:
+                clean_map([mc])
                 fight1 = False
-        else:
-            move_npc(roll_imp, [mc]) #the Roll Imp moves
-            if in_range(roll_imp, mc) == True:
-                attack(roll_imp, mc)
+        move_npc(roll_imp, [mc]) #the Roll Imp moves
+        if in_range(roll_imp, mc) == True:
+            attack(roll_imp, mc, menu_box_size)
+            if check_defeat(mc) == True:
+                fight1 = False
 
     pygame.time.delay(2000)
 
