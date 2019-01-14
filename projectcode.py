@@ -420,6 +420,46 @@ def bread_menu(menu_box_size, mc):
 
     return
 
+def unlock_menu(menu_box_size):
+    """Draw the bread unlocking box on the screen."""
+    global screen, bg
+    bg.fill(fe_blue, menu_box_size)
+    marth_box = pygame.Rect(10, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
+    lucina_box = pygame.Rect(menu_box_size.width/3 + 6, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
+    masked_marth_box = pygame.Rect(menu_box_size.width*2/3, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
+    if marth.bread == 0:
+        bg.fill(light_blue, marth_box)
+    else:
+        bg.fill(gray, marth_box)
+    if lucina.bread == 0:
+        bg.fill(light_blue, lucina_box)
+    else:
+        bg.fill(gray, lucina_box)
+    if masked_marth.bread == 0:
+        bg.fill(light_blue, masked_marth_box)
+    else:
+        bg.fill(gray, masked_marth_box)
+
+    font = pygame.font.Font(None, 20)
+    t1 = font.render("1. Marth", 1, black) #Marth cutscene button
+    t1_pos = t1.get_rect()
+    t1_pos.center = check_bread_box.center
+    bg.blit(t1, t1_pos)
+
+    t2 = font.render("2. Lucina", 1, black) #Lucina cutscene button
+    t2_pos = t2.get_rect()
+    t2_pos.center = unlock_bread_box.center
+    bg.blit(t2, t2_pos)
+
+    t3 = font.render("3. Masked Marth", 1, black) #Masked Marth cutscene button
+    t3_pos = t3.get_rect()
+    t3_pos.center = new_lvl_box.center
+    bg.blit(t3, t3_pos)
+
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
+    return
+
 def highlight(square, color):
     """Highlight a square with a colored outline."""
     global bg, screen
