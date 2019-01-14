@@ -6,6 +6,7 @@ pygame.font.init() #initialize font module so font functions work
 
 size = width, height = 500, 500 #define size as a certain px area
 screen = pygame.display.set_mode(size) #create a Surface called "screen" with pygame (the screen the computer displays)
+bg = screen.convert() #bg is a separate Surface based on screen
 
 #define colors by name for convenience
 black = (0, 0, 0) #rgb value of black
@@ -24,7 +25,7 @@ class Player:
     """The class for the Player."""
     def __init__(self, name, appearance, eye_color, hair_color, weapon, color, image, equipped=None):
         self.chartype = "player"
-        self.name = name
+        self.name = name #name is always Player, but this attribute is for consistency
         self.appearance = appearance
         if self.appearance == "male":
             self.he = "he"
@@ -43,8 +44,8 @@ class Player:
         self.weapon = weapon
         self.color = color
         self.image = image
-        self.equipped = equipped
-#base stats based on the first hero in Fire Emblem Heroes, Takumi, at 4 star rarity, except for range
+        self.equipped = equipped #which weapon is equipped
+#base stats based on the first summoned hero in Fire Emblem Heroes, Takumi, at 4 star rarity, except for range
         self.hp = 17 #health
         self.a = 8 #attack
         self.d = 5 #defense
@@ -73,7 +74,6 @@ class Foe:
         self.drop = drop #how many breadcrumbs are dropped by the enemy
         self.x = 0
         self.y = 0
-bg = screen.convert()
 roll_imp_img = pygame.image.load("Images/NPC/roll_imp.png").convert_alpha()
 bun_dragon_img = pygame.image.load("Images/NPC/bun_dragon.png").convert_alpha()
 baguette_devil_img = pygame.image.load("Images/NPC/baguette_devil.png").convert_alpha()
@@ -85,13 +85,13 @@ loaf_archer = Foe("Loaf Archer", "bow", "colorless", loaf_archer_img, 17, 10, 5,
 
 def get_bread(defeated, mc):
     """Obtain breadcrumbs from defeating an enemy."""
-    mc.breadcrumbs += defeated.drop
+    mc.breadcrumbs += defeated.drop #add to Player's breadcrumb count
     return
 
 def breadify(mc, menu_box_size):
     """Convert breadcrumbs to bread."""
     global screen, bg
-    converted = mc.breadcrumbs % 15 #how many whole breads can be made
+    converted = mc.breadcrumbs % 15 #calculate how many whole breads can be made
     mc.breadcrumbs -= 15 * converted
     mc.bread += converted
     return
@@ -114,27 +114,26 @@ class Bread:
             self.his = "their"
             self.him = "them"
         self.bread = bread #how much bread is required to unlock their cutscene
-marth = Bread("Marth", "male", 10)
-masked_marth = Bread("Masked Marth", "nonbinary", 75)
-lucina = Bread("Masked Marth", "female", 50)
+marth = Bread("Marth", "male", 10) #Marth - the main character of many FE games
+lucina = Bread("Masked Marth", "female", 50) #Lucina - Marth's descendant
+masked_marth = Bread("Masked Marth", "nonbinary", 75) #Masked Marth - Lucina, but disguised as Marth to save your timeline... but that's another can of worms
 
 def unlock(character, mc):
     """Unlock a character's cutscene."""
     if character.bread == 0:
         None #if character has already been unlocked, nothing happens
     elif mc.bread < character.bread:
-        input(f"You don't have enough bread to unlock {character.name} yet.")
+        input(f"You don't have enough bread to unlock {character.name} yet.") #fix
     elif mc.bread >= character.bread:
         input(f"{character.name} unlocked!")
         mc.bread -= character.bread
-        input(f"You now have {mc.bread} bread.")
         character.bread = 0 #character's bread cost is now 0
     return
 
 def in_range(attacker, defender):
     x_dif = abs(attacker.x - defender.x)
     y_dif = abs(attacker.y - defender.y)
-    if x_dif + y_dif <= attacker.rng:
+    if x_dif + y_dif <= attacker.rng: #this allows attackers with range 2 to attack within 2 spaces
         return True
     else:
         return False
@@ -179,10 +178,10 @@ def check_defeat(defeated):
         return False
 
 def reset_hp(character):
-    """Reset a character's hp."""
+    """Reset a character's hp after battle."""
     if character.chartype != "foe":
-       character.hp = 17
-    else:
+       character.hp = 17 #Player hp is reset
+    else: #reset foe hp
         if character.name == "Roll Imp" or character.name == "Baguette Devil":
             character.hp = 18
         elif character.name == "Bun Dragon":
@@ -195,7 +194,7 @@ class Weapon:
     """The class for weapons that can be equipped by the Player."""
     def __init__(self, name, might, rng):
         self.name = name
-        self.might = might
+        self.might = might #the attack power of the weapon
         self.rng = rng
 
     def equip(self, mc):
@@ -209,16 +208,16 @@ iron_axe = Weapon("Iron Axe", 6, 1)
 iron_bow = Weapon("Iron Bow", 4, 2)
 iron_dagger = Weapon("Iron Dagger", 3, 2)
 fire_breath = Weapon("Fire Breath", 6, 1)
-fire_tome = Weapon("Fire", 4, 2)
-light_tome = Weapon("Light", 4, 2)
-wind_tome = Weapon("Wind", 4, 2)
+fire_tome = Weapon("Fire", 4, 2) #red tome
+light_tome = Weapon("Light", 4, 2) #blue tome
+wind_tome = Weapon("Wind", 4, 2) #green tome
 
 def print_question(question, q_box, bg):
     """Print a question on q_box."""
     q_font = pygame.font.Font(None, 25)
     q_text = q_font.render(question, 1, black)
     q_text_position = q_text.get_rect()
-    q_text_position.center = q_box.center
+    q_text_position.center = q_box.center #question text is at center of q_box
     bg.blit(q_text, q_text_position) #blit question text
     q_font_sub = pygame.font.Font(None, 20)
     q_text = q_font_sub.render("Type the number on the button.", 1, black)
@@ -232,7 +231,7 @@ def print_button_text(text, button, bg):
     font = pygame.font.Font(None, 20)
     text = font.render(text, 1, black)
     text_position = text.get_rect()
-    text_position.center = button.center
+    text_position.center = button.center #print button text at center of button
     bg.blit(text, text_position)
     return
 
@@ -241,15 +240,15 @@ def spawn(character, spawned):
     global screen, bg
     #location is based on a 6 x 5 tile map
     squarex = random.randint(0, 5)
-    squarey = random.randint(1, 5) #the top row is taken up by the menu box
+    squarey = random.randint(1, 5) #the top row is taken up by the menu box, so spawn starting at the second row down
     if spawned != None:
         for other in spawned:
-            if squarex == other.x and squarey == other.y:
+            if squarex == other.x and squarey == other.y: #re-spawn a character if they would spawn on top of another character
                 squarex = random.randint(0, 5)
                 squarey = random.randint(1, 5)
     location = (screen.get_width() * squarex / 6) + 100/6, (screen.get_height() * squarey / 6) + 100/6
     character.x = squarex
-    character.y = squarey
+    character.y = squarey #record x, y location
     bg.blit(character.image, location)
     screen.blit(bg, (0,0))
     pygame.display.flip()
@@ -259,10 +258,14 @@ def move(character, tilexmove, tileymove, others):
     """Move a character on the screen."""
     global screen, bg
     position = pygame.Rect((screen.get_width() * character.x / 6) + 100/6, (screen.get_height() * character.y / 6) + 100/6, screen.get_width()/6, screen.get_height()/6)
-    if character.x + tilexmove > 5 or character.x + tilexmove < 0:
+    if character.x + tilexmove > 5 or character.x + tilexmove < 0: #character can't move beyond the screen
         tilexmove = 0
     if character.y + tileymove > 5 or character.y + tileymove < 1:
         tileymove = 0
+    for char in others:
+        if character.x + tilexmove == char.x and character.y + tileymove == char.y:
+            tilexmove = 0
+            tileymove = 0 #nullify movement if it would move on top of another character
     character.x += tilexmove
     character.y += tileymove
     tilexmove *= screen.get_width()/6
@@ -277,9 +280,9 @@ def move(character, tilexmove, tileymove, others):
 def draw_map():
     """Draw the battle map on the screen."""
     global screen, bg
-    fill_space = pygame.Rect(0, bg.get_height()/6, bg.get_width(), bg.get_height()*5/6)
+    fill_space = pygame.Rect(0, bg.get_height()/6, bg.get_width(), bg.get_height()*5/6) #only fill the 5 x 6 grid below the menu
     bg.fill((250, 250, 250), fill_space)
-    for x in range(1,6):
+    for x in range(1,6): #draw grid lines
         linespace = screen.get_width() * x / 6
         pygame.draw.line(bg, (0,0,0), (linespace, bg.get_height()/6), (linespace, bg.get_height()))
     for y in range(1,6):
@@ -341,13 +344,13 @@ def display_health(menu_box_size, characters):
 def draw_menu(menu_box_size):
     """Draw the menu box on the screen."""
     global screen, bg
-    bg.fill(fe_blue, menu_box_size)
+    bg.fill(fe_blue, menu_box_size) #fill menu bg
     check_bread_box = pygame.Rect(10, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
     unlock_bread_box = pygame.Rect(menu_box_size.width/3 + 6, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
     new_lvl_box = pygame.Rect(menu_box_size.width*2/3, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
     bg.fill(light_blue, check_bread_box)
     bg.fill(light_blue, unlock_bread_box)
-    bg.fill(light_blue, new_lvl_box)
+    bg.fill(light_blue, new_lvl_box) #fill buttons
 
     font = pygame.font.Font(None, 20)
     t1 = font.render("1. Check Bread", 1, black) #check bread button
@@ -372,12 +375,12 @@ def draw_menu(menu_box_size):
 def bread_menu(menu_box_size, mc):
     """Draw the bread menu on the screen and interact with it."""
     global screen, bg
-    bg.fill(fe_blue, menu_box_size)
+    bg.fill(fe_blue, menu_box_size) #fill menu bg
     breadcrumb_box = pygame.Rect(10, 10, menu_box_size.width/3 - 10, menu_box_size.height/2 - 11)
     bread_box = pygame.Rect(10, menu_box_size.height/2 + 2, menu_box_size.width/3 - 10, menu_box_size.height/2 - 11)
     convert_bread_box = pygame.Rect(menu_box_size.width/3 + 6, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
     go_back_box = pygame.Rect(menu_box_size.width*2/3, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
-    bg.fill(light_blue, breadcrumb_box)
+    bg.fill(light_blue, breadcrumb_box) #fill buttons
     bg.fill(light_blue, bread_box)
     bg.fill(light_blue, convert_bread_box)
     bg.fill(light_blue, go_back_box)
@@ -413,7 +416,7 @@ def bread_menu(menu_box_size, mc):
             if event.type == pygame.KEYDOWN:
                 pressed = pygame.key.get_pressed()
                 if pressed[pygame.K_1] == True:
-                    breadify(mc, menu_box_size)
+                    breadify(mc, menu_box_size) #convert bread if the button is "pressed"
                     wait_to_start = False
                 elif pressed[pygame.K_2] == True:
                     wait_to_start = False
@@ -423,14 +426,15 @@ def bread_menu(menu_box_size, mc):
 def unlock_menu(menu_box_size):
     """Draw the bread unlocking box on the screen."""
     global screen, bg
-    bg.fill(fe_blue, menu_box_size)
-    marth_box = pygame.Rect(10, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
-    lucina_box = pygame.Rect(menu_box_size.width/3 + 6, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
-    masked_marth_box = pygame.Rect(menu_box_size.width*2/3, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
+    bg.fill(fe_blue, menu_box_size) #fill menu bg
+    marth_box = pygame.Rect(10, 10, menu_box_size.width/4 - 10, menu_box_size.height - 20)
+    lucina_box = pygame.Rect(menu_box_size.width/4, 10, menu_box_size.width/4 - 10, menu_box_size.height - 20)
+    masked_marth_box = pygame.Rect(menu_box_size.width/2, 10, menu_box_size.width/4 - 10, menu_box_size.height - 20)
+    go_back_box = pygame.Rect(menu_box_size.width*3/4, 10, menu_box_size.width/4 - 10, menu_box_size.height - 20)
     if marth.bread == 0:
-        bg.fill(light_blue, marth_box)
+        bg.fill(light_blue, marth_box) #fill button blue if unlocked
     else:
-        bg.fill(gray, marth_box)
+        bg.fill(gray, marth_box) #fill button gray if not unlocked
     if lucina.bread == 0:
         bg.fill(light_blue, lucina_box)
     else:
@@ -439,25 +443,50 @@ def unlock_menu(menu_box_size):
         bg.fill(light_blue, masked_marth_box)
     else:
         bg.fill(gray, masked_marth_box)
+    bg.fill(light_blue, exit_box)
 
     font = pygame.font.Font(None, 20)
     t1 = font.render("1. Marth", 1, black) #Marth cutscene button
     t1_pos = t1.get_rect()
-    t1_pos.center = check_bread_box.center
+    t1_pos.center = marth_box.center
     bg.blit(t1, t1_pos)
 
     t2 = font.render("2. Lucina", 1, black) #Lucina cutscene button
     t2_pos = t2.get_rect()
-    t2_pos.center = unlock_bread_box.center
+    t2_pos.center = lucina_box.center
     bg.blit(t2, t2_pos)
 
     t3 = font.render("3. Masked Marth", 1, black) #Masked Marth cutscene button
     t3_pos = t3.get_rect()
-    t3_pos.center = new_lvl_box.center
+    t3_pos.center = masked_marth_box.center
     bg.blit(t3, t3_pos)
+
+    t4 = font.render("4. Exit Unlock Menu", 1, black) #exit unlock menu button
+    t4_pos = t4.get_rect()
+    t4_pos.center = go_back_box.center
+    bg.blit(t4, t4_pos)
 
     screen.blit(bg, (0,0))
     pygame.display.flip()
+
+    wait_to_start = True
+    while wait_to_start == True:
+        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                pressed = pygame.key.get_pressed()
+                if pressed[pygame.K_1] == True:
+                    #marth cutscene
+                    wait_to_start = False
+                elif pressed[pygame.K_2] == True:
+                    #lucina cutscene
+                    wait_to_start = False
+                elif pressed[pygame.K_3] == True:
+                    #masked marth cutscene
+                    wait_to_start = False
+                elif pressed[pygame.K_4] == True:
+                    wait_to_start = False
+
     return
 
 def highlight(square, color):
@@ -550,7 +579,7 @@ def clean_map(characters):
 def main():
     """The code of the game."""
     #opening screen
-    bg = screen.convert()
+    global screen, bg
     
     bg.fill(white) #the opening bg is white, for now
     pygame.display.flip()
@@ -959,6 +988,7 @@ def main():
     while fight1 == True:
         if check_defeat(roll_imp) == True:
             draw_map()
+            spawn(mc, None)
             get_bread(roll_imp, mc)
             reset_hp(roll_imp)
             reset_hp(mc)
@@ -971,6 +1001,7 @@ def main():
             turn = "foe"  
         else:
             move_npc(roll_imp, [mc]) #the Roll Imp moves
+            pygame.time.delay(1000)
             if in_range(roll_imp, mc) == True:
                 attack(roll_imp, mc, menu_box_size)
                 if check_defeat(mc) == True: #this most likely won't happen, but the Player can be defeated by the first enemy
@@ -993,6 +1024,9 @@ def main():
                 wait_to_start = False    
 
     bread_menu(menu_box_size, mc)
+    anna_box(menu_box_size, "Breadcrumbs can be converted in the Check Bread menu.", "It takes 15 breadcrumbs to make 1 bread.")
+    pygame.time.delay(5000)
+    anna_box(menu_box_size, "Bread is used to unlock bread characters. Press 2 to open", "the Unlock Bread menu.")
 
     pygame.time.delay(2000)
 
