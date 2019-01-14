@@ -98,12 +98,6 @@ def breadify(mc):
     mc.bread += converted
     return
 
-def check_bread(mc):
-    """Check how many breadcrumbs and how much bread the player has."""
-    input(f"Breadcrumbs: {mc.breadcrumbs}")
-    input(f"Bread: {mc.bread}")
-    return
-
 class Bread:
     """The class for the Fire Emblem characters with cutscenes."""
     def __init__(self, name, appearance, bread):
@@ -375,6 +369,42 @@ def draw_menu(menu_box_size):
 
     screen.blit(bg, (0,0))
     pygame.display.flip()
+    return
+
+def bread_menu(menu_box_size, mc):
+    """Draw the bread menu on the screen."""
+    global screen, bg
+    bg.fill(fe_blue, menu_box_size)
+    breadcrumb_box = pygame.Rect(10, 10, menu_box_size.width/3 - 10, menu_box_size.height/2 - 10)
+    bread_box = pygame.Rect(10, menu_box_size.height/2 - 10, menu_box_size.width/3 - 10, menu_box_size.height/2 - 10)
+    convert_bread_box = pygame.Rect(menu_box_size.width/3 + 6, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
+    go_back_box = pygame.Rect(menu_box_size.width*2/3, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
+    bg.fill(light_blue, breadcrumb_box)
+    bg.fill(light_blue, bread_box)
+    bg.fill(light_blue, convert_bread_box)
+    bg.fill(light_blue, go_back_box)
+
+    font = pygame.font.Font(None, 20)
+    t1 = font.render(f"Breadcrumbs: {mc.breadcrumbs}", 1, black) #display number of breadcrumbs
+    t1_pos = t1.get_rect()
+    t1_pos.center = breadcrumbs_box.center
+    bg.blit(t1, t1_pos)
+
+    t2 = font.render(f"Bread: {mc.bread}", 1, black) #display amount of bread
+    t2_pos = t2.get_rect()
+    t2_pos.center = bread_box.center
+    bg.blit(t2, t2_pos)
+
+    t3 = font.render("1. Convert Bread", 1, black) #convert breadcrumbs to bread button
+    t3_pos = t3.get_rect()
+    t3_pos.center = convert_bread_box.center
+    bg.blit(t3, t3_pos)
+
+    t4 = font.render("2. Exit Bread Menu", 1, black) #exit bread menu button
+    t4_pos = t4.get_rect()
+    t4_pos.center = go_back_box.center
+    bg.blit(t4, t4_pos)
+    
     return
 
 def highlight(square, color):
@@ -800,13 +830,13 @@ def main():
     q_box = bg.fill(white, q_box_size) #q_box is white for the equipment screen
 
     if weapon == "sword":
-        print_button_text("You received an Iron Sword!", q_box, bg) #print text on q_box (q_box is the "button")
+        print_button_text("You received a red Iron Sword!", q_box, bg) #print text on q_box (q_box is the "button")
         iron_sword.equip(mc)
     elif weapon == "lance":
-        print_button_text("You received an Iron Lance!", q_box, bg)
+        print_button_text("You received a blue Iron Lance!", q_box, bg)
         iron_lance.equip(mc)
     elif weapon == "axe":
-        print_button_text("You received an Iron Axe!", q_box, bg)
+        print_button_text("You received a green Iron Axe!", q_box, bg)
         iron_axe.equip(mc)
     elif weapon == "dagger":
         print_button_text(f"You received a {color} Iron Dagger!", q_box, bg)
@@ -885,6 +915,21 @@ def main():
             attack(roll_imp, mc, menu_box_size)
             if check_defeat(mc) == True:
                 fight1 = False
+
+    anna_box(menu_box_size, "Nice work!", None)
+    pygame.time.delay(2000)
+    anna_box(menu_box_size, "Every time you defeat an enemy, you collect breadcrumbs.", None)
+    pygame.time.delay(4000)
+    anna_box(menu_box_size, "Press 1 to open the breadcrumb menu.", None)
+
+    wait_to_start = True
+    while wait_to_start == True:
+        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.KEYDOWN: #the Player doesn't actually have to press 1 this time, but... they don't have to know that
+                wait_to_start = False    
 
     pygame.time.delay(2000)
 
