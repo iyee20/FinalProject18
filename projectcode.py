@@ -114,6 +114,9 @@ class Bread:
             self.his = "their"
             self.him = "them"
         self.bread = bread #how much bread is required to unlock their cutscene
+marth_img = pygame.image.load("Images/Bread/FEH_Marth.png").convert_alpha()
+lucina_img = pygame.image.load("Images/Bread/FEH_Lucina.png").convert_alpha()
+masked_marth_img = pygame.image.load("Images/Bread/FEH_Masked_Marth.png").convert_alpha()
 marth = Bread("Marth", "male", 10) #Marth - the main character of many FE games
 lucina = Bread("Masked Marth", "female", 50) #Lucina - Marth's descendant
 masked_marth = Bread("Masked Marth", "nonbinary", 75) #Masked Marth - Lucina, but disguised as Marth to save your timeline... but that's another can of worms
@@ -128,6 +131,50 @@ def unlock(character, mc):
         input(f"{character.name} unlocked!")
         mc.bread -= character.bread
         character.bread = 0 #character's bread cost is now 0
+    return
+
+def bread_dialogue(dialogue, line2, line3):
+    """Print a bread character's dialogue during a cutscene."""
+    global screen, bg
+    text_box = pygame.Rect(0, 400, bg.get_width(), 100)
+    bg.fill(fe_blue, text_box)
+
+    font = pygame.font.Font(None, 20)
+    text = font.render(dialogue, 1, black)
+    text_pos = text.get_rect()
+    text_pos.left = 10
+    text_pos.top = text_box.get_height() + 10
+    bg.blit(text, text_pos)
+
+    if line2 != None:
+        t2 = font.render(line2, 1, black)
+        t2_pos = t2.get_rect()
+        t2_pos.left = 10
+        t2_pos.top = text_pos.top + 25
+        bg.blit(t2, t2_pos)
+
+    if line3 != None:
+        t3 = font.render(line3, 1, black)
+        t3_pos = t3.get_rect()
+        t3_pos.left = 10
+        t3_pos.top = t2_pos.top + 25
+        bg.blit(t3, t3_pos)
+
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
+
+    return
+
+def marth_scene():
+    """Run through Marth's cutscene."""
+    global screen, bg
+    bg.fill(white)
+    bg.blit(marth_img, (0,0))
+
+    bread_dialogue("There you are. Anna said you wanted to talk to me.", None, None)
+    pygame.time.delay(2000)
+    bread_dialogue("You know that you can come over whenever you want to talk, right?", None, None)
+
     return
 
 def in_range(attacker, defender):
