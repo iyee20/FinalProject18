@@ -1179,6 +1179,8 @@ def main():
 
     unlock_menu(menu_box_size, mc)
 
+    anna_box(menu_box_size, "When you're done with a level, press 3 to", None)
+
     pygame.time.delay(2000)
 
     return
