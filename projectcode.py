@@ -27,18 +27,6 @@ class Player:
         self.chartype = "player"
         self.name = name #name is always Player, but this attribute is for consistency
         self.appearance = appearance
-        if self.appearance == "male":
-            self.he = "he"
-            self.his = "his"
-            self.him = "him"
-        if self.appearance == "female":
-            self.he = "she"
-            self.his = "her"
-            self.him = "her"
-        if self.appearance == "nonbinary":
-            self.he = "they"
-            self.his = "their"
-            self.him = "them"
         self.eye_color = eye_color
         self.hair_color = hair_color
         self.weapon = weapon
@@ -98,36 +86,24 @@ def breadify(mc, menu_box_size):
 
 class Bread:
     """The class for the Fire Emblem characters with cutscenes."""
-    def __init__(self, name, appearance, bread):
+    def __init__(self, name, bread):
         self.name = name
-        self.appearance = appearance
-        if self.appearance == "male":
-            self.he = "he"
-            self.his = "his"
-            self.him = "him"
-        if self.appearance == "female":
-            self.he = "she"
-            self.his = "her"
-            self.him = "her"
-        if self.appearance == "nonbinary":
-            self.he = "they"
-            self.his = "their"
-            self.him = "them"
         self.bread = bread #how much bread is required to unlock their cutscene
+        self.unlocked = False
 marth_img = pygame.image.load("Images/Bread/FEH_Marth.png").convert_alpha()
 lucina_img = pygame.image.load("Images/Bread/FEH_Lucina.png").convert_alpha()
 masked_marth_img = pygame.image.load("Images/Bread/FEH_Masked_Marth.png").convert_alpha()
-marth = Bread("Marth", "male", 3) #Marth - the main character of many FE games
-lucina = Bread("Masked Marth", "female", 5) #Lucina - Marth's descendant
-masked_marth = Bread("Masked Marth", "nonbinary", 7) #Masked Marth - Lucina, but disguised as Marth to save your timeline... but that's another can of worms
+marth = Bread("Marth", 3) #Marth - the main character of many FE games
+lucina = Bread("Masked Marth", 5) #Lucina - Marth's descendant
+masked_marth = Bread("Masked Marth", 7) #Masked Marth - Lucina, but disguised as Marth to save your timeline... but that's another can of worms
 
 def unlock(character, mc, menu_box_size):
     """Unlock a character's cutscene."""
     global bg, screen
     font = pygame.font.Font(None, 20)
-    if character.bread == 0:
+    if character.unlocked == True:
         None #if character has already been unlocked, nothing happens
-    elif mc.bread < character.bread:
+    elif character.bread > mc.bread:
         bg.fill(fe_blue, menu_box_size)
         text = font.render(f"You don't have enough bread to unlock {character.name} yet.", 1 , black)
         text_pos = text.get_rect()
@@ -135,7 +111,7 @@ def unlock(character, mc, menu_box_size):
         bg.blit(text, text_pos)
         screen.blit(bg, (0,0))
         pygame.display.flip()
-    elif mc.bread >= character.bread:
+    elif character.bread <= mc.bread:
         bg.fill(fe_blue, menu_box_size)
         text = font.render(f"{character.name} unlocked!", 1, black)
         text_pos = text.get_rect()
@@ -144,7 +120,7 @@ def unlock(character, mc, menu_box_size):
         screen.blit(bg, (0,0))
         pygame.display.flip()
         mc.bread -= character.bread #subtract spent bread from current bread
-        character.bread = 0 #character's bread cost is now 0
+        character.unlocked = True #character is now unlocked
     return
 
 def bread_dialogue(dialogue, line2, line3):
@@ -537,6 +513,12 @@ def bread_menu(menu_box_size, mc):
                 pressed = pygame.key.get_pressed()
                 if pressed[pygame.K_1] == True:
                     breadify(mc, menu_box_size) #convert bread if the button is "pressed"
+                    bg.fill(light_blue, convert_bread_box)
+                    converted_message = font.render("Bread converted!", 1, black)
+                    bg.blit(converted_message, t3_pos) #replace button with success message
+                    screen.blit(bg, (0,0))
+                    pygame.display.flip()
+                    pygame.time.delay(2000)
                     wait_to_start = False
                 elif pressed[pygame.K_2] == True:
                     wait_to_start = False
@@ -607,32 +589,38 @@ def unlock_menu(menu_box_size, mc):
     screen.blit(bg, (0,0))
     pygame.display.flip()
 
-    wait_to_start = True
-    while wait_to_start == True:
+    running = True
+    while running == True:
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 pressed = pygame.key.get_pressed()
                 if pressed[pygame.K_1] == True:
-                    if marth.bread != 0:
+                    if marth.unlocked == False:
                         unlock(marth, mc, menu_box_size)
-                        unlock_menu(menu_box_size, mc)
-                    elif marth.bread == 0:
+                        pygame.time.delay(2000)
+                        running = False
+                    elif marth.bread == True:
                         marth_scene()
+                        running = False
                 elif pressed[pygame.K_2] == True:
-                    if lucina.bread != 0:
+                    if lucina.unlocked == False:
                         unlock(lucina, mc, menu_box_size)
-                        unlock_menu(menu_box_size, mc)
-                    elif lucina.bread == 0:
+                        pygame.time.delay(2000)
+                        running = False
+                    elif lucina.unlocked == True:
                         lucina_scene()
+                        running = False
                 elif pressed[pygame.K_3] == True:
-                    if masked_marth.bread != 0:
+                    if masked_marth.unlocked == False:
                         unlock(masked_marth, mc, menu_box_size)
-                        unlock_menu(menu_box_size, mc)
-                    elif masked_marth.bread == 0:
+                        pygame.time.delay(2000)
+                        running = False
+                    elif masked_marth.unlocked == True:
                         masked_marth_scene()
+                        running = False
                 elif pressed[pygame.K_4] == True:
-                    wait_to_start = False
+                    running = False
 
     return
 
@@ -1135,7 +1123,7 @@ def main():
     while fight1 == True:
         if check_defeat(roll_imp) == True:
             draw_map()
-            spawn(mc, None)
+            clean_map([mc])
             get_bread(roll_imp, mc)
             reset_hp(roll_imp)
             reset_hp(mc)
@@ -1152,6 +1140,11 @@ def main():
             if in_range(roll_imp, mc) == True:
                 attack(roll_imp, mc, menu_box_size)
                 if check_defeat(mc) == True: #this most likely won't happen, but the Player can be defeated by the first enemy
+                    draw_map()
+                    clean_map([mc])
+                    get_bread(roll_imp, mc) #the Player wins anyway, however
+                    reset_hp(roll_imp)
+                    reset_hp(mc)
                     fight1 = False
             turn = "mc"
 
