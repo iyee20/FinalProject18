@@ -711,6 +711,56 @@ def clean_map(characters):
     pygame.display.flip()
     return
 
+def new_level(characters, menu_box_size):
+    """Generate and play through a level."""
+    global bg, screen
+    draw_map() #draw bg map
+    draw_menu(menu_box_size) #draw menu on top
+    foes = characters #list of foes = given list of characters
+    foes.remove(mc) #remove Player from foe list
+    spawn(mc, None) #spawn Player
+
+    foe_number = random.randint(1, 100) #1 or 2 foes spawned
+    if foe_number <= 80: #80% chance of spawning 1 foe
+        to_spawn1 = random.choice(foes)
+        spawn(to_spawn1, [mc])
+        to_spawn2 = None
+    elif foe_number > 80: #20% chance of spawning 2 foes
+        to_spawn1 = random.choice(foes)
+        to_spawn2 = random.choice(foes)
+        spawn(to_spawn1, [mc])
+        spawn(to_spawn2, [mc, to_spawn2])
+    
+    fighting = True
+    turn = "mc"
+    while fighting == True:
+        if to_spawn2 == None:
+            if check_defeat(to_spawn1) == True:
+                clean_map([mc]) #clean map of all but Player
+                get_bread(to_spawn1, mc)
+                reset_hp(to_spawn1)
+                reset_hp(mc)
+                fighting = False
+            elif turn == "mc":
+                move_options(mc, [to_spawn1]) #view move options
+                move_player(mc, [to_spawn1]) #Player moves
+                if in_range(mc, to_spawn1) == True:
+                    attack(mc, to_spawn1, menu_box_size)
+                turn = "foe"
+            else:
+                move_npc(to_spawn1, [mc]) #foe moves
+                pygame.time.delay(1000)
+                if in_range(to_spawn1, mc) == True:
+                    attack(to_spawn1, mc, menu_box_size)
+                    if check_defeat(mc) == True:
+                        reset_hp(to_spawn1) #no reward is gained by losing, but HP is reset for the next level
+                        reset_hp(mc)
+                        return
+                turn = "mc"
+
+    return
+
+
 def main():
     """The code of the game."""
     #opening screen
@@ -1122,7 +1172,6 @@ def main():
     turn = "mc"
     while fight1 == True:
         if check_defeat(roll_imp) == True:
-            draw_map()
             clean_map([mc])
             get_bread(roll_imp, mc)
             reset_hp(roll_imp)
@@ -1140,7 +1189,6 @@ def main():
             if in_range(roll_imp, mc) == True:
                 attack(roll_imp, mc, menu_box_size)
                 if check_defeat(mc) == True: #this most likely won't happen, but the Player can be defeated by the first enemy
-                    draw_map()
                     clean_map([mc])
                     get_bread(roll_imp, mc) #the Player wins anyway, however
                     reset_hp(roll_imp)
@@ -1179,7 +1227,10 @@ def main():
 
     unlock_menu(menu_box_size, mc)
 
-    anna_box(menu_box_size, "When you're done with a level, press 3 to", None)
+    anna_box(menu_box_size, "When you want to spawn new enemies or re-spawn, press 3 to start a new level.", None)
+    pygame.time.delay(4000)
+    anna_box(menu_box_size, "Alright! Let's get this bread!", None)
+    pygame.time.delay(2000)
 
     pygame.time.delay(2000)
 
