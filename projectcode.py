@@ -117,19 +117,33 @@ class Bread:
 marth_img = pygame.image.load("Images/Bread/FEH_Marth.png").convert_alpha()
 lucina_img = pygame.image.load("Images/Bread/FEH_Lucina.png").convert_alpha()
 masked_marth_img = pygame.image.load("Images/Bread/FEH_Masked_Marth.png").convert_alpha()
-marth = Bread("Marth", "male", 10) #Marth - the main character of many FE games
-lucina = Bread("Masked Marth", "female", 50) #Lucina - Marth's descendant
-masked_marth = Bread("Masked Marth", "nonbinary", 75) #Masked Marth - Lucina, but disguised as Marth to save your timeline... but that's another can of worms
+marth = Bread("Marth", "male", 3) #Marth - the main character of many FE games
+lucina = Bread("Masked Marth", "female", 5) #Lucina - Marth's descendant
+masked_marth = Bread("Masked Marth", "nonbinary", 7) #Masked Marth - Lucina, but disguised as Marth to save your timeline... but that's another can of worms
 
-def unlock(character, mc):
+def unlock(character, mc, menu_box_size):
     """Unlock a character's cutscene."""
+    global bg, screen
+    font = pygame.font.Font(None, 20)
     if character.bread == 0:
         None #if character has already been unlocked, nothing happens
     elif mc.bread < character.bread:
-        input(f"You don't have enough bread to unlock {character.name} yet.") #fix
+        bg.fill(fe_blue, menu_box_size)
+        text = font.render(f"You don't have enough bread to unlock {character.name} yet.", 1 , black)
+        text_pos = text.get_rect()
+        text_pos.center = menu_box_size.center
+        bg.blit(text, text_pos)
+        screen.blit(bg, (0,0))
+        pygame.display.flip()
     elif mc.bread >= character.bread:
-        input(f"{character.name} unlocked!")
-        mc.bread -= character.bread
+        bg.fill(fe_blue, menu_box_size)
+        text = font.render(f"{character.name} unlocked!", 1, black)
+        text_pos = text.get_rect()
+        text_pos.center = menu_box_size.center
+        bg.blit(text, text_pos)
+        screen.blit(bg, (0,0))
+        pygame.display.flip()
+        mc.bread -= character.bread #subtract spent bread from current bread
         character.bread = 0 #character's bread cost is now 0
     return
 
@@ -183,7 +197,7 @@ def marth_scene():
     pygame.time.delay(3000)
     bread_dialogue("...That's very kind of you to say. I, too, am grateful for the support that", "you have given me. It is thanks to you that I have been able to help so", "many people.")
     pygame.time.delay(8000)
-    bread_dialogue("I am glad that we can be a beacon of hope for Mantou... together.", None, None)
+    bread_dialogue("I am glad that we can be a beacon of hope for Mantou together.", None, None)
     pygame.time.delay(4000)
 
     return
@@ -210,6 +224,29 @@ def lucina_scene():
     pygame.time.delay(5000)
     bread_dialogue("I look forward to spending more time with you.", None, None)
     pygame.time.delay(4000)
+
+    return
+
+def masked_marth_scene():
+    """Run through Masked Marth's cutscene."""
+    global bg
+    bg.fill(white)
+    bg.blit(masked_marth_img, (0,0))
+
+    bread_dialogue("Thank you for inviting me to talk. What is on your mind?", None, None)
+    pygame.time.delay(4000)
+    bread_dialogue("You wanted to ask about my mask? It was a gift from someone dear to me.", "I wear it to remember them.", None)
+    pygame.time.delay(5000)
+    bread_dialogue("...I understand your concern, but I can see perfectly well through it.", "There's no need to worry.", None)
+    pygame.time.delay(5000)
+    bread_dialogue("Hm? You were not referring to its effect on my sight?", None, None)
+    pygame.time.delay(4000)
+    bread_dialogue("...Oh! Oh. I-- I see. It is very kind of you to say that.", None, None)
+    pygame.time.delay(4000)
+    bread_dialogue("...To tell the truth, I had never thought of my eyes as pretty before.", None, None)
+    pygame.time.delay(4000)
+    bread_dialogue("It makes me happy to think that we will spend more time together. I look", "forward to it.", None)
+    pygame.time.delay(5000)
 
     return
 
@@ -484,7 +521,7 @@ def bread_menu(menu_box_size, mc):
     t3_pos.center = convert_bread_box.center
     bg.blit(t3, t3_pos)
 
-    t4 = font.render("2. Exit Bread Menu", 1, black) #exit bread menu button
+    t4 = font.render("2. Exit Menu", 1, black) #exit bread menu button
     t4_pos = t4.get_rect()
     t4_pos.center = go_back_box.center
     bg.blit(t4, t4_pos)
@@ -506,7 +543,7 @@ def bread_menu(menu_box_size, mc):
 
     return
 
-def unlock_menu(menu_box_size):
+def unlock_menu(menu_box_size, mc):
     """Draw the bread unlocking box on the screen."""
     global screen, bg
     bg.fill(fe_blue, menu_box_size) #fill menu bg
@@ -526,25 +563,43 @@ def unlock_menu(menu_box_size):
         bg.fill(light_blue, masked_marth_box)
     else:
         bg.fill(gray, masked_marth_box)
-    bg.fill(light_blue, exit_box)
+    bg.fill(light_blue, go_back_box)
 
     font = pygame.font.Font(None, 20)
     t1 = font.render("1. Marth", 1, black) #Marth cutscene button
     t1_pos = t1.get_rect()
     t1_pos.center = marth_box.center
     bg.blit(t1, t1_pos)
+    if marth.bread != 0: #print cost to unlock if Marth is not unlocked
+        sub1 = font.render("3 Bread", 1, black)
+        sub1_pos = sub1.get_rect()
+        sub1_pos.centerx = marth_box.centerx
+        sub1_pos.top = t1_pos.top + 25
+        bg.blit(sub1, sub1_pos)
 
     t2 = font.render("2. Lucina", 1, black) #Lucina cutscene button
     t2_pos = t2.get_rect()
     t2_pos.center = lucina_box.center
     bg.blit(t2, t2_pos)
+    if lucina.bread != 0: #print cost to unlock if Lucina is not unlocked
+        sub2 = font.render("5 Bread", 1, black)
+        sub2_pos = sub2.get_rect()
+        sub2_pos.centerx = lucina_box.centerx
+        sub2_pos.top = t2_pos.top + 25
+        bg.blit(sub2, sub2_pos)
 
     t3 = font.render("3. Masked Marth", 1, black) #Masked Marth cutscene button
     t3_pos = t3.get_rect()
     t3_pos.center = masked_marth_box.center
     bg.blit(t3, t3_pos)
+    if masked_marth.bread != 0: #print cost to unlock if Masked Marth is not unlocked
+        sub3 = font.render("7 Bread", 1, black)
+        sub3_pos = sub3.get_rect()
+        sub3_pos.centerx = masked_marth_box.centerx
+        sub3_pos.top = t2_pos.top + 25
+        bg.blit(sub3, sub3_pos)
 
-    t4 = font.render("4. Exit Unlock Menu", 1, black) #exit unlock menu button
+    t4 = font.render("4. Exit Menu", 1, black) #exit unlock menu button
     t4_pos = t4.get_rect()
     t4_pos.center = go_back_box.center
     bg.blit(t4, t4_pos)
@@ -559,14 +614,23 @@ def unlock_menu(menu_box_size):
             if event.type == pygame.KEYDOWN:
                 pressed = pygame.key.get_pressed()
                 if pressed[pygame.K_1] == True:
-                    #marth cutscene
-                    wait_to_start = False
+                    if marth.bread != 0:
+                        unlock(marth, mc, menu_box_size)
+                        unlock_menu(menu_box_size, mc)
+                    elif marth.bread == 0:
+                        marth_scene()
                 elif pressed[pygame.K_2] == True:
-                    #lucina cutscene
-                    wait_to_start = False
+                    if lucina.bread != 0:
+                        unlock(lucina, mc, menu_box_size)
+                        unlock_menu(menu_box_size, mc)
+                    elif lucina.bread == 0:
+                        lucina_scene()
                 elif pressed[pygame.K_3] == True:
-                    #masked marth cutscene
-                    wait_to_start = False
+                    if masked_marth.bread != 0:
+                        unlock(masked_marth, mc, menu_box_size)
+                        unlock_menu(menu_box_size, mc)
+                    elif masked_marth.bread == 0:
+                        masked_marth_scene()
                 elif pressed[pygame.K_4] == True:
                     wait_to_start = False
 
@@ -1038,9 +1102,6 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 wait_to_start = False    
 
-    lucina_scene() #fix
-    return #fix
-
     draw_map() #draw the bg
     spawn(mc, None) #spawn mc on map
     spawn(roll_imp, [mc]) #spawn Roll Imp on map, not on mc
@@ -1107,12 +1168,23 @@ def main():
             if event.type == pygame.QUIT:
                 return
             elif event.type == pygame.KEYDOWN: #the Player doesn't actually have to press 1 this time, but... they don't have to know that
-                wait_to_start = False    
+                wait_to_start = False
 
     bread_menu(menu_box_size, mc)
     anna_box(menu_box_size, "Breadcrumbs can be converted in the Check Bread menu.", "It takes 15 breadcrumbs to make 1 bread.")
     pygame.time.delay(5000)
     anna_box(menu_box_size, "Bread is used to unlock bread characters. Press 2 to open", "the Unlock Bread menu.")
+
+    wait_to_start = True
+    while wait_to_start == True:
+        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.KEYDOWN: #the Player doesn't actually have to press 1 this time, but... they don't have to know that
+                wait_to_start = False
+
+    unlock_menu(menu_box_size, mc)
 
     pygame.time.delay(2000)
 
