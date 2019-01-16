@@ -138,25 +138,27 @@ def bread_dialogue(dialogue, line2, line3):
     global screen, bg
     text_box = pygame.Rect(0, 400, bg.get_width(), 100)
     bg.fill(fe_blue, text_box)
+    white_box = pygame.Rect(10, 400, bg.get_width()-20, 100)
+    bg.fill(white, white_box)
 
     font = pygame.font.Font(None, 20)
     text = font.render(dialogue, 1, black)
     text_pos = text.get_rect()
-    text_pos.left = 10
-    text_pos.top = text_box.get_height() + 10
+    text_pos.left = 20
+    text_pos.top = text_box.top + 10
     bg.blit(text, text_pos)
 
     if line2 != None:
         t2 = font.render(line2, 1, black)
         t2_pos = t2.get_rect()
-        t2_pos.left = 10
+        t2_pos.left = 20
         t2_pos.top = text_pos.top + 25
         bg.blit(t2, t2_pos)
 
     if line3 != None:
         t3 = font.render(line3, 1, black)
         t3_pos = t3.get_rect()
-        t3_pos.left = 10
+        t3_pos.left = 20
         t3_pos.top = t2_pos.top + 25
         bg.blit(t3, t3_pos)
 
@@ -167,13 +169,47 @@ def bread_dialogue(dialogue, line2, line3):
 
 def marth_scene():
     """Run through Marth's cutscene."""
-    global screen, bg
+    global bg
     bg.fill(white)
     bg.blit(marth_img, (0,0))
 
-    bread_dialogue("There you are. Anna said you wanted to talk to me.", None, None)
-    pygame.time.delay(2000)
-    bread_dialogue("You know that you can come over whenever you want to talk, right?", None, None)
+    bread_dialogue("There you are. Anna said that you wanted to talk to me.", None, None)
+    pygame.time.delay(3000)
+    bread_dialogue("You know that you can come over whenever you want to talk, right? If you", "need any advice, you can ask me directly.", None)
+    pygame.time.delay(5000)
+    bread_dialogue("Oh, I see... you wanted to speak in private?", None, None)
+    pygame.time.delay(3000)
+    bread_dialogue("What seems to be the matter?", None, None)
+    pygame.time.delay(3000)
+    bread_dialogue("...That's very kind of you to say. I, too, am grateful for the support that", "you have given me. It is thanks to you that I have been able to help so", "many people.")
+    pygame.time.delay(8000)
+    bread_dialogue("I am glad that we can be a beacon of hope for Mantou... together.", None, None)
+    pygame.time.delay(4000)
+
+    return
+
+def lucina_scene():
+    """Run through Lucina's cutscene."""
+    global bg
+    bg.fill(white)
+    bg.blit(lucina_img, (0,0))
+
+    bread_dialogue("Here you are. I should have known that you would be training.", None, None)
+    pygame.time.delay(3000)
+    bread_dialogue("What? My hat? It is a bear. I thought it was cute.", None, None)
+    pygame.time.delay(3000)
+    bread_dialogue("...I see. I will keep that in mind.", None, None)
+    pygame.time.delay(3000)
+    bread_dialogue("Anna told me that you wanted to talk to me. What is it?", None, None)
+    pygame.time.delay(3000)
+    bread_dialogue("...Oh, you want to train with me?", None, None)
+    pygame.time.delay(3000)
+    bread_dialogue("...It's not that I wouldn't like to! I just... I assumed that you would rather", "practice with someone else.", None)
+    pygame.time.delay(5000)
+    bread_dialogue("...Thank you. It means a lot to me that you would say that, really. You", "remind me of-- of someone I once knew.", None)
+    pygame.time.delay(5000)
+    bread_dialogue("I look forward to spending more time with you.", None, None)
+    pygame.time.delay(4000)
 
     return
 
@@ -1001,6 +1037,9 @@ def main():
                 return
             elif event.type == pygame.KEYDOWN:
                 wait_to_start = False    
+
+    lucina_scene() #fix
+    return #fix
 
     draw_map() #draw the bg
     spawn(mc, None) #spawn mc on map
