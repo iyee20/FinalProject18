@@ -78,7 +78,6 @@ def get_bread(defeated, mc):
 
 def breadify(mc, menu_box_size):
     """Convert breadcrumbs to bread."""
-    global screen, bg
     converted = mc.breadcrumbs // 15 #calculate how much whole bread can be made
     mc.breadcrumbs -= (converted * 15) #subtracted converted breadcrumbs from Player's breadcrumbs
     mc.bread += converted #add converted bread to Player's bread
