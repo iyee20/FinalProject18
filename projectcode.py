@@ -76,7 +76,7 @@ def get_bread(defeated, mc):
     mc.breadcrumbs += defeated.drop #add to Player's breadcrumb count
     return
 
-def breadify(mc, menu_box_size):
+def breadify(mc):
     """Convert breadcrumbs to bread."""
     converted = mc.breadcrumbs // 15 #calculate how much whole bread can be made
     mc.breadcrumbs -= (converted * 15) #subtracted converted breadcrumbs from Player's breadcrumbs
@@ -511,7 +511,7 @@ def bread_menu(menu_box_size, mc):
             if event.type == pygame.KEYDOWN:
                 pressed = pygame.key.get_pressed()
                 if pressed[pygame.K_1] == True:
-                    breadify(mc, menu_box_size) #convert bread if the button is "pressed"
+                    breadify(mc) #convert bread if the button is "pressed"
                     bg.fill(light_blue, convert_bread_box)
                     converted_message = font.render("Bread converted!", 1, black)
                     bg.blit(converted_message, t3_pos) #replace button with success message
