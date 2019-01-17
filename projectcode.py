@@ -94,7 +94,7 @@ marth_img = pygame.image.load("Images/Bread/FEH_Marth.png").convert_alpha()
 lucina_img = pygame.image.load("Images/Bread/FEH_Lucina.png").convert_alpha()
 masked_marth_img = pygame.image.load("Images/Bread/FEH_Masked_Marth.png").convert_alpha()
 marth = Bread("Marth", 3) #Marth - the main character of many FE games
-lucina = Bread("Masked Marth", 5) #Lucina - Marth's descendant
+lucina = Bread("Lucina", 5) #Lucina - Marth's descendant
 masked_marth = Bread("Masked Marth", 7) #Masked Marth - Lucina, but disguised as Marth to save your timeline... but that's another can of worms
 
 def unlock(character, mc, menu_box_size):
@@ -1257,5 +1257,3 @@ def main():
     return
 
 main()
-
-#see textmc.py for the terminal-based customization code
