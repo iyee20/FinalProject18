@@ -730,7 +730,15 @@ def new_level(foes, mc, menu_box_size):
         spawn(to_spawn2, [mc, to_spawn2])
     
     fighting = True
-    turn = "mc"
+    turn = "mc" #start with Player's turn
+    alive = [mc, to_spawn1] #a list of live characters
+    to_fight = [to_spawn1] #a list of live foes
+    if to_spawn2 != None:
+        alive.append(to_spawn2) #add the second foe to live characters, if applicable
+        to_fight.append(to_spawn2)
+        not_foe1 = [mc, to_spawn2] #a list of the characters that aren't foe 2
+        not_foe2 = [mc, to_spawn1] #a list of the characters that aren't foe 2
+
     while fighting == True:
         if to_spawn2 == None:
             if check_defeat(to_spawn1) == True:
@@ -753,8 +761,61 @@ def new_level(foes, mc, menu_box_size):
                     if check_defeat(mc) == True:
                         reset_hp(to_spawn1) #no reward is gained from losing, but HP is reset for the next level
                         reset_hp(mc)
-                        return
+                        fighting = False
                 turn = "mc"
+        else:
+            if alive == [mc]: #if only Player is alive, end level
+                fighting = False
+            elif check_defeat(to_spawn1) == True: #check if foe 1 is alive
+                alive.remove(to_spawn1) #remove foe 1 from live characters
+                to_fight.remove(to_spawn1) #remove foe 1 from live foes list
+                not_foe2.remove(to_spawn1) #remove foe 1 from the non-foe-2 list
+                clean_map(alive) #clean map of all but live characters
+                get_bread(to_spawn1, mc)
+                reset_hp(to_spawn1)
+                mc.hp += 5 #Player gets a 5 HP bonus for defeating a foe
+            elif check_defeat(to_spawn2) == True: #check if foe 2 is alive
+                alive.remove(to_spawn2)
+                to_fight.remove(to_spawn2)
+                not_foe1.remove(to_spawn2)
+                clean_map(alive)
+                get_bread(to_spawn2, mc)
+                reset_hp(to_spawn2)
+                mc.hp += 5
+            elif turn == "mc":
+                move_options(mc, to_fight)
+                move_player(mc, to_fight)
+                if in_range(mc, to_spawn1) == True:
+                    attack(mc, to_spawn1, menu_box_size) #attacking foe 1 takes priority over attacking foe 2
+                elif in_range(mc, to_spawn2) == True:
+                    attack(mc, to_spawn1, menu_box_size)
+                if check_defeat(to_spawn1) == False:
+                    turn = "foe 1" #next turn is foe 1's if foe 1 is alive
+                else:
+                    turn = "foe 2" #otherwise, the next turn is foe 2's
+            elif turn == "foe 1":
+                move_npc(to_spawn1, not_foe1)
+                pygame.time.delay(1000)
+                if in_range(to_spawn1, mc) == True:
+                    attack(to_spawn1, mc, menu_box_size)
+                    if check_defeat(mc) == True:
+                        reset_hp(to_spawn1)
+                        reset_hp(mc)
+                        fighting = False
+                if check_defeat(to_spawn2) == False:
+                    turn = "foe 2" #next turn is foe 2's if foe 2 is alive
+                else:
+                    turn = "mc" #otherwise, the next turn is the Player's
+            else:
+                move_npc(to_spawn2, not_foe2)
+                pygame.time.delay(1000)
+                if in_range(to_spawn2, mc) == True:
+                    attack(to_spawn2, mc, menu_box_size)
+                    if check_defeat(mc) == True:
+                        reset_hp(to_spawn2)
+                        reset_hp(mc)
+                        fighting = False
+                turn = "mc" #the next turn is always the Player's 
 
     draw_menu(menu_box_size)
 
