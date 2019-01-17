@@ -79,9 +79,9 @@ def get_bread(defeated, mc):
 def breadify(mc, menu_box_size):
     """Convert breadcrumbs to bread."""
     global screen, bg
-    converted = mc.breadcrumbs % 15 #calculate how many whole breads can be made
-    mc.breadcrumbs -= 15 * converted
-    mc.bread += converted
+    converted = mc.breadcrumbs // 15 #calculate how much whole bread can be made
+    mc.breadcrumbs -= (converted * 15) #subtracted converted breadcrumbs from Player's breadcrumbs
+    mc.bread += converted #add converted bread to Player's bread
     return
 
 class Bread:
@@ -350,7 +350,7 @@ def spawn(character, spawned):
     pygame.display.flip()
     return
 
-def move(character, tilexmove, tileymove, others):
+def move(character, tilexmove, tileymove, other):
     """Move a character on the screen."""
     global screen, bg
     position = pygame.Rect((screen.get_width() * character.x / 6) + 100/6, (screen.get_height() * character.y / 6) + 100/6, screen.get_width()/6, screen.get_height()/6)
@@ -358,16 +358,15 @@ def move(character, tilexmove, tileymove, others):
         tilexmove = 0
     if character.y + tileymove > 5 or character.y + tileymove < 1:
         tileymove = 0
-    for char in others:
-        if character.x + tilexmove == char.x and character.y + tileymove == char.y:
-            tilexmove = 0
-            tileymove = 0 #nullify movement if it would move on top of another character
+    if character.x + tilexmove == other.x and character.y + tileymove == other.y:
+        tilexmove = 0
+        tileymove = 0 #nullify movement if it would move on top of another character
     character.x += tilexmove
     character.y += tileymove
     tilexmove *= screen.get_width()/6
     tileymove *= screen.get_height()/6
     new_pos = position.move(tilexmove, tileymove)
-    clean_map(others)
+    clean_map(other)
     bg.blit(character.image, new_pos)
     screen.blit(bg, (0,0))
     pygame.display.flip()
@@ -519,7 +518,6 @@ def bread_menu(menu_box_size, mc):
                     screen.blit(bg, (0,0))
                     pygame.display.flip()
                     pygame.time.delay(2000)
-                    wait_to_start = False
                 elif pressed[pygame.K_2] == True:
                     wait_to_start = False
 
@@ -632,7 +630,7 @@ def highlight(square, color):
     pygame.display.flip()
     return
 
-def move_options(character, others):
+def move_options(character, other):
     """Highlight the player's move options in green."""
     square_width = screen.get_width()/6
     square_height = screen.get_height()/6
@@ -649,16 +647,15 @@ def move_options(character, others):
     for option in squares: #for each square...
         squarex = option.left * square_width
         squarey = option.top * square_height
-        for char in others: #check against all char in list others
-            if squarex == char.x and squarey == char.y:
-                None #if the square is occupied, don't highlight it
-            else:
-                if squarey != 0:
-                    highlight(option, green) #highlight unoccupied squares green
+        if squarex == other.x and squarey == other.y:
+            None #if the square is occupied, don't highlight it
+        else:
+            if squarey != 0:
+                highlight(option, green) #highlight unoccupied squares green
 
     return
 
-def move_player(mc, others):
+def move_player(mc, other):
     """Move the Player on the map."""
     global bg, screen
     choosing = True
@@ -670,43 +667,42 @@ def move_player(mc, others):
             elif event.type == pygame.KEYDOWN: #if a key is pressed...
                 pressed = pygame.key.get_pressed()
                 if pressed[pygame.K_UP] == True:
-                    move(mc, 0, -1, others)
+                    move(mc, 0, -1, other)
                     choosing = False
                 elif pressed[pygame.K_LEFT] == True:
-                    move(mc, -1, 0, others)
+                    move(mc, -1, 0, other)
                     choosing = False
                 elif pressed[pygame.K_RIGHT] == True:
-                    move(mc, 1, 0, others)
+                    move(mc, 1, 0, other)
                     choosing = False
                 elif pressed[pygame.K_DOWN] == True:
-                    move(mc, 0, 1, others)
+                    move(mc, 0, 1, other)
                     choosing = False
                 elif pressed[pygame.K_KP_ENTER] == True or pressed[pygame.K_RETURN] == True:
                     choosing = False #don't move if the Player presses ENTER
 
     return
 
-def move_npc(character, others):
+def move_npc(character, other):
     """Move an enemy on the map."""
     direction = random.randint(1,4) #randomly pick a direction
     if direction == 1:
-        move(character, 0, -1, others) #1 = move up
+        move(character, 0, -1, other) #1 = move up
     elif direction == 2:
-        move(character, 1, 0, others) #2 = move right
+        move(character, 1, 0, other) #2 = move right
     elif direction == 3:
-        move(character, 0, 1, others) #3 = move down
+        move(character, 0, 1, other) #3 = move down
     elif direction == 4:
-        move(character, -1, 0, others) #4 = move left
+        move(character, -1, 0, other) #4 = move left
 
     return
 
-def clean_map(characters):
-    """Draw the map with characters placed on it."""
+def clean_map(char):
+    """Draw the map with a character placed on it."""
     global bg, screen
     draw_map()
-    for char in characters: #for every char in the list characters...
-        location = pygame.Rect((screen.get_width() * char.x / 6) + 100/6, (screen.get_height() * char.y / 6) + 100/6, screen.get_width()/6, screen.get_height()/6)
-        bg.blit(char.image, location)
+    location = pygame.Rect((screen.get_width() * char.x / 6) + 100/6, (screen.get_height() * char.y / 6) + 100/6, screen.get_width()/6, screen.get_height()/6)
+    bg.blit(char.image, location)
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
@@ -714,108 +710,40 @@ def clean_map(characters):
 def new_level(foes, mc, menu_box_size):
     """Generate and play through a level."""
     global bg, screen
+    bg.fill(fe_blue, menu_box_size) #cover up menu while level is in progress
     draw_map() #draw bg map
-    draw_menu(menu_box_size) #draw menu on top
     spawn(mc, None) #spawn Player
 
-    foe_number = random.randint(1, 100) #1 or 2 foes spawned
-    if foe_number <= 80: #80% chance of spawning 1 foe
-        to_spawn1 = random.choice(foes)
-        spawn(to_spawn1, [mc])
-        to_spawn2 = None
-    elif foe_number > 80: #20% chance of spawning 2 foes
-        to_spawn1 = random.choice(foes)
-        to_spawn2 = random.choice(foes)
-        spawn(to_spawn1, [mc])
-        spawn(to_spawn2, [mc, to_spawn2])
+    to_spawn1 = random.choice(foes) #spawn a random foe
+    spawn(to_spawn1, [mc])
     
     fighting = True
     turn = "mc" #start with Player's turn
-    alive = [mc, to_spawn1] #a list of live characters
-    to_fight = [to_spawn1] #a list of live foes
-    if to_spawn2 != None:
-        alive.append(to_spawn2) #add the second foe to live characters, if applicable
-        to_fight.append(to_spawn2)
-        not_foe1 = [mc, to_spawn2] #a list of the characters that aren't foe 2
-        not_foe2 = [mc, to_spawn1] #a list of the characters that aren't foe 2
 
     while fighting == True:
-        if to_spawn2 == None:
-            if check_defeat(to_spawn1) == True:
-                clean_map([mc]) #clean map of all but Player
-                get_bread(to_spawn1, mc)
-                reset_hp(to_spawn1)
-                reset_hp(mc)
-                fighting = False
-            elif turn == "mc":
-                move_options(mc, [to_spawn1]) #view move options
-                move_player(mc, [to_spawn1]) #Player moves
-                if in_range(mc, to_spawn1) == True:
-                    attack(mc, to_spawn1, menu_box_size)
-                turn = "foe"
-            else:
-                move_npc(to_spawn1, [mc]) #foe moves
-                pygame.time.delay(1000)
-                if in_range(to_spawn1, mc) == True:
-                    attack(to_spawn1, mc, menu_box_size)
-                    if check_defeat(mc) == True:
-                        reset_hp(to_spawn1) #no reward is gained from losing, but HP is reset for the next level
-                        reset_hp(mc)
-                        fighting = False
-                turn = "mc"
+        if check_defeat(to_spawn1) == True:
+            draw_map() #clean map
+            get_bread(to_spawn1, mc)
+            reset_hp(to_spawn1)
+            reset_hp(mc)
+            fighting = False
+        elif turn == "mc":
+            move_options(mc, to_spawn1) #view move options
+            move_player(mc, to_spawn1) #Player moves
+            if in_range(mc, to_spawn1) == True:
+                attack(mc, to_spawn1, menu_box_size)
+            turn = "foe"
         else:
-            if alive == [mc]: #if only Player is alive, end level
-                fighting = False
-            elif check_defeat(to_spawn1) == True: #check if foe 1 is alive
-                alive.remove(to_spawn1) #remove foe 1 from live characters
-                to_fight.remove(to_spawn1) #remove foe 1 from live foes list
-                not_foe2.remove(to_spawn1) #remove foe 1 from the non-foe-2 list
-                clean_map(alive) #clean map of all but live characters
-                get_bread(to_spawn1, mc)
-                reset_hp(to_spawn1)
-                mc.hp += 5 #Player gets a 5 HP bonus for defeating a foe
-            elif check_defeat(to_spawn2) == True: #check if foe 2 is alive
-                alive.remove(to_spawn2)
-                to_fight.remove(to_spawn2)
-                not_foe1.remove(to_spawn2)
-                clean_map(alive)
-                get_bread(to_spawn2, mc)
-                reset_hp(to_spawn2)
-                mc.hp += 5
-            elif turn == "mc":
-                move_options(mc, to_fight)
-                move_player(mc, to_fight)
-                if in_range(mc, to_spawn1) == True:
-                    attack(mc, to_spawn1, menu_box_size) #attacking foe 1 takes priority over attacking foe 2
-                elif in_range(mc, to_spawn2) == True:
-                    attack(mc, to_spawn1, menu_box_size)
-                if check_defeat(to_spawn1) == False:
-                    turn = "foe 1" #next turn is foe 1's if foe 1 is alive
-                else:
-                    turn = "foe 2" #otherwise, the next turn is foe 2's
-            elif turn == "foe 1":
-                move_npc(to_spawn1, not_foe1)
-                pygame.time.delay(1000)
-                if in_range(to_spawn1, mc) == True:
-                    attack(to_spawn1, mc, menu_box_size)
-                    if check_defeat(mc) == True:
-                        reset_hp(to_spawn1)
-                        reset_hp(mc)
-                        fighting = False
-                if check_defeat(to_spawn2) == False:
-                    turn = "foe 2" #next turn is foe 2's if foe 2 is alive
-                else:
-                    turn = "mc" #otherwise, the next turn is the Player's
-            else:
-                move_npc(to_spawn2, not_foe2)
-                pygame.time.delay(1000)
-                if in_range(to_spawn2, mc) == True:
-                    attack(to_spawn2, mc, menu_box_size)
-                    if check_defeat(mc) == True:
-                        reset_hp(to_spawn2)
-                        reset_hp(mc)
-                        fighting = False
-                turn = "mc" #the next turn is always the Player's 
+            move_npc(to_spawn1, mc) #foe moves
+            pygame.time.delay(1000)
+            if in_range(to_spawn1, mc) == True:
+                attack(to_spawn1, mc, menu_box_size)
+                if check_defeat(mc) == True:
+                    reset_hp(to_spawn1) #no reward is gained from losing, but HP is reset for the next level
+                    reset_hp(mc)
+                    fighting = False
+            turn = "mc"
+
 
     draw_menu(menu_box_size)
 
@@ -1233,24 +1161,24 @@ def main():
     turn = "mc"
     while fight1 == True:
         if check_defeat(roll_imp) == True:
-            clean_map([mc])
+            clean_map(mc)
             get_bread(roll_imp, mc)
             reset_hp(roll_imp)
             reset_hp(mc)
             fight1 = False
         elif turn == "mc":
-            move_options(mc, [roll_imp]) #show Player their move options
-            move_player(mc, [roll_imp]) #the Player moves
+            move_options(mc, roll_imp) #show Player their move options
+            move_player(mc, roll_imp) #the Player moves
             if in_range(mc, roll_imp) == True:
                 attack(mc, roll_imp, menu_box_size) #the Player automatically attacks if the Roll Imp is in range
             turn = "foe"  
         else:
-            move_npc(roll_imp, [mc]) #the Roll Imp moves
+            move_npc(roll_imp, mc) #the Roll Imp moves
             pygame.time.delay(1000)
             if in_range(roll_imp, mc) == True:
                 attack(roll_imp, mc, menu_box_size)
                 if check_defeat(mc) == True: #this most likely won't happen, but the Player can be defeated by the first enemy
-                    clean_map([mc])
+                    clean_map(mc)
                     get_bread(roll_imp, mc) #the Player wins anyway, however
                     reset_hp(roll_imp)
                     reset_hp(mc)
@@ -1306,10 +1234,10 @@ def main():
                     pressed = pygame.key.get_pressed()
                     if pressed[pygame.K_1] == True:
                         bread_menu(menu_box_size, mc)
-                        wait_to_start = False
+                        draw_menu(menu_box_size)
                     elif pressed[pygame.K_2] == True:
                         unlock_menu(menu_box_size, mc)
-                        wait_to_start = False
+                        draw_menu(menu_box_size)
                     elif pressed[pygame.K_3] == True:
                         wait_to_start = False
 
