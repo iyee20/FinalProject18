@@ -421,10 +421,12 @@ def display_health(menu_box_size, characters):
     """Display the health of all characters on the screen."""
     global screen, bg
     bg.fill(fe_blue, menu_box_size)
+    white_box = pygame.Rect(10, 400, bg.get_width()-20, 100)
+    bg.fill(white, white_box)
     font = pygame.font.Font(None, 20)
     above = -20
     for character in characters:
-        above += 30 #add 30px to the above line
+        above += 30 #add 30px to the above line, resulting in a 10px space between the lines
         text = font.render(f"{character.name}: {character.hp} HP", 1, black)
         text_pos = text.get_rect()
         text_pos.left = 10
