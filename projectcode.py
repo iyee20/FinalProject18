@@ -711,13 +711,11 @@ def clean_map(characters):
     pygame.display.flip()
     return
 
-def new_level(characters, menu_box_size):
+def new_level(foes, mc, menu_box_size):
     """Generate and play through a level."""
     global bg, screen
     draw_map() #draw bg map
     draw_menu(menu_box_size) #draw menu on top
-    foes = characters #list of foes = given list of characters
-    foes.remove(mc) #remove Player from foe list
     spawn(mc, None) #spawn Player
 
     foe_number = random.randint(1, 100) #1 or 2 foes spawned
@@ -753,10 +751,12 @@ def new_level(characters, menu_box_size):
                 if in_range(to_spawn1, mc) == True:
                     attack(to_spawn1, mc, menu_box_size)
                     if check_defeat(mc) == True:
-                        reset_hp(to_spawn1) #no reward is gained by losing, but HP is reset for the next level
+                        reset_hp(to_spawn1) #no reward is gained from losing, but HP is reset for the next level
                         reset_hp(mc)
                         return
                 turn = "mc"
+
+    draw_menu(menu_box_size)
 
     return
 
@@ -1227,10 +1227,30 @@ def main():
 
     unlock_menu(menu_box_size, mc)
 
-    anna_box(menu_box_size, "When you want to spawn new enemies or re-spawn, press 3 to start a new level.", None)
+    anna_box(menu_box_size, "After you complete one level, press 3 to start a new level.", None)
     pygame.time.delay(4000)
     anna_box(menu_box_size, "Alright! Let's get this bread!", None)
     pygame.time.delay(2000)
+
+    running = True
+    while running == True:
+        new_level([roll_imp, bun_dragon, baguette_devil, loaf_archer], mc, menu_box_size)
+        wait_to_start = True
+        while wait_to_start == True:
+            pygame.event.pump()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
+                elif event.type == pygame.KEYDOWN:
+                    pressed = pygame.key.get_pressed()
+                    if pressed[pygame.K_1] == True:
+                        bread_menu(menu_box_size, mc)
+                        wait_to_start = False
+                    elif pressed[pygame.K_2] == True:
+                        unlock_menu(menu_box_size, mc)
+                        wait_to_start = False
+                    elif pressed[pygame.K_3] == True:
+                        wait_to_start = False
 
     pygame.time.delay(2000)
 
