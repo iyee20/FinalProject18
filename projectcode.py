@@ -10,7 +10,7 @@ bg = screen.convert() #bg is a separate Surface based on screen
 
 #define colors by name for convenience
 black = (0, 0, 0) #rgb value of black
-white = (250, 250, 250) #rgb value of white
+white = (255, 255, 255) #rgb value of white
 fe_blue = (72, 117, 139) #color of Fire Emblem textboxes, midway between the gradient endpoints...ish
 light_blue = (112, 172, 201) #a blue to stand out against Fire Emblem blue
 red = (223, 29, 64) #a red to represent red-colored characters
@@ -297,6 +297,13 @@ class Weapon:
         mc.a += self.might
         mc.rng = self.rng
         mc.equipped = self.name
+sword_img = pygame.image.load("Images/Weapons/sword.png")
+lance_img = pygame.image.load("Images/Weapons/lance.png")
+axe_img = pygame.image.load("Images/Weapons/axe.png")
+bow_img = pygame.image.load("Images/Weapons/bow.png")
+dagger_img = pygame.image.load("Images/Weapons/dagger.png")
+dragonstone_img = pygame.image.load("Images/Weapons/dragonstone.png")
+tome_img = pygame.image.load("Images/Weapons/tome.png")
 iron_sword = Weapon("Iron Sword", 6, 1)
 iron_lance = Weapon("Iron Lance", 6, 1)
 iron_axe = Weapon("Iron Axe", 6, 1)
@@ -1022,11 +1029,11 @@ def main():
     pygame.display.flip()
 
     q_box = bg.fill(fe_blue, q_box_size)
-    print_question("Pick a weapon.", q_box, bg)
+    print_question("Pick a weapon.", q_box, bg) #print new question
 
-    button_top_1 = q_box.height + 10
-    button_top_2 = bg.get_rect().centery + (a_box_height / 2)
-    b1_size = pygame.Rect(0, button_top_1, button_width, a_box_height)
+    button_top_1 = q_box.height + 10 #define top row of buttons
+    button_top_2 = bg.get_rect().centery + (a_box_height / 2) #define center row of buttons
+    b1_size = pygame.Rect(0, button_top_1, button_width, a_box_height) #define new button sizes
     b2_size = pygame.Rect(r_button_left, button_top_1, button_width, a_box_height)
     b3_size = pygame.Rect(0, button_top_2, button_width, a_box_height)
     b4_size = pygame.Rect(r_button_left, button_top_2, button_width, a_box_height)
@@ -1034,7 +1041,7 @@ def main():
     b6_size = pygame.Rect(c_button_left, button_top, button_width, a_box_height)
     b7_size = pygame.Rect(r_button_left, button_top, button_width, a_box_height)
     
-    b1 = bg.fill(light_blue, b1_size)
+    b1 = bg.fill(light_blue, b1_size) #define buttons as filled Rects
     b2 = bg.fill(light_blue, b2_size)
     b3 = bg.fill(light_blue, b3_size)
     b4 = bg.fill(light_blue, b4_size)
@@ -1042,13 +1049,21 @@ def main():
     b6 = bg.fill(light_blue, b6_size)
     b7 = bg.fill(light_blue, b7_size)
 
-    print_button_text("1. Sword", b1, bg)
+    print_button_text("1. Sword", b1, bg) #print button text
     print_button_text("2. Lance", b2, bg)
     print_button_text("3. Axe", b3, bg)
     print_button_text("4. Bow", b4, bg)
     print_button_text("5. Dagger", b5, bg)
     print_button_text("6. Dragonstone", b6, bg)
     print_button_text("7. Tome", b7, bg)
+
+    bg.blit(sword_img, pygame.Rect(bg.get_rect().centerx-50, button_top_1+15, 20, 20)) #display weapon images
+    bg.blit(lance_img, pygame.Rect(bg.get_rect().centerx+50, button_top_1+15, 20, 20))
+    bg.blit(axe_img, pygame.Rect(bg.get_rect().centerx-50, button_top_2+15, 20, 20))
+    bg.blit(bow_img, pygame.Rect(bg.get_rect().centerx+50, button_top_2+15, 20, 20))
+    bg.blit(dagger_img, pygame.Rect(button_width/2, button_top-30, 20, 20))
+    bg.blit(dragonstone_img, pygame.Rect(bg.get_rect().centerx, button_top-30, 20, 20))
+    bg.blit(tome_img, pygame.Rect(bg.get_width()-(button_width/2)-20, button_top-30, 20, 20))
 
     screen.blit(bg, (0,0))
     pygame.display.flip()
@@ -1161,11 +1176,13 @@ def main():
     anna_box(menu_box_size, "Keep the weapon-triangle advantages in mind when you", "attack enemies.")
     pygame.time.delay(5000)
     anna_box(menu_box_size, "BLUE weapons are effective against RED weapons, which are", "effective against GREEN weapons,") 
-    pygame.time.delay(5000)
+    pygame.time.delay(7000)
     anna_box(menu_box_size, "and GREEN weapons are effective against BLUE weapons.", None)
-    pygame.time.delay(4000)
+    pygame.time.delay(5000)
     anna_box(menu_box_size, "Let's try attacking the Roll Imp!", None)
     pygame.time.delay(2000)
+    anna_box(menu_box_size, "Swords, lances, axes, and dragonstones have a range of 1 tile.", "Bows, daggers, and tomes have a range of 2 tiles.")
+    pygame.time.delay(10000)
     anna_box(menu_box_size, "Move using the arrow keys until you get in range to attack.", "Press ENTER if you don't need to move.")
 
     fight1 = True
