@@ -528,18 +528,18 @@ def unlock_menu(menu_box_size, mc):
     global screen, bg
     bg.fill(fe_blue, menu_box_size) #fill menu bg
     marth_box = pygame.Rect(10, 10, menu_box_size.width/4 - 10, menu_box_size.height - 20)
-    lucina_box = pygame.Rect(menu_box_size.width/4, 10, menu_box_size.width/4 - 10, menu_box_size.height - 20)
+    lucina_box = pygame.Rect(menu_box_size.width/4 + 5, 10, menu_box_size.width/4 - 10, menu_box_size.height - 20)
     masked_marth_box = pygame.Rect(menu_box_size.width/2, 10, menu_box_size.width/4 - 10, menu_box_size.height - 20)
     go_back_box = pygame.Rect(menu_box_size.width*3/4, 10, menu_box_size.width/4 - 10, menu_box_size.height - 20)
-    if marth.bread == 0:
+    if marth.unlocked == True:
         bg.fill(light_blue, marth_box) #fill button blue if unlocked
     else:
         bg.fill(gray, marth_box) #fill button gray if not unlocked
-    if lucina.bread == 0:
+    if lucina.unlocked == True:
         bg.fill(light_blue, lucina_box)
     else:
         bg.fill(gray, lucina_box)
-    if masked_marth.bread == 0:
+    if masked_marth.unlocked == True:
         bg.fill(light_blue, masked_marth_box)
     else:
         bg.fill(gray, masked_marth_box)
@@ -550,7 +550,7 @@ def unlock_menu(menu_box_size, mc):
     t1_pos = t1.get_rect()
     t1_pos.center = marth_box.center
     bg.blit(t1, t1_pos)
-    if marth.bread != 0: #print cost to unlock if Marth is not unlocked
+    if marth.unlocked == False: #print cost to unlock if Marth is not unlocked
         sub1 = font.render("3 Bread", 1, black)
         sub1_pos = sub1.get_rect()
         sub1_pos.centerx = marth_box.centerx
@@ -561,7 +561,7 @@ def unlock_menu(menu_box_size, mc):
     t2_pos = t2.get_rect()
     t2_pos.center = lucina_box.center
     bg.blit(t2, t2_pos)
-    if lucina.bread != 0: #print cost to unlock if Lucina is not unlocked
+    if lucina.unlocked == False: #print cost to unlock if Lucina is not unlocked
         sub2 = font.render("5 Bread", 1, black)
         sub2_pos = sub2.get_rect()
         sub2_pos.centerx = lucina_box.centerx
@@ -572,7 +572,7 @@ def unlock_menu(menu_box_size, mc):
     t3_pos = t3.get_rect()
     t3_pos.center = masked_marth_box.center
     bg.blit(t3, t3_pos)
-    if masked_marth.bread != 0: #print cost to unlock if Masked Marth is not unlocked
+    if masked_marth.unlocked == False: #print cost to unlock if Masked Marth is not unlocked
         sub3 = font.render("7 Bread", 1, black)
         sub3_pos = sub3.get_rect()
         sub3_pos.centerx = masked_marth_box.centerx
@@ -598,7 +598,7 @@ def unlock_menu(menu_box_size, mc):
                         unlock(marth, mc, menu_box_size)
                         pygame.time.delay(2000)
                         running = False
-                    elif marth.bread == True:
+                    elif marth.unlocked == True:
                         marth_scene()
                         running = False
                 elif pressed[pygame.K_2] == True:
@@ -1237,6 +1237,7 @@ def main():
                         draw_menu(menu_box_size)
                     elif pressed[pygame.K_2] == True:
                         unlock_menu(menu_box_size, mc)
+                        draw_map()
                         draw_menu(menu_box_size)
                     elif pressed[pygame.K_3] == True:
                         wait_to_start = False
