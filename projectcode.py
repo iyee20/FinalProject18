@@ -338,10 +338,9 @@ def spawn(character, spawned):
     squarex = random.randint(0, 5)
     squarey = random.randint(1, 5) #the top row is taken up by the menu box, so spawn starting at the second row down
     if spawned != None:
-        for other in spawned:
-            if squarex == other.x and squarey == other.y: #re-spawn a character if they would spawn on top of another character
-                squarex = random.randint(0, 5)
-                squarey = random.randint(1, 5)
+        if squarex == spawned.x and squarey == spawned.y: #re-spawn a character if they would spawn on top of another character
+            squarex = random.randint(0, 5)
+            squarey = random.randint(1, 5)
     location = (screen.get_width() * squarex / 6) + 100/6, (screen.get_height() * squarey / 6) + 100/6
     character.x = squarex
     character.y = squarey #record x, y location
@@ -515,6 +514,12 @@ def bread_menu(menu_box_size, mc):
                     bg.fill(light_blue, convert_bread_box)
                     converted_message = font.render("Bread converted!", 1, black)
                     bg.blit(converted_message, t3_pos) #replace button with success message
+                    bg.fill(light_blue, breadcrumb_box)
+                    bg.fill(light_blue, bread_box)
+                    t1 = font.render(f"Breadcrumbs: {mc.breadcrumbs}", 1, black) #display number of breadcrumbs
+                    bg.blit(t1, t1_pos)
+                    t2 = font.render(f"Bread: {mc.bread}", 1, black) #display amount of bread
+                    bg.blit(t2, t2_pos)
                     screen.blit(bg, (0,0))
                     pygame.display.flip()
                     pygame.time.delay(2000)
@@ -711,35 +716,42 @@ def new_level(foes, mc, menu_box_size):
     """Generate and play through a level."""
     global bg, screen
     bg.fill(fe_blue, menu_box_size) #cover up menu while level is in progress
+    white_box = pygame.Rect(10, 400, bg.get_width()-20, 100)
+    bg.fill(white, white_box)
     draw_map() #draw bg map
     spawn(mc, None) #spawn Player
 
-    to_spawn1 = random.choice(foes) #spawn a random foe
-    spawn(to_spawn1, [mc])
-    
+    to_spawn = random.choice(foes) #spawn a random foe
+    spawn(to_spawn, mc)
+
+    font = pygame.font.Font(None, 20)
+    notif = font.render(f"A {to_spawn} appeared!", 1, black)
+    notif_pos = notif.get_rect()
+    notif_pos.center = white_box.center
+
     fighting = True
     turn = "mc" #start with Player's turn
 
     while fighting == True:
-        if check_defeat(to_spawn1) == True:
+        if check_defeat(to_spawn) == True:
             draw_map() #clean map
-            get_bread(to_spawn1, mc)
-            reset_hp(to_spawn1)
+            get_bread(to_spawn, mc)
+            reset_hp(to_spawn)
             reset_hp(mc)
             fighting = False
         elif turn == "mc":
-            move_options(mc, to_spawn1) #view move options
-            move_player(mc, to_spawn1) #Player moves
-            if in_range(mc, to_spawn1) == True:
-                attack(mc, to_spawn1, menu_box_size)
+            move_options(mc, to_spawn) #view move options
+            move_player(mc, to_spawn) #Player moves
+            if in_range(mc, to_spawn) == True:
+                attack(mc, to_spawn, menu_box_size)
             turn = "foe"
         else:
-            move_npc(to_spawn1, mc) #foe moves
+            move_npc(to_spawn, mc) #foe moves
             pygame.time.delay(1000)
-            if in_range(to_spawn1, mc) == True:
-                attack(to_spawn1, mc, menu_box_size)
+            if in_range(to_spawn, mc) == True:
+                attack(to_spawn, mc, menu_box_size)
                 if check_defeat(mc) == True:
-                    reset_hp(to_spawn1) #no reward is gained from losing, but HP is reset for the next level
+                    reset_hp(to_spawn) #no reward is gained from losing, but HP is reset for the next level
                     reset_hp(mc)
                     fighting = False
             turn = "mc"
@@ -1131,10 +1143,8 @@ def main():
 
     draw_map() #draw the bg
     spawn(mc, None) #spawn mc on map
-    spawn(roll_imp, [mc]) #spawn Roll Imp on map, not on mc
+    spawn(roll_imp, mc) #spawn Roll Imp on map, not on mc
     menu_box_size = pygame.Rect(0, 0, screen.get_width(), screen.get_height()/6)
-    #menu_box = bg.fill(fe_blue, menu_box_size)
-    #draw_menu(menu_box_size)
     anna_box(menu_box_size, "Good morning! It's good to see that you're finally awake.", None)
     pygame.time.delay(2000) #Player gets 2 seconds to read
     anna_box(menu_box_size, "The forces of Brioche have invaded Mantou. We need your help!", None)
