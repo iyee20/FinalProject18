@@ -1,5 +1,4 @@
 #the game is heavily based on Fire Emblem Heroes, the mobile game of the Fire Emblem series
-
 import random #import random to use
 import sys, pygame #import pygame to use
 pygame.font.init() #initialize font module so font functions work
@@ -124,30 +123,30 @@ def bread_dialogue(dialogue, line2, line3):
     """Print a bread character's dialogue during a cutscene."""
     global screen, bg
     text_box = pygame.Rect(0, 400, bg.get_width(), 100)
-    bg.fill(fe_blue, text_box)
+    bg.fill(fe_blue, text_box) #fill text box
     white_box = pygame.Rect(10, 400, bg.get_width()-20, 100)
-    bg.fill(white, white_box)
+    bg.fill(white, white_box) #fill white box
 
     font = pygame.font.Font(None, 20)
     text = font.render(dialogue, 1, black)
     text_pos = text.get_rect()
     text_pos.left = 20
     text_pos.top = text_box.top + 10
-    bg.blit(text, text_pos)
+    bg.blit(text, text_pos) #print line 1
 
     if line2 != None:
         t2 = font.render(line2, 1, black)
         t2_pos = t2.get_rect()
         t2_pos.left = 20
         t2_pos.top = text_pos.top + 25
-        bg.blit(t2, t2_pos)
+        bg.blit(t2, t2_pos) #print line 2
 
     if line3 != None:
         t3 = font.render(line3, 1, black)
         t3_pos = t3.get_rect()
         t3_pos.left = 20
         t3_pos.top = t2_pos.top + 25
-        bg.blit(t3, t3_pos)
+        bg.blit(t3, t3_pos) #print line 3
 
     screen.blit(bg, (0,0))
     pygame.display.flip()
@@ -158,7 +157,7 @@ def marth_scene():
     """Run through Marth's cutscene."""
     global bg
     bg.fill(white)
-    bg.blit(marth_img, (0,0))
+    bg.blit(marth_img, (0,0)) #print Marth's image
 
     bread_dialogue("There you are. Anna said that you wanted to talk to me.", None, None)
     pygame.time.delay(3000)
@@ -179,7 +178,7 @@ def lucina_scene():
     """Run through Lucina's cutscene."""
     global bg
     bg.fill(white)
-    bg.blit(lucina_img, (0,0))
+    bg.blit(lucina_img, (0,0)) #print Lucina's image
 
     bread_dialogue("Here you are. I should have known that you would be training.", None, None)
     pygame.time.delay(3000)
@@ -204,7 +203,7 @@ def masked_marth_scene():
     """Run through Masked Marth's cutscene."""
     global bg
     bg.fill(white)
-    bg.blit(masked_marth_img, (0,0))
+    bg.blit(masked_marth_img, (0,0)) #print Masked Marth's image
 
     bread_dialogue("Thank you for inviting me to talk. What is on your mind?", None, None)
     pygame.time.delay(4000)
@@ -251,14 +250,14 @@ magic_weapons = ["tome", "dragonstone"]
 def attack(attacker, defender, menu_box_size):
     """The attacker attacks the defender."""
     if attacker.weapon in physical_weapons:
-        dmg = attacker.a - defender.d
+        dmg = attacker.a - defender.d #use defense against physical weapons
     if attacker.weapon in magic_weapons:
-        dmg = attacker.a - defender.res
+        dmg = attacker.a - defender.res #use resistance against magic weapons
     dmg *= advantage(attacker, defender) #alter damage based on the weapon-triangle advantage multiplier
     if dmg > defender.hp:
-        dmg = defender.hp
+        dmg = defender.hp #max damage is all of the defender's hp
     if dmg <= 0:
-        dmg = 0
+        dmg = 0 #min damage is 0
     defender.hp -= int(dmg)
     display_health(menu_box_size, [attacker, defender])
     return
@@ -288,13 +287,14 @@ class Weapon:
     def __init__(self, name, might, rng):
         self.name = name
         self.might = might #the attack power of the weapon
-        self.rng = rng
+        self.rng = rng #the range of the weapon
 
     def equip(self, mc):
         """Equip a weapon."""
         mc.a += self.might
         mc.rng = self.rng
         mc.equipped = self.name
+        return
 sword_img = pygame.image.load("Images/Weapons/sword.png")
 lance_img = pygame.image.load("Images/Weapons/lance.png")
 axe_img = pygame.image.load("Images/Weapons/axe.png")
@@ -318,12 +318,12 @@ def print_question(question, q_box, bg):
     q_text = q_font.render(question, 1, black)
     q_text_position = q_text.get_rect()
     q_text_position.center = q_box.center #question text is at center of q_box
-    bg.blit(q_text, q_text_position) #blit question text
+    bg.blit(q_text, q_text_position) #print question text
     q_font_sub = pygame.font.Font(None, 20)
-    q_text = q_font_sub.render("Type the number on the button.", 1, black)
+    q_text = q_font_sub.render("Type the number on the button.", 1, black) #instructions
     q_text_position = q_text.get_rect()
     q_text_position.center = q_box.centerx, q_box.bottom - 20
-    bg.blit(q_text, q_text_position) #blit subtext
+    bg.blit(q_text, q_text_position) #print subtext
     return
 
 def print_button_text(text, button, bg):
