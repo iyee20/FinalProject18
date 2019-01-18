@@ -108,18 +108,16 @@ def unlock(character, mc, menu_box_size):
         text_pos = text.get_rect()
         text_pos.center = menu_box_size.center
         bg.blit(text, text_pos)
-        screen.blit(bg, (0,0))
-        pygame.display.flip()
     elif character.bread <= mc.bread:
         bg.fill(fe_blue, menu_box_size)
         text = font.render(f"{character.name} unlocked!", 1, black)
         text_pos = text.get_rect()
         text_pos.center = menu_box_size.center
         bg.blit(text, text_pos)
-        screen.blit(bg, (0,0))
-        pygame.display.flip()
         mc.bread -= character.bread #subtract spent bread from current bread
         character.unlocked = True #character is now unlocked
+    screen.blit(bg, (0,0))
+    pygame.display.flip()    
     return
 
 def bread_dialogue(dialogue, line2, line3):
