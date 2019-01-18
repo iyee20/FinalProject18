@@ -46,7 +46,7 @@ class Player:
 
 class Foe:
     """The class for the enemies."""
-    def __init__(self, name, weapon, color, image, hp, a, d, res, spd, rng, drop):
+    def __init__(self, name, weapon, color, image, hp, a, d, res, rng, drop):
         self.chartype = "foe"
         self.name = name
         self.weapon = weapon
@@ -56,7 +56,6 @@ class Foe:
         self.a = a
         self.d = d
         self.res = res
-        self.spd = spd
         self.rng = rng
         self.drop = drop #how many breadcrumbs are dropped by the enemy
         self.x = 0
@@ -65,10 +64,10 @@ roll_imp_img = pygame.image.load("Images/NPC/roll_imp.png").convert_alpha()
 bun_dragon_img = pygame.image.load("Images/NPC/bun_dragon.png").convert_alpha()
 baguette_devil_img = pygame.image.load("Images/NPC/baguette_devil.png").convert_alpha()
 loaf_archer_img = pygame.image.load("Images/NPC/loaf_archer.png").convert_alpha()
-roll_imp = Foe("Roll Imp", "lance", "blue", roll_imp_img, 18, 11, 6, 3, 5, 1, 10) #based on Blue Fighter, 1 star with Iron Lance
-bun_dragon = Foe("Bun Dragon", "dragonstone", "green", bun_dragon_img, 16, 13, 5, 4, 7, 1, 25) #based on Green Manakete, 2 star with Fire Breath
-baguette_devil = Foe("Baguette Devil", "sword", "red", baguette_devil_img, 18, 11, 6, 3, 5, 1, 10) #based on Sword Fighter, 1 star with Iron Sword
-loaf_archer = Foe("Loaf Archer", "bow", "colorless", loaf_archer_img, 17, 10, 5, 1, 5, 2, 10) #based on Bow Fighter, 1 star with Iron Bow
+roll_imp = Foe("Roll Imp", "lance", "blue", roll_imp_img, 18, 11, 6, 3, 1, 10) #based on Blue Fighter, 1 star with Iron Lance
+bun_dragon = Foe("Bun Dragon", "dragonstone", "green", bun_dragon_img, 16, 13, 5, 4, 1, 25) #based on Green Manakete, 2 star with Fire Breath
+baguette_devil = Foe("Baguette Devil", "sword", "red", baguette_devil_img, 18, 11, 6, 3, 1, 10) #based on Sword Fighter, 1 star with Iron Sword
+loaf_archer = Foe("Loaf Archer", "bow", "colorless", loaf_archer_img, 17, 10, 5, 1, 2, 10) #based on Bow Fighter, 1 star with Iron Bow
 
 def get_bread(defeated, mc):
     """Obtain breadcrumbs from defeating an enemy."""
