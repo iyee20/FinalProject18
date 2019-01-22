@@ -808,7 +808,6 @@ def main():
     
     q_box_size = pygame.Rect(0, 0, 500, 100)
     q_box = bg.fill(fe_blue, q_box_size) #question box is a filled rectangle
-    q_box.topleft = 0, 0
 
     #question text
     name = "You" #Player is always referred to as "You"
@@ -1246,8 +1245,7 @@ def main():
     anna_box(menu_box_size, "Alright! Let's get this bread!", None)
     pygame.time.delay(2000)
 
-    running = True
-    while running == True:
+    while True:
         new_level([roll_imp, bun_dragon, baguette_devil, loaf_archer], mc, menu_box_size)
         wait_to_start = True
         while wait_to_start == True:
@@ -1266,8 +1264,6 @@ def main():
                         draw_menu(menu_box_size)
                     elif pressed[pygame.K_3] == True:
                         wait_to_start = False
-
-    pygame.time.delay(2000)
 
     return
 
