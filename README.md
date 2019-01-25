@@ -1,5 +1,6 @@
 # Fire Emblem: Let's Get This Bread
-[Works Cited](https://docs.google.com/document/d/1Y9-2NwLwZYEoqNn9iCBRXU6SntzLxns5A1LvYpD3404/edit?usp=sharing "Works Cited")
+[Works Cited](https://docs.google.com/document/d/1Y9-2NwLwZYEoqNn9iCBRXU6SntzLxns5A1LvYpD3404/edit?usp=sharing "Google Doc")
+[Presentation](https://docs.google.com/presentation/d/1buTjGN28_Lt2KpkpBi9j8jnDkH0zaE3LrU-WJXtJyIg/edit?usp=sharing "Google Slides")
 
 ## Description
 The kingdom of Mantou is an unassuming limited monarchy with few noteworthy inhabitants. Mantou has just been invaded by its neighbor, and you have been tasked with protecting it, in the style of Fire Emblem Heroes. With the tap of a keyboard, you enter a completely and entirely non-self-insert world of bread-themed foes. It is in Mantou that you can, as the kids say, "obtain the grain" by collecting enough breadcrumbs to talk to Marth, Lucina, and... another Marth. All you have to do is type.
