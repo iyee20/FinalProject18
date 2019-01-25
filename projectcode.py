@@ -1,6 +1,6 @@
 #the game is heavily based on Fire Emblem Heroes, the mobile game of the Fire Emblem series
 import random #import random to use
-import sys, pygame #import pygame to use
+import sys, pygame #import pygame and sys to use
 pygame.font.init() #initialize font module so font functions work
 
 size = width, height = 500, 500 #define size as a certain px area
@@ -21,7 +21,7 @@ gray = (100, 117, 126) #a gray to represent colorless characters
 anna = pygame.image.load("Images/NPC/Anna.png").convert_alpha() #load file as surface
 
 class Player:
-    """The class for the Player."""
+    """The class for the Player's stats."""
     def __init__(self, name, appearance, eye_color, hair_color, weapon, color, image, equipped=None):
         self.chartype = "player"
         self.name = name #name is always Player, but this attribute is for consistency
@@ -45,7 +45,7 @@ class Player:
         self.y = 0 #y square on screen
 
 class Foe:
-    """The class for the enemies."""
+    """The class for the enemy stats."""
     def __init__(self, name, weapon, color, image, hp, a, d, res, rng, drop):
         self.chartype = "foe"
         self.name = name
@@ -60,7 +60,7 @@ class Foe:
         self.drop = drop #how many breadcrumbs are dropped by the enemy
         self.x = 0
         self.y = 0
-roll_imp_img = pygame.image.load("Images/NPC/roll_imp.png").convert_alpha()
+roll_imp_img = pygame.image.load("Images/NPC/roll_imp.png").convert_alpha() #load images as Surfaces
 bun_dragon_img = pygame.image.load("Images/NPC/bun_dragon.png").convert_alpha()
 baguette_devil_img = pygame.image.load("Images/NPC/baguette_devil.png").convert_alpha()
 loaf_archer_img = pygame.image.load("Images/NPC/loaf_archer.png").convert_alpha()
@@ -95,18 +95,18 @@ lucina = Bread("Lucina", 5) #Lucina - Marth's descendant
 masked_marth = Bread("Masked Marth", 7) #Masked Marth - Lucina, but disguised as Marth to save your timeline... but that's another can of worms
 
 def unlock(character, mc, menu_box_size):
-    """Unlock a character's cutscene."""
+    """Unlock (or try to unlock) a character's cutscene."""
     global bg, screen
     font = pygame.font.Font(None, 20)
     if character.unlocked == True:
         None #if character has already been unlocked, nothing happens
-    elif character.bread > mc.bread:
+    elif character.bread > mc.bread: #message if Player doesn't have enough bread
         bg.fill(fe_blue, menu_box_size)
         text = font.render(f"You don't have enough bread to unlock {character.name} yet.", 1 , black)
         text_pos = text.get_rect()
         text_pos.center = menu_box_size.center
         bg.blit(text, text_pos)
-    elif character.bread <= mc.bread:
+    elif character.bread <= mc.bread: #unlock character
         bg.fill(fe_blue, menu_box_size)
         text = font.render(f"{character.name} unlocked!", 1, black)
         text_pos = text.get_rect()
@@ -222,8 +222,9 @@ def masked_marth_scene():
     return
 
 def in_range(attacker, defender):
-    x_dif = abs(attacker.x - defender.x)
-    y_dif = abs(attacker.y - defender.y)
+    """Check if the defender is within the attacker's range."""
+    x_dif = abs(attacker.x - defender.x) #difference in x squares
+    y_dif = abs(attacker.y - defender.y) #difference in y squares
     if x_dif + y_dif <= attacker.rng: #this allows attackers with range 2 to attack within 2 spaces
         return True
     else:
@@ -258,7 +259,7 @@ def attack(attacker, defender, menu_box_size):
     if dmg <= 0:
         dmg = 0 #min damage is 0
     defender.hp -= int(dmg)
-    display_health(menu_box_size, [attacker, defender])
+    display_health(menu_box_size, [attacker, defender]) #display results of attack
     return
 
 def check_defeat(defeated):
@@ -289,7 +290,7 @@ class Weapon:
         self.rng = rng #the range of the weapon
 
     def equip(self, mc):
-        """Equip a weapon."""
+        """Equip a weapon and modify mc's stats."""
         mc.a += self.might
         mc.rng = self.rng
         mc.equipped = self.name
@@ -306,7 +307,7 @@ iron_lance = Weapon("Iron Lance", 6, 1)
 iron_axe = Weapon("Iron Axe", 6, 1)
 iron_bow = Weapon("Iron Bow", 4, 2)
 iron_dagger = Weapon("Iron Dagger", 3, 2)
-fire_breath = Weapon("Fire Breath", 6, 1)
+fire_breath = Weapon("Fire Breath", 6, 1) #dragonstone
 fire_tome = Weapon("Fire", 4, 2) #red tome
 light_tome = Weapon("Light", 4, 2) #blue tome
 wind_tome = Weapon("Wind", 4, 2) #green tome
@@ -319,7 +320,7 @@ def print_question(question, q_box, bg):
     q_text_position.center = q_box.center #question text is at center of q_box
     bg.blit(q_text, q_text_position) #print question text
     q_font_sub = pygame.font.Font(None, 20)
-    q_text = q_font_sub.render("Type the number on the button.", 1, black) #instructions
+    q_text = q_font_sub.render("Type the number on the button.", 1, black) #instructions - subtext
     q_text_position = q_text.get_rect()
     q_text_position.center = q_box.centerx, q_box.bottom - 20
     bg.blit(q_text, q_text_position) #print subtext
@@ -335,7 +336,7 @@ def print_button_text(text, button, bg):
     return
 
 def spawn(character, spawned):
-    """Spawn a character on the screen."""
+    """Spawn a character on the screen, but not on spawned."""
     global screen, bg
     #location is based on a 6 x 5 tile map
     squarex = random.randint(0, 5)
@@ -368,8 +369,8 @@ def move(character, tilexmove, tileymove, other):
     tilexmove *= screen.get_width()/6
     tileymove *= screen.get_height()/6
     new_pos = position.move(tilexmove, tileymove)
-    clean_map(other)
-    bg.blit(character.image, new_pos)
+    clean_map(other) #re-draw the map with other on it
+    bg.blit(character.image, new_pos) #draw character at new position
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
@@ -390,7 +391,7 @@ def draw_map():
     return
 
 def anna_box(menu_box_size, dialogue, line2):
-    """Draw Anna's dialogue box on the screen."""
+    """Draw Anna's dialogue box on the screen and draw her dialogue."""
     global screen, bg, anna
     bg.fill(fe_blue, menu_box_size)
     white_box = pygame.Rect(10, 0, screen.get_width() - 20, menu_box_size.height)
@@ -423,9 +424,9 @@ def anna_box(menu_box_size, dialogue, line2):
 def display_health(menu_box_size, characters):
     """Display the health of all characters on the screen."""
     global screen, bg
-    bg.fill(fe_blue, menu_box_size)
-    white_box = pygame.Rect(10, 400, bg.get_width()-20, 100)
-    bg.fill(white, white_box)
+    bg.fill(fe_blue, menu_box_size) #fill menu-sized area
+    white_box = pygame.Rect(10, 0, bg.get_width()-20, 100)
+    bg.fill(white, white_box) #fill white box
     font = pygame.font.Font(None, 20)
     above = -20
     for character in characters:
@@ -441,7 +442,7 @@ def display_health(menu_box_size, characters):
     return
 
 def draw_menu(menu_box_size):
-    """Draw the menu box on the screen."""
+    """Draw the menu on the screen."""
     global screen, bg
     bg.fill(fe_blue, menu_box_size) #fill menu bg
     check_bread_box = pygame.Rect(10, 10, menu_box_size.width/3 - 10, menu_box_size.height - 20)
@@ -509,7 +510,7 @@ def bread_menu(menu_box_size, mc):
     pygame.display.flip()
 
     wait_to_start = True
-    while wait_to_start == True:
+    while wait_to_start == True: #wait for Player input
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -529,12 +530,12 @@ def bread_menu(menu_box_size, mc):
                     pygame.display.flip()
                     pygame.time.delay(2000)
                 elif pressed[pygame.K_2] == True:
-                    wait_to_start = False
+                    wait_to_start = False #exit function if button is "pressed"
 
     return
 
 def unlock_menu(menu_box_size, mc):
-    """Draw the bread unlocking box on the screen."""
+    """Draw the bread unlocking menu on the screen."""
     global screen, bg
     bg.fill(fe_blue, menu_box_size) #fill menu bg
     marth_box = pygame.Rect(10, 10, menu_box_size.width/4 - 10, menu_box_size.height - 20)
@@ -598,34 +599,34 @@ def unlock_menu(menu_box_size, mc):
     pygame.display.flip()
 
     running = True
-    while running == True:
+    while running == True: #wait for keyboard input
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 pressed = pygame.key.get_pressed()
                 if pressed[pygame.K_1] == True:
                     if marth.unlocked == False:
-                        unlock(marth, mc, menu_box_size)
+                        unlock(marth, mc, menu_box_size) #try to unlock Marth if he isn't already
                         pygame.time.delay(2000)
                         running = False
                     elif marth.unlocked == True:
-                        marth_scene()
+                        marth_scene() #run through Marth's scene
                         running = False
                 elif pressed[pygame.K_2] == True:
                     if lucina.unlocked == False:
-                        unlock(lucina, mc, menu_box_size)
+                        unlock(lucina, mc, menu_box_size) #try to unlock Lucina if she isn't already
                         pygame.time.delay(2000)
                         running = False
                     elif lucina.unlocked == True:
-                        lucina_scene()
+                        lucina_scene() #run through Lucina's scene
                         running = False
                 elif pressed[pygame.K_3] == True:
                     if masked_marth.unlocked == False:
-                        unlock(masked_marth, mc, menu_box_size)
+                        unlock(masked_marth, mc, menu_box_size) #try to unlock Masked Marth if they aren't already
                         pygame.time.delay(2000)
                         running = False
                     elif masked_marth.unlocked == True:
-                        masked_marth_scene()
+                        masked_marth_scene() #run through Masked Marth's scene
                         running = False
                 elif pressed[pygame.K_4] == True:
                     running = False
@@ -653,7 +654,7 @@ def move_options(character, other):
     rightsquare = pygame.Rect(character_left + square_width, character_top, square_width, square_height)
     downsquare = pygame.Rect(character_left, character_top + square_height, square_width, square_height)
 
-    squares = [upsquare, leftsquare, rightsquare, downsquare]
+    squares = [upsquare, leftsquare, rightsquare, downsquare] #possible places to move
     for option in squares: #for each square...
         squarex = option.left * square_width
         squarey = option.top * square_height
@@ -669,14 +670,14 @@ def move_player(mc, other):
     """Move the Player on the map."""
     global bg, screen
     choosing = True
-    while choosing == True:
+    while choosing == True: #wait for keyboard input
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
             elif event.type == pygame.KEYDOWN: #if a key is pressed...
                 pressed = pygame.key.get_pressed()
-                if pressed[pygame.K_UP] == True:
+                if pressed[pygame.K_UP] == True: #move up if up key is pressed, etc.
                     move(mc, 0, -1, other)
                     choosing = False
                 elif pressed[pygame.K_LEFT] == True:
@@ -712,7 +713,7 @@ def clean_map(char):
     global bg, screen
     draw_map()
     location = pygame.Rect((screen.get_width() * char.x / 6) + 100/6, (screen.get_height() * char.y / 6) + 100/6, screen.get_width()/6, screen.get_height()/6)
-    bg.blit(char.image, location)
+    bg.blit(char.image, location) #place character on map
     screen.blit(bg, (0,0))
     pygame.display.flip()
     return
@@ -721,7 +722,7 @@ def new_level(foes, mc, menu_box_size):
     """Generate and play through a level."""
     global bg, screen
     bg.fill(fe_blue, menu_box_size) #cover up menu while level is in progress
-    white_box = pygame.Rect(10, 400, bg.get_width()-20, 100)
+    white_box = pygame.Rect(10, 0, bg.get_width()-20, 100)
     bg.fill(white, white_box)
     draw_map() #draw bg map
     spawn(mc, None) #spawn Player
@@ -730,9 +731,12 @@ def new_level(foes, mc, menu_box_size):
     spawn(to_spawn, mc)
 
     font = pygame.font.Font(None, 20)
-    notif = font.render(f"A {to_spawn} appeared!", 1, black)
+    notif = font.render(f"A {to_spawn.name} appeared!", 1, black)
     notif_pos = notif.get_rect()
     notif_pos.center = white_box.center
+    bg.blit(notif, notif_pos) #display notif
+    screen.blit(bg, (0,0))
+    pygame.display.flip()
 
     fighting = True
     turn = "mc" #start with Player's turn
@@ -748,13 +752,13 @@ def new_level(foes, mc, menu_box_size):
             move_options(mc, to_spawn) #view move options
             move_player(mc, to_spawn) #Player moves
             if in_range(mc, to_spawn) == True:
-                attack(mc, to_spawn, menu_box_size)
+                attack(mc, to_spawn, menu_box_size) #Player attacks if to_spawn is in range
             turn = "foe"
         else:
             move_npc(to_spawn, mc) #foe moves
             pygame.time.delay(1000)
             if in_range(to_spawn, mc) == True:
-                attack(to_spawn, mc, menu_box_size)
+                attack(to_spawn, mc, menu_box_size) #to_spawn attacks if Player is in range
                 if check_defeat(mc) == True:
                     reset_hp(to_spawn) #no reward is gained from losing, but HP is reset for the next level
                     reset_hp(mc)
@@ -772,7 +776,7 @@ def main():
     #opening screen
     global screen, bg
     
-    bg.fill(white) #the opening bg is white, for now
+    bg.fill(white) #the opening bg is white
     pygame.display.flip()
     
     #title words
@@ -794,13 +798,13 @@ def main():
     pygame.display.flip()
 
     intro = True
-    while intro == True: #event loop - start
+    while intro == True: #event loop - start after a key is pressed
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT: #if the Player tries to close the window...
-                return
+                return #exit (close game)
             elif event.type == pygame.KEYDOWN: #if the Player presses a key...
-                intro = False
+                intro = False #continue
 
     #start Player customization
     bg.fill(white)
@@ -824,7 +828,7 @@ def main():
     button_top = bg.get_height() - a_box_height
     c_button_left = (a_box_width / 2) - (button_width / 2)
     r_button_left = a_box_width - button_width
-    l_button_size = pygame.Rect(0, button_top, button_width, a_box_height)
+    l_button_size = pygame.Rect(0, button_top, button_width, a_box_height) #define button sizes
     c_button_size = pygame.Rect(c_button_left, button_top, button_width, a_box_height)
     r_button_size = pygame.Rect(r_button_left, button_top, button_width, a_box_height)
 
@@ -841,13 +845,13 @@ def main():
     pygame.display.flip()
 
     choosing = True
-    while choosing == True:
+    while choosing == True: #wait until Player chooses
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
             elif event.type == pygame.KEYDOWN:
-                pressed = pygame.key.get_pressed()
+                pressed = pygame.key.get_pressed() #check if a key has been pressed
                 if pressed[pygame.K_1] == True:
                     appearance = "male"
                     choosing = False
@@ -874,7 +878,7 @@ def main():
     pygame.display.flip()
 
     choosing = True
-    while choosing == True:
+    while choosing == True: #wait for Player to choose
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -907,7 +911,7 @@ def main():
     pygame.display.flip()
 
     choosing = True
-    while choosing == True:
+    while choosing == True: #wait for Player to choose
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1065,7 +1069,7 @@ def main():
     pygame.display.flip()
 
     choosing = True
-    while choosing == True:
+    while choosing == True: #wait for Player to choose
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1095,23 +1099,23 @@ def main():
                     choosing = False
 
     colors = ["red", "blue", "green"] #I've elected to remove the colorless option for daggers, bows, and dragonstones
-    if weapon == "sword":
+    if weapon == "sword": #swords are red
         color = "red"
-    elif weapon == "lance":
+    elif weapon == "lance": #lances are blue
         color = "blue"
-    elif weapon == "axe":
+    elif weapon == "axe": #axes are green
         color = "green"
-    elif weapon == "dagger" or weapon == "bow" or weapon == "dragonstone" or weapon == "tome":
+    elif weapon == "dagger" or weapon == "bow" or weapon == "dragonstone" or weapon == "tome": #these can be any color
         color = random.choice(colors) #random color assignment, to be fair
 
-    mc = Player(name, appearance, eye_color, hair_color, weapon, color, image, None)
+    mc = Player(name, appearance, eye_color, hair_color, weapon, color, image, None) #mc = Player ("you")
 
     bg.fill(white)
     q_box = bg.fill(white, q_box_size) #q_box is white for the equipment screen
 
     if weapon == "sword":
         print_button_text("You received a red Iron Sword!", q_box, bg) #print text on q_box (q_box is the "button")
-        iron_sword.equip(mc)
+        iron_sword.equip(mc) #equip weapon
     elif weapon == "lance":
         print_button_text("You received a blue Iron Lance!", q_box, bg)
         iron_lance.equip(mc)
@@ -1156,7 +1160,7 @@ def main():
     draw_map() #draw the bg
     spawn(mc, None) #spawn mc on map
     spawn(roll_imp, mc) #spawn Roll Imp on map, not on mc
-    menu_box_size = pygame.Rect(0, 0, screen.get_width(), screen.get_height()/6)
+    menu_box_size = pygame.Rect(0, 0, screen.get_width(), screen.get_height()/6) #define Rect for size of menu
     anna_box(menu_box_size, "Good morning! It's good to see that you're finally awake.", None)
     pygame.time.delay(2000) #Player gets 2 seconds to read
     anna_box(menu_box_size, "The forces of Brioche have invaded Mantou. We need your help!", None)
@@ -1182,12 +1186,12 @@ def main():
     anna_box(menu_box_size, "Move using the arrow keys until you get in range to attack.", "Press ENTER if you don't need to move.")
 
     fight1 = True
-    turn = "mc"
+    turn = "mc" #start with Player's turn
     while fight1 == True:
-        if check_defeat(roll_imp) == True:
+        if check_defeat(roll_imp) == True: #if Roll Imp is defeated...
             clean_map(mc)
-            get_bread(roll_imp, mc)
-            reset_hp(roll_imp)
+            get_bread(roll_imp, mc) #win breadcrumbs
+            reset_hp(roll_imp) #hp is reset
             reset_hp(mc)
             fight1 = False
         elif turn == "mc":
@@ -1203,8 +1207,8 @@ def main():
                 attack(roll_imp, mc, menu_box_size)
                 if check_defeat(mc) == True: #this most likely won't happen, but the Player can be defeated by the first enemy
                     clean_map(mc)
-                    get_bread(roll_imp, mc) #the Player wins anyway, however
-                    reset_hp(roll_imp)
+                    get_bread(roll_imp, mc) #the Player wins breadcrumbs anyway, however
+                    reset_hp(roll_imp) #hp is reset
                     reset_hp(mc)
                     fight1 = False
             turn = "mc"
@@ -1216,7 +1220,7 @@ def main():
     anna_box(menu_box_size, "Press 1 to open the breadcrumb menu.", None)
 
     wait_to_start = True
-    while wait_to_start == True:
+    while wait_to_start == True: #wait for Player to press a key
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1224,47 +1228,48 @@ def main():
             elif event.type == pygame.KEYDOWN: #the Player doesn't actually have to press 1 this time, but... they don't have to know that
                 wait_to_start = False
 
-    bread_menu(menu_box_size, mc)
+    bread_menu(menu_box_size, mc) #display Bread Menu
     anna_box(menu_box_size, "Breadcrumbs can be converted in the Check Bread menu.", "It takes 15 breadcrumbs to make 1 bread.")
     pygame.time.delay(5000)
     anna_box(menu_box_size, "Bread is used to unlock bread characters. Press 2 to open", "the Unlock Bread menu.")
 
     wait_to_start = True
-    while wait_to_start == True:
+    while wait_to_start == True: #wait for Player to press a key
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-            elif event.type == pygame.KEYDOWN: #the Player doesn't actually have to press 1 this time, but... they don't have to know that
+            elif event.type == pygame.KEYDOWN: #the Player doesn't actually have to press 2 this time, but... they don't have to know that
                 wait_to_start = False
 
-    unlock_menu(menu_box_size, mc)
+    unlock_menu(menu_box_size, mc) #display Unlock Menu
 
     anna_box(menu_box_size, "After you complete one level, press 3 to start a new level.", None)
     pygame.time.delay(4000)
     anna_box(menu_box_size, "Alright! Let's get this bread!", None)
     pygame.time.delay(2000)
 
-    while True:
-        new_level([roll_imp, bun_dragon, baguette_devil, loaf_archer], mc, menu_box_size)
+    while True: #running levels and choices loop
+        new_level([roll_imp, bun_dragon, baguette_devil, loaf_archer], mc, menu_box_size) #run a new level
         wait_to_start = True
-        while wait_to_start == True:
+        while wait_to_start == True: #after battle, wait until a key is pressed
             pygame.event.pump()
+#hehe. 1257.
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return
+                    return #exit game if Player closes the window
                 elif event.type == pygame.KEYDOWN:
-                    pressed = pygame.key.get_pressed()
+                    pressed = pygame.key.get_pressed() #check if a key is pressed
                     if pressed[pygame.K_1] == True:
-                        bread_menu(menu_box_size, mc)
-                        draw_menu(menu_box_size)
+                        bread_menu(menu_box_size, mc) #display Bread Menu
+                        draw_menu(menu_box_size) #display regular menu
                     elif pressed[pygame.K_2] == True:
-                        unlock_menu(menu_box_size, mc)
-                        draw_map()
+                        unlock_menu(menu_box_size, mc) #display Unlock Menu
+                        draw_map() #redraw map (in case a Bread scene was played)
                         draw_menu(menu_box_size)
                     elif pressed[pygame.K_3] == True:
-                        wait_to_start = False
+                        wait_to_start = False #start a new level
 
     return
 
-main()
+main() #run game
